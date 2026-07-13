@@ -1,0 +1,279 @@
+<!-- 模組 M5｜負責模型: Claude Sonnet 5 -->
+<section class="chapter" id="C08"><header class="ch-header"><div class="ch-eyebrow">章節 08</div><h2 class="ch-title">Agent Skills</h2><div class="ch-subtitle">對應官方課程 Introduction to Agent Skills</div><div class="ch-meta">4課 · ⏱ ~18 分鐘</div></header>
+<article class="lesson" id="L8.1" data-lid="8.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.1"><span>已讀</span></label></div><h3 class="lesson-title">什麼是 Skill</h3><div class="lesson-subtitle">漸進式揭露的知識包</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Agent Skill（代理技能）說穿了很簡單：一個資料夾，裡面至少有一份 <code>SKILL.md</code>。它不是工具（tool），不會幫 Claude 多一個「能做的動作」，而是一包<strong>知識與流程</strong>——教 Claude 遇到某種情境時，該怎麼想、按什麼順序做、要注意哪些眉角。你可以把公司的報帳 SOP、品牌文案規範、退款審核流程，通通寫成一個 Skill，讓它變成可以重複使用、可以搬到別的專案的知識包。</p>
+  <p>Skill 真正厲害的地方在於 <strong>progressive disclosure（漸進式揭露）</strong>：Claude 不會一開始就把所有 Skill 的完整內容塞進 context（上下文視窗），那樣太浪費。它分層載入——平常只有每個 Skill 的 name（名稱）和 description（說明）常駐在背景，成本極低；任務看起來用得上時，才讀完整的 <code>SKILL.md</code>；若還帶了腳本、範本、參考文件，等真正動手做的那一刻才會被讀取。</p>
+  <pre class="code">skills/
+└── expense-policy-check/
+    ├── SKILL.md
+    ├── scripts/
+    │   └── check_limit.py
+    └── references/
+        └── policy.md</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像一下：這就像餐廳的菜單設計。平常客人只看得到封面幾道招牌菜的名字和一句話介紹（name/description）；點了某一道，服務生才會去廚房翻出完整食譜（SKILL.md 本文）；真的要現做，才會走進倉庫拿特定食材和器具（資源檔）。你不會叫每個客人先讀完整本廚房手冊才能點餐。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Skill 是資料夾＋<code>SKILL.md</code>，可以額外包含腳本、範本、參考文件等資源檔</li>
+  <li>平常只有 name 與 description 常駐在 context 裡，成本很低</li>
+  <li>只有任務可能用得上時，Claude 才會讀取完整的 SKILL.md 內容</li>
+  <li>更深一層的資源檔（腳本、長文件、範本）等真正需要動手時才會被載入</li>
+  <li>Skill 讓組織的 SOP、風格指南變成可重複使用、可攜帶的知識包</li>
+  <li>跟把所有規則硬塞進 system prompt 不同，Skill 讓平常的 context 保持精簡</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Agent Skill 最基本的組成是什麼？</div><div class="opt">一個資料夾＋SKILL.md 檔案</div><div class="opt">一段很長的 system prompt</div><div class="opt">一支獨立部署的 API 服務</div><div class="answer">✅ 一個資料夾＋SKILL.md 檔案</div></div>
+  <div class="qa"><div class="qtext">Q2: progressive disclosure（漸進式揭露）的用意是什麼？</div><div class="opt">讓所有 Skill 內容一次全部塞進 context</div><div class="opt">依需要分層載入內容，平常只留最精簡的資訊</div><div class="opt">把 Skill 隨機顯示給使用者看</div><div class="answer">✅ 依需要分層載入內容，平常只留最精簡的資訊</div></div>
+  <div class="qa"><div class="qtext">Q3: 下列何者最平常就會常駐在 context 裡？</div><div class="opt">SKILL.md 裡所有資源檔的完整內容</div><div class="opt">Skill 的 name 與 description</div><div class="opt">Skill 資料夾裡所有腳本的原始碼</div><div class="answer">✅ Skill 的 name 與 description</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L8.2" data-lid="8.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.2"><span>已讀</span></label></div><h3 class="lesson-title">SKILL.md 的結構</h3><div class="lesson-subtitle">frontmatter、說明與資源檔</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p><code>SKILL.md</code> 開頭一定是一段 YAML frontmatter（檔案最前面用 <code>---</code> 包起來的中繼資料），至少要有 <strong>name</strong> 和 <strong>description</strong> 兩個欄位。這兩個欄位就是 Skill 平常唯一會被 Claude 看到的部分，所以 description 寫得好不好，直接決定這個 Skill 會不會在對的時機被叫出來。</p>
+  <p>好的 description 不是抽象介紹「這是什麼」，而是具體寫出「什麼情境該用」——用第三人稱描述任務類型、關鍵字、使用者可能問的問題形式。frontmatter 之後就是本文，通常會列操作步驟、注意事項、範例輸出。如果流程需要固定的檢查清單、範本或可執行腳本，就把它們放進同一個資料夾的子目錄（例如 <code>scripts/</code>、<code>references/</code>），在本文裡指示 Claude 什麼時候該去讀或去執行它們。</p>
+  <pre class="code">---
+name: expense-policy-check
+description: 當使用者要核對報帳金額、詢問&lt;差旅&gt;或&lt;交際費&gt;額度上限時使用，檢查是否符合公司報支政策
+---
+
+## 使用時機
+1. 讀取使用者提供的金額與費用類型
+2. 對照 references/policy.md 裡的額度表
+3. 回報是否超標，超標時引用對應政策條款</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：description 只寫「這是一個財務相關的 Skill」，太抽象，Claude 很難判斷什麼時候該打開它。要寫成「當使用者要求…、詢問…、需要核對…時使用」這種具體到會出現在真實提問裡的觸發句。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>SKILL.md 開頭是 YAML frontmatter，至少包含 name 與 description</li>
+  <li>description 是平常唯一常駐的說明文字，寫法要具體到「什麼情境該用」</li>
+  <li>frontmatter 之後的本文放操作步驟、注意事項與範例</li>
+  <li>資源檔（scripts、references、templates）放在同一資料夾的子目錄</li>
+  <li>本文要明確指示 Claude 什麼情況該去讀取或執行哪個資源檔</li>
+  <li>description 用詞越貼近使用者實際會講的話，觸發準確率通常越高</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: SKILL.md 的 frontmatter 至少要包含哪兩個欄位？</div><div class="opt">name 與 description</div><div class="opt">title 與 author</div><div class="opt">version 與 license</div><div class="answer">✅ name 與 description</div></div>
+  <div class="qa"><div class="qtext">Q2: 好的 description 應該怎麼寫？</div><div class="opt">抽象描述這個 Skill 的功能定位</div><div class="opt">具體寫出「什麼情境該用」的觸發條件</div><div class="opt">盡量簡短、用一個詞帶過即可</div><div class="answer">✅ 具體寫出「什麼情境該用」的觸發條件</div></div>
+  <div class="qa"><div class="qtext">Q3: 資源檔（scripts、references、templates）通常放在哪裡？</div><div class="opt">直接寫死在 frontmatter 裡</div><div class="opt">SKILL.md 同一個資料夾下的子目錄</div><div class="opt">完全不需要，都寫進本文就好</div><div class="answer">✅ SKILL.md 同一個資料夾下的子目錄</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L8.3" data-lid="8.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.3 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.3"><span>已讀</span></label></div><h3 class="lesson-title">Skill、Tool、MCP 怎麼選</h3><div class="lesson-subtitle">三種擴充方式的分工</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>這三個名詞常常被混在一起講，但它們各自負責不同層次的事。<strong>Tool（工具）</strong>是單一、明確定義的動作，有輸入輸出的 schema（結構定義），讓 Claude 能真的「做事」——查資料庫、算數字、呼叫某支 API。<strong>MCP（Model Context Protocol）</strong>是一種標準協議，負責把 Claude 用統一的方式「接上」外部系統；一個 MCP server 可以同時提供 tools、resources、prompts，是「怎麼連上東西」的管道，不是動作本身。</p>
+  <p><strong>Skill</strong> 則是知識與流程的封裝，它不執行動作，而是教 Claude 在特定任務裡「該怎麼組合這些工具、按什麼順序、要注意什麼」。三者不是三選一的競爭關係，實務上常常疊在一起：MCP 負責連線與授權，Tool 是連上之後可以呼叫的具體動作，Skill 是那本告訴 Claude 什麼時候該用哪個工具、用完該怎麼收尾的操作手冊。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像做菜：MCP 是把你家廚房接上瓦斯管線和自來水——讓你能連上外部資源；Tool 是瓦斯爐、菜刀這些單一工具本身；Skill 則是那本寫著「三杯雞怎麼做、先炒薑再下九層塔」的食譜，教你怎麼組合工具完成一道菜。少了任何一塊，這頓飯都做不出來。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Tool 負責「執行」，一次呼叫完成一件明確定義的動作</li>
+  <li>MCP 負責「連線」，用標準協議把外部系統的 tools/resources/prompts 接進來</li>
+  <li>Skill 負責「知識與流程」，教 Claude 何時、如何組合工具完成任務</li>
+  <li>三者不是互斥選項，實務上經常疊在一起使用</li>
+  <li>判斷準則：要新增一個「動作」用 Tool；要接一個「外部系統」用 MCP；要沉澱一套「做法」用 Skill</li>
+  <li>換團隊、換專案時，Skill 資料夾通常能直接搬過去複用</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 想讓 Claude 能查詢公司的即時庫存資料庫，最直接該用哪一種擴充方式？</div><div class="opt">定義一個查詢庫存的 Tool（或透過 MCP 提供）</div><div class="opt">寫一個 Skill 說明庫存查詢流程</div><div class="opt">都不需要，直接用一句 prompt 描述就好</div><div class="answer">✅ 定義一個查詢庫存的 Tool（或透過 MCP 提供）</div></div>
+  <div class="qa"><div class="qtext">Q2: MCP 的角色定位比較接近下列哪一個？</div><div class="opt">單一函式呼叫</div><div class="opt">連接外部系統的標準協議管道</div><div class="opt">一份操作手冊</div><div class="answer">✅ 連接外部系統的標準協議管道</div></div>
+  <div class="qa"><div class="qtext">Q3: 「教 Claude 遇到退款申請時該先查訂單、再核對金額、最後才核准」比較適合用什麼方式承載？</div><div class="opt">Tool</div><div class="opt">Skill</div><div class="opt">都不適合，只能寫在使用者訊息裡</div><div class="answer">✅ Skill</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L8.4" data-lid="8.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.4"><span>已讀</span></label></div><h3 class="lesson-title">打造並測試你的第一個 Skill</h3><div class="lesson-subtitle">從想法到可重複使用</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>第一個 Skill 不用想得太宏大，最好的題材就是「你已經反覆手動教過 Claude 好幾次的事」。流程大致是：先挑一個重複出現的任務；接著寫 <code>SKILL.md</code>，description 寫清楚使用情境，本文列出步驟與注意事項；如果流程需要固定範本、檢查清單或可執行腳本，才另外建資源檔——不用一開始就求完整。</p>
+  <p>寫完之後最容易被跳過、卻最重要的一步是<strong>測試觸發</strong>。拿幾種不同措辭的真實提問去試，看 Claude 會不會正確判斷「這時候該打開這個 Skill」；同時也要丟一些看起來相關、但其實不該觸發的問題，確認沒有誤觸發。根據測試結果回頭調整 description 的用詞——通常觸發不準的問題，八成都出在 description 沒寫到使用者實際會用的說法。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像在教新人：你不會把公司十年份的 SOP 一次塞給他背，而是先讓他知道「遇到什麼狀況要翻哪本手冊」，真正用到才去翻開細節。測試 Skill 觸不觸發，就像觀察新人「遇到退款單，有沒有想到要翻退款手冊」，而不是「他能不能把整本手冊背出來」。</div></div>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：只測試「應該觸發」的情境就直接上線，卻沒測「容易誤觸發」的情境。結果 Skill 在不相關的任務裡也被叫出來，反而讓回答變得奇怪、離題，比沒有這個 Skill 之前更糟。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>先挑一個你反覆手動說明的重複性任務當作第一個 Skill 候選</li>
+  <li>description 要涵蓋使用者可能用的多種措辭與情境關鍵字</li>
+  <li>本文用清楚的步驟與注意事項，不必塞入不必要的細節</li>
+  <li>資源檔按實際需要才建立，避免一開始就過度複雜</li>
+  <li>測試要同時包含「該觸發」與「不該觸發」兩種情境</li>
+  <li>依實測結果反覆調整 description，觸發率才會穩定</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 挑選第一個 Skill 題材時，最適合的來源是什麼？</div><div class="opt">隨便找一個從沒做過的任務</div><div class="opt">你反覆手動教 Claude 做的重複性任務</div><div class="opt">公司最複雜、最少人懂的流程</div><div class="answer">✅ 你反覆手動教 Claude 做的重複性任務</div></div>
+  <div class="qa"><div class="qtext">Q2: 測試 Skill 觸發時，除了「應該觸發」的情境，還必須測試什麼？</div><div class="opt">使用者的打字速度</div><div class="opt">「不該觸發」的情境，確認沒有誤觸發</div><div class="opt">SKILL.md 檔案的大小</div><div class="answer">✅ 「不該觸發」的情境，確認沒有誤觸發</div></div>
+  <div class="qa"><div class="qtext">Q3: 如果 Skill 常常該觸發卻沒觸發，最先該調整的通常是什麼？</div><div class="opt">換一個模型</div><div class="opt">description 的用詞與涵蓋的情境關鍵字</div><div class="opt">把整份 SKILL.md 刪掉重寫</div><div class="answer">✅ description 的用詞與涵蓋的情境關鍵字</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C09"><header class="ch-header"><div class="ch-eyebrow">章節 09</div><h2 class="ch-title">Subagents 與多代理架構</h2><div class="ch-subtitle">對應官方課程 Introduction to Subagents</div><div class="ch-meta">4課 · ⏱ ~18 分鐘</div></header>
+<article class="lesson" id="L9.1" data-lid="9.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.1"><span>已讀</span></label></div><h3 class="lesson-title">為什麼需要 subagent</h3><div class="lesson-subtitle">context 隔離與專業分工</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Subagent（子代理）是另一個獨立的 Claude 實例，有自己的 context window（上下文視窗）、自己的 system prompt、自己的工具權限，由主對話（也叫 orchestrator，協調者）在需要時呼叫，去處理某個子任務。乍看之下多一層很麻煩，但它解決的是一個很實際的問題：<strong>context 會被子任務的雜亂過程塞爆</strong>。</p>
+  <p>如果什麼事都在同一個對話裡做——翻十份文件找一句話、試了五次才成功的指令、大量的中間輸出——主對話的 context 很快就被這些「過程垃圾」占滿，模型反而抓不到重點。把子任務丟給 subagent，它在自己的空間裡搞定所有嘗試與失敗，只回傳整理過的結論，主對話因此保持乾淨。除了 context 隔離，subagent 還帶來另外兩個好處：可以<strong>平行</strong>執行多個獨立子任務，不用排隊一件一件做；也可以針對性地給每個 subagent 專屬的角色設定，讓它把一件事做得更專精。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像你是專案經理，手上一個大案子。你不會自己下海查遍每一份文件、自己寫每一行測試——你會把「查資料」交給一個助理、「寫測試」交給另一個，你只要收最後的結論報告，自己的桌面（也就是 context）才不會被一堆草稿淹沒。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Subagent 是有自己 context window、system prompt、工具權限的獨立 Claude 實例</li>
+  <li>最大好處之一是 context 隔離：子任務的雜亂過程不會污染主對話</li>
+  <li>彼此獨立的子任務可以平行派工，不用排隊等</li>
+  <li>針對性的角色設定（窄工具白名單、專屬 system prompt）讓子任務做得更專精</li>
+  <li>主對話（orchestrator）通常只需要看子任務整理過的結論，不用看完整過程</li>
+  <li>不是所有任務都值得拆給 subagent，過於簡單的事直接做可能更快</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: subagent 最主要解決的問題之一是什麼？</div><div class="opt">讓 Claude 變得更便宜</div><div class="opt">context 被子任務的雜亂過程塞爆</div><div class="opt">讓使用者不用打字</div><div class="answer">✅ context 被子任務的雜亂過程塞爆</div></div>
+  <div class="qa"><div class="qtext">Q2: 下列何者是使用 subagent 的合理理由？</div><div class="opt">任務本身很簡單，一句話就能做完</div><div class="opt">任務可以拆成多個獨立子任務，能平行處理</div><div class="opt">想讓回覆看起來比較長</div><div class="answer">✅ 任務可以拆成多個獨立子任務，能平行處理</div></div>
+  <div class="qa"><div class="qtext">Q3: 主對話（orchestrator）通常會收到 subagent 的什麼？</div><div class="opt">完整、未經整理的原始工具輸出</div><div class="opt">整理過的結論與必要資訊</div><div class="opt">什麼都不會收到</div><div class="answer">✅ 整理過的結論與必要資訊</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L9.2" data-lid="9.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.2"><span>已讀</span></label></div><h3 class="lesson-title">定義 subagent</h3><div class="lesson-subtitle">角色、工具與權限邊界</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>定義一個 subagent，通常要交代清楚三件事。第一是<strong>角色與 system prompt</strong>：這個 subagent 是誰、負責什麼範圍、輸出格式的期待是什麼。第二是<strong>工具白名單</strong>：只給它完成任務所必要的工具，沒有列進白名單的工具，就是它做不到的事——這是一個硬性的權限邊界，不是「反正給多一點也沒差」。第三是<strong>觸發描述</strong>：讓 orchestrator 知道什麼情境該指派給它，寫法跟 Skill 的 description 概念很像，要具體到「什麼任務該找它」。</p>
+  <p>工具白名單特別值得認真對待。一個只負責讀程式碼、給審查建議的 subagent，原則上不該擁有能刪除檔案、能執行 <code>git push</code> 的工具——就算它「應該」不會亂用，把危險工具排除在外，本身就是一種防呆設計。</p>
+  <pre class="code">---
+name: code-reviewer
+description: 當使用者要求審查程式碼變更、找出潛在 bug 或風格問題時使用，只做唯讀分析
+tools: Read, Grep, Glob
+model: sonnet
+---
+
+你是一個嚴謹的資深工程師，只做唯讀的程式碼審查，
+不修改任何檔案，發現問題時指出具體行號與原因。</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：把 subagent 的工具權限開得跟主對話一樣寬，等於失去了「權限邊界」這個好處。工具白名單越窄、角色越專一，這個 subagent 犯下高風險錯誤的空間就越小。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>定義 subagent 三要素：角色與 system prompt、工具白名單、觸發描述</li>
+  <li>工具白名單是明確的權限邊界，不是「反正給多一點沒差」</li>
+  <li>觸發描述的寫法和 Skill 類似，要具體到「什麼情境該指派給它」</li>
+  <li>角色越窄、越專一，子任務的品質通常越穩定</li>
+  <li>高風險操作（刪除、部署、金錢相關）的工具權限要格外謹慎</li>
+  <li>subagent 能不能再往下呼叫其他 subagent，要看系統整體的設計</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 定義一個 subagent 通常需要哪三個要素？</div><div class="opt">角色/system prompt、工具白名單、觸發描述</div><div class="opt">顏色、名字、圖示</div><div class="opt">價格、速度、廠牌</div><div class="answer">✅ 角色/system prompt、工具白名單、觸發描述</div></div>
+  <div class="qa"><div class="qtext">Q2: 一個「唯讀程式碼審查」的 subagent，工具白名單原則上不該包含什麼？</div><div class="opt">讀取檔案的工具</div><div class="opt">搜尋程式碼的工具</div><div class="opt">刪除或寫入檔案的工具</div><div class="answer">✅ 刪除或寫入檔案的工具</div></div>
+  <div class="qa"><div class="qtext">Q3: 為什麼工具白名單要盡量收窄而不是給滿？</div><div class="opt">因為工具越多耗電越快</div><div class="opt">因為窄工具白名單就是明確的權限邊界，能降低誤操作風險</div><div class="opt">因為系統規定每個 subagent 最多三個工具</div><div class="answer">✅ 因為窄工具白名單就是明確的權限邊界，能降低誤操作風險</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L9.3" data-lid="9.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.3"><span>已讀</span></label></div><h3 class="lesson-title">Orchestrator 模式</h3><div class="lesson-subtitle">任務分派、平行執行與匯整</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Orchestrator-worker（協調者－工作者）模式大致分三步。第一步，主模型先<strong>規劃</strong>：把一個大任務拆成可以獨立執行的子任務，判斷哪些彼此獨立、可以平行做，哪些有先後依賴、必須照順序來。第二步，把子任務<strong>分派</strong>給對應的 subagent，獨立的部分同時進行，不必排隊等。第三步，也是最容易被省略的一步：主模型要<strong>驗收匯整</strong>——檢查每個 subagent 回報的結果是否合理、彼此有沒有矛盾，再統整成最終要給使用者的答案，而不是把幾份結果直接拼貼轉貼。</p>
+  <p>拆分的粒度也要拿捏：切得太細，光是協調與整合的成本就會超過平行化省下的時間；切得太粗，又會失去平行處理的好處。一般來說，值得拆分的子任務要「夠大、夠獨立」，光是查一個小數字這種事，直接自己做通常比開一個 subagent 快。</p>
+  <pre class="code">任務：分析三個競品的定價頁面
+
+1. 主模型規劃：拆成「分析競品 A」「分析競品 B」「分析競品 C」三個獨立子任務
+2. 平行分派給三個 subagent，各自抓取並整理該競品的定價資料
+3. 主模型驗收：比對三份結果格式是否一致，有沒有明顯矛盾或缺漏
+4. 主模型整合三份結果，寫成一份比較報告回覆使用者</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像一場團體報告：你（主模型）先把題目拆成幾個子題分給組員（subagent），組員各自回來報告，但你不會不看內容就直接把每個人的投影片疊在一起交出去——你要先看過、挑出矛盾的地方、統一格式，這樣才是一份完整報告。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Orchestrator 先規劃拆解任務，判斷子任務的獨立性與依賴順序</li>
+  <li>獨立的子任務平行分派，有依賴關係的子任務照順序處理</li>
+  <li>subagent 各自在自己的 context 裡執行，回傳整理過的結果</li>
+  <li>主模型要做「驗收」：檢查結果是否合理、彼此是否矛盾</li>
+  <li>最終呈現給使用者的答案是主模型整合過的版本，不是子任務結果的直接拼貼</li>
+  <li>拆分粒度要拿捏：太細增加溝通與整合成本，太粗會失去平行化的好處</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Orchestrator-worker 模式的第一步是什麼？</div><div class="opt">直接把整段使用者提問轉給某個 subagent</div><div class="opt">主模型先規劃拆解，判斷任務的獨立性與依賴順序</div><div class="opt">隨機分配任務給任一個 subagent</div><div class="answer">✅ 主模型先規劃拆解，判斷任務的獨立性與依賴順序</div></div>
+  <div class="qa"><div class="qtext">Q2: 主模型收到多個 subagent 的結果後，最重要卻常被忽略的步驟是什麼？</div><div class="opt">立刻轉貼給使用者</div><div class="opt">驗收：檢查結果是否合理、有沒有互相矛盾</div><div class="opt">把結果全部刪掉重做</div><div class="answer">✅ 驗收：檢查結果是否合理、有沒有互相矛盾</div></div>
+  <div class="qa"><div class="qtext">Q3: 什麼樣的子任務適合平行分派？</div><div class="opt">彼此獨立、不依賴對方結果的子任務</div><div class="opt">一定要照嚴格順序才能做的子任務</div><div class="opt">完全一樣的同一個任務重複做三次</div><div class="answer">✅ 彼此獨立、不依賴對方結果的子任務</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L9.4" data-lid="9.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.4 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.4"><span>已讀</span></label></div><h3 class="lesson-title">多代理的常見陷阱</h3><div class="lesson-subtitle">過度分派、結果失真與驗收</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>多代理架構好用，但也容易踩坑。最常見的是<strong>過度分派</strong>：連查一行程式碼、算一個簡單數字這種事都開一個 subagent，多繞一圈的延遲與成本卻沒換到對應好處。第二個是<strong>結果未驗證就照單全收</strong>：subagent 也是模型，一樣會出錯或產生幻覺（hallucination，講得煞有其事但其實不對），主模型如果不檢查就直接採用，錯誤反而被放大、包裝得更像真的。</p>
+  <p>第三個是 <strong>context 傳遞不完整</strong>：分派任務時只丟了一句指令，沒把「為什麼要做這件事、背景是什麼」一起交代，subagent 做出來的東西方向對，但深度不夠，甚至答非所問。第四個是<strong>成本與延遲失控</strong>：每個 subagent 都是獨立的 context 與 token 消耗，平行開太多、巢狀呼叫（subagent 又呼叫 subagent）疊太深，帳單和等待時間都可能不成比例地暴增。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做的事：把使用者的敏感資料或機密任務不經篩選就丟給一堆 subagent，卻不追蹤誰拿到了什麼資訊，也不驗證最終輸出就直接對外發布。任何牽涉金錢操作、對外發布、刪除資料的最終結果，都必須經過人工或至少主模型明確覆核，才能定案。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>過度分派：小到一行程式碼的事也開 subagent，增加成本與延遲卻沒有實質好處</li>
+  <li>結果未驗證：把 subagent 的輸出當成絕對正確，錯誤會被放大</li>
+  <li>context 傳遞不完整：只丟任務指令、不給背景，容易做出「對但不到位」的結果</li>
+  <li>成本與延遲失控：平行度太高或巢狀呼叫太深，token 消耗與等待時間會迅速膨脹</li>
+  <li>判斷是否值得拆分的準則：任務夠大、夠獨立、夠有平行化空間才值得</li>
+  <li>高風險或對外的最終輸出，一定要有明確的驗收關卡</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 下列哪一種情境最適合直接自己做，不需要開 subagent？</div><div class="opt">只是查一行程式碼的簡單問題</div><div class="opt">需要同時分析五份獨立長文件</div><div class="opt">需要平行呼叫多個外部系統做整合報告</div><div class="answer">✅ 只是查一行程式碼的簡單問題</div></div>
+  <div class="qa"><div class="qtext">Q2: 「context 傳遞不完整」最常導致什麼後果？</div><div class="opt">subagent 完全無法執行</div><div class="opt">subagent 做出方向對但深度不足、甚至答非所問的結果</div><div class="opt">系統會自動報錯</div><div class="answer">✅ subagent 做出方向對但深度不足、甚至答非所問的結果</div></div>
+  <div class="qa"><div class="qtext">Q3: 多代理架構中，成本與延遲最容易在什麼情況下失控？</div><div class="opt">只用一個 subagent 處理單一任務</div><div class="opt">平行度過高或巢狀分派太深</div><div class="opt">完全不使用 subagent</div><div class="answer">✅ 平行度過高或巢狀分派太深</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C10"><header class="ch-header"><div class="ch-eyebrow">章節 10</div><h2 class="ch-title">部署、評估與 AI Fluency</h2><div class="ch-subtitle">把 Claude 帶進正式環境</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L10.1" data-lid="10.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.1"><span>已讀</span></label></div><h3 class="lesson-title">部署選項</h3><div class="lesson-subtitle">Claude API、Amazon Bedrock、Google Vertex AI</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>把 Claude 接進正式產品，主要有三條管道。<strong>Claude API</strong> 是 Anthropic 直接提供的服務，通常最先拿到新模型與新功能，接入方式也最單純。<strong>Amazon Bedrock</strong> 把 Claude 整合進 AWS 生態，如果團隊本來就用 AWS，就能沿用既有的雲端合約、IAM 權限管理與帳務系統，資料處理也留在 AWS 環境內。<strong>Google Vertex AI</strong> 是給 GCP 陣營團隊的對應選項，邏輯類似，一樣能沿用既有的雲端採購關係與權限體系。</p>
+  <p>選哪一條管道，重點不在「哪個 Claude 比較強」——底層模型能力是一致的，差別主要在<strong>怎麼接、資料怎麼流、帳單怎麼算</strong>。實務上要考慮的因素包括：公司既有的雲端合約與採購關係、資料落地與合規要求（資料需不需要留在特定雲端環境或地區）、統一帳務與權限管理是否重要，以及要不要最快拿到新模型或新功能。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像叫車：Claude API 像直接打給計程車行，最直接也最快；Bedrock 或 Vertex AI 像用你已經有的叫車 App 帳戶叫車——車子（模型）一樣，但帳單、發票、里程紀錄都併進你原本熟悉的那套系統。選哪個，看的是你公司的「帳戶」本來開在哪裡。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude API 是 Anthropic 直接提供的管道，通常最快取得新模型與新功能</li>
+  <li>Amazon Bedrock 讓已經在用 AWS 的團隊透過既有帳務、IAM 權限存取 Claude</li>
+  <li>Google Vertex AI 提供給 GCP 陣營團隊類似的整合方式</li>
+  <li>選擇考量：既有雲端合約、資料落地與合規需求、統一帳務與權限管理</li>
+  <li>三種管道底層的模型能力一致，差異主要在接入方式與資料流向</li>
+  <li>沒有絕對最好的選項，要看團隊既有的雲端生態與治理要求</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 哪一個部署管道通常最快拿到 Anthropic 釋出的新模型與新功能？</div><div class="opt">Claude API 直連</div><div class="opt">一定是 Amazon Bedrock</div><div class="opt">一定是 Google Vertex AI</div><div class="answer">✅ Claude API 直連</div></div>
+  <div class="qa"><div class="qtext">Q2: 一家公司原本所有系統都在 AWS 上、希望帳務與權限統一管理，比較適合考慮哪個管道？</div><div class="opt">Claude API 直連</div><div class="opt">Amazon Bedrock</div><div class="opt">都不適合</div><div class="answer">✅ Amazon Bedrock</div></div>
+  <div class="qa"><div class="qtext">Q3: 三種部署管道之間，底層的模型能力有什麼差異？</div><div class="opt">能力完全不同，需要分別評估</div><div class="opt">底層模型能力一致，差異主要在接入方式與資料流向</div><div class="opt">Bedrock 和 Vertex AI 一定比較弱</div><div class="answer">✅ 底層模型能力一致，差異主要在接入方式與資料流向</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L10.2" data-lid="10.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.2"><span>已讀</span></label></div><h3 class="lesson-title">Evals 評估基本功</h3><div class="lesson-subtitle">怎麼知道你的 AI 有沒有變好</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Evals（評估）是把「感覺這次回答得比較好」換成可以重複驗證的具體流程。核心是一份 <strong>golden test set（黃金測試集）</strong>：一組具代表性的輸入與預期結果，用來衡量目前系統的表現。評分方式有很多種，簡單的可以用精確比對或規則式評分；輸出比較開放、難用固定規則量化好壞的情境，可以用 <strong>LLM-as-judge</strong>——另外呼叫一次 Claude，依照你訂的評分標準幫忙打分。</p>
+  <p>Evals 不是做一次就結束的事，而是要持續維護的資產。每次調整 prompt、換模型、改流程，都應該重跑一次評估，這就是<strong>regression test（迴歸測試）</strong>：確認新版本沒有讓原本表現好的案例悄悄變差。實務上，黃金測試集也要隨著使用中發現的真實失敗案例不斷補進去，才能真正貼近實際會遇到的情境，而不是只涵蓋當初設計時想得到的那幾種。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：只憑「感覺這次回答得比較好」就上線新版本。沒有黃金測試集當基準，你根本不知道這次改動是全面進步，還是在某些沒注意到的案例上悄悄變差了。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>黃金測試集是一組具代表性的輸入與預期輸出，作為評估基準</li>
+  <li>評分可以用精確比對／規則，也可以用 LLM-as-judge 處理開放式輸出</li>
+  <li>迴歸測試：每次改動 prompt 或模型，都要重跑一次評估</li>
+  <li>Evals 不是一次性任務，要隨實際使用中發現的失敗案例持續補充</li>
+  <li>目的是把「感覺變好了」換成可以重複驗證的具體指標</li>
+  <li>好的黃金測試集要涵蓋常見情境，也要涵蓋邊界情況與已知的失敗案例</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 黃金測試集（golden test set）的用途是什麼？</div><div class="opt">隨機挑幾筆資料做展示</div><div class="opt">一組具代表性的輸入與預期輸出，作為評估基準</div><div class="opt">只是給主管看的行銷素材</div><div class="answer">✅ 一組具代表性的輸入與預期輸出，作為評估基準</div></div>
+  <div class="qa"><div class="qtext">Q2: 什麼情況比較適合用 LLM-as-judge 而不是規則式精確比對？</div><div class="opt">答案只有唯一正確格式的數字</div><div class="opt">輸出是開放式、難以用固定規則量化好壞的內容</div><div class="opt">完全不需要評估的情境</div><div class="answer">✅ 輸出是開放式、難以用固定規則量化好壞的內容</div></div>
+  <div class="qa"><div class="qtext">Q3: 為什麼每次調整 prompt 或換模型都要重跑迴歸測試？</div><div class="opt">純粹走個流程，沒有實質意義</div><div class="opt">確認新版本沒有讓原本表現好的案例悄悄變差</div><div class="opt">迴歸測試只是為了讓報表好看</div><div class="answer">✅ 確認新版本沒有讓原本表現好的案例悄悄變差</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L10.3" data-lid="10.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.3"><span>已讀</span></label></div><h3 class="lesson-title">AI Fluency 4D 框架</h3><div class="lesson-subtitle">Delegation、Description、Discernment、Diligence</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>AI Fluency（AI 流暢力）4D 框架把「怎麼好好用 AI」拆成四個環環相扣的能力。<strong>Delegation（委派）</strong>：判斷這個任務該交給 AI 做多少、哪些部分該保留人為決策——不是遇到任務就整個丟給 AI。<strong>Description（描述）</strong>：怎麼把任務、脈絡、期待格式講清楚，讓 AI 真正理解你要什麼，這其實就是前面學過的角色、脈絡、任務、格式那一套。</p>
+  <p><strong>Discernment（判斷）</strong>：拿到 AI 的產出後，用專業判斷力評估是否正確、有沒有偏誤或幻覺，而不是照單全收。<strong>Diligence（盡責）</strong>：使用 AI 的人始終對最終結果負責，包括遵守公司政策與法規，對高風險輸出做額外查核。四者缺一不可——委派錯了、描述不清、不做判斷、不負責任，任何一環斷掉，整個流程都會出問題。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像帶一個很快、但沒有社會經驗的實習生：你要決定哪些事讓他自己做、哪些你要親自把關（Delegation）；交辦時要講清楚要什麼（Description）；他交回來的東西你要自己看過、判斷好不好（Discernment）；最後掛你名字送出去的東西，出了錯還是你負責（Diligence）。AI Fluency 講的其實就是這件事。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Delegation：判斷任務該交給 AI 多少、哪些決策該留在人身上</li>
+  <li>Description：清楚描述任務、脈絡與期待格式，AI 才能給出你要的東西</li>
+  <li>Discernment：用專業判斷力檢視 AI 產出，不是照單全收</li>
+  <li>Diligence：使用者對最終結果始終負責，高風險輸出要額外查核</li>
+  <li>四個 D 環環相扣，任何一環做不到位都會拉低整體品質</li>
+  <li>AI Fluency 是一種可以刻意練習的能力，不是天生會或不會</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: AI Fluency 4D 框架中，「判斷該把哪些任務交給 AI、哪些留給人」對應哪一個 D？</div><div class="opt">Delegation</div><div class="opt">Discernment</div><div class="opt">Diligence</div><div class="answer">✅ Delegation</div></div>
+  <div class="qa"><div class="qtext">Q2: 拿到 AI 的產出後，用專業判斷評估正確性、有沒有偏誤，對應哪一個 D？</div><div class="opt">Description</div><div class="opt">Discernment</div><div class="opt">Diligence</div><div class="answer">✅ Discernment</div></div>
+  <div class="qa"><div class="qtext">Q3: 「使用者對最終結果始終負責，高風險輸出要額外查核」對應哪一個 D？</div><div class="opt">Description</div><div class="opt">Discernment</div><div class="opt">Diligence</div><div class="answer">✅ Diligence</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L10.4" data-lid="10.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.4 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.4"><span>已讀</span></label></div><h3 class="lesson-title">負責任地用 AI</h3><div class="lesson-subtitle">資料、隱私與治理</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>送進 prompt 裡的內容，都要當作「可能被處理」的資料看待。牽涉敏感個資或機密資訊時，先確認資料使用政策，以及所選部署管道（Claude API、Bedrock、Vertex AI）當下的資料保留承諾是否符合規範——各管道細節可能不同，要以官方當下條款為準，不要只憑印象假設。治理面同樣重要：團隊要有清楚的使用規範；高風險或不可逆的操作（金錢、對外發布、刪除資料）要設人工核准關卡；也要保留紀錄與稽核軌跡，方便回溯是誰、何時讓 AI 做了什麼。</p>
+  <p>走到這裡，這門課也接近尾聲了。從 CH01 認識 Claude 開始，一路走過 Prompt Engineering、API、Tool Use、MCP、Claude Code，再到這三章的 Agent Skills、Subagents、部署與 AI Fluency——這些能力是一層層疊上去的：先學會把話講清楚，才有辦法把任務交代給工具、Skill、subagent。找一個手邊真實的任務，把學到的東西串起來動手做，是鞏固所學最快的方式。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：把客戶個資、商業機密或受法規保護的敏感資料，未經確認資料處理政策就貼進 prompt，或串接進沒有審查過的第三方 Skill、MCP server。資料一旦送出去，很難假設「反正沒事」，一定要先確認清楚再動作。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>送進 prompt 的內容都要當作「可能被處理」的資料，先確認清楚資料使用政策</li>
+  <li>不同部署管道的資料保留與使用承諾可能不同，以官方當下條款為準</li>
+  <li>高風險、不可逆的操作要設人工核准關卡，不能讓 AI 全自動執行</li>
+  <li>治理需要清楚的使用規範，讓團隊知道什麼能問、什麼不能問</li>
+  <li>保留紀錄與稽核軌跡，方便回溯輸入、輸出與決策過程</li>
+  <li>從認識 Claude 到部署與 AI Fluency，這條路徑的能力一層層疊上去，找一個真實任務動手練習最能鞏固所學</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 使用者把敏感個資貼進 prompt 前，最應該先做什麼？</div><div class="opt">先確認資料使用政策與所選部署管道是否符合規範</div><div class="opt">不用想太多，先貼再說</div><div class="opt">只要用中文寫就不算資料外洩</div><div class="answer">✅ 先確認資料使用政策與所選部署管道是否符合規範</div></div>
+  <div class="qa"><div class="qtext">Q2: 對於金錢操作、對外發布這類高風險且不可逆的動作，治理上應該怎麼處理？</div><div class="opt">讓 AI 全自動執行，效率最高</div><div class="opt">設人工核准關卡，不能讓 AI 全自動完成</div><div class="opt">完全不用紀錄，事後想不起來也沒關係</div><div class="answer">✅ 設人工核准關卡，不能讓 AI 全自動完成</div></div>
+  <div class="qa"><div class="qtext">Q3: 為什麼要保留 AI 使用的紀錄與稽核軌跡？</div><div class="opt">純粹增加系統負擔</div><div class="opt">方便回溯輸入、輸出與決策過程</div><div class="opt">沒有實際用途</div><div class="answer">✅ 方便回溯輸入、輸出與決策過程</div></div>
+</div></div>
+</div></article>
+</section>

@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<!--
+  Claude Academy 課程網站（單檔 HTML，零建置）
+  多模型協作產出：
+    M0/M8 架構、課綱、整合 — Claude Fable 5
+    M1 CSS 主題            — Claude Sonnet 5
+    M2 互動層 JS           — Claude Opus 4.8
+    M3–M5 課程內容         — Claude Sonnet 5
+    M6 驗證測試            — Claude Sonnet 5
+    M7 註解與格式微調      — Claude Haiku 4.5
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Academy 課程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- ===== M1: CSS 主題｜Claude Sonnet 5 ===== -->
+<style>
+/* 模組 M1｜負責模型: Claude Sonnet 5 */
+
+/* ===== CSS 變數定義 ===== */
+:root {
+  --bg: #f0eee6;
+  --bg-tint: #e8e4d8;
+  --paper: #faf9f5;
+  --ink: #1a1410;
+  --ink-soft: #4a3f33;
+  --ink-faint: #8a7a66;
+  --accent: #c96442;
+  --accent-soft: #d97757;
+  --rule: #ddd7c6;
+  --code-bg: #2b1f19;
+  --code-fg: #f2e9db;
+  --sidebar-w: 320px;
+  --max-read: 720px;
+}
+/* ===== 基礎重置與排版 ===== */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif;
+  background: var(--bg); color: var(--ink);
+  line-height: 1.85; font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+/* ===== 版面骨架 ===== */
+.app { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+
+/* ===== Sidebar（導航面板） ===== */
+aside.sidebar {
+  background: var(--bg-tint);
+  border-right: 1px solid var(--rule);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 32px 24px 60px;
+  min-width: 0;
+}
+.brand {
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif;
+  font-weight: 900; font-size: 22px;
+  letter-spacing: -0.01em; line-height: 1.2;
+  color: var(--ink); margin-bottom: 4px;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.brand-sub {
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12px;
+  color: var(--ink-faint); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 24px;
+  overflow-wrap: break-word;
+}
+.search input {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 2px; font: inherit; font-size: 14px;
+  color: var(--ink); outline: none; transition: border-color .15s;
+}
+.search input:focus { border-color: var(--accent); }
+.search { margin-bottom: 20px; }
+.progress-summary {
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12px;
+  color: var(--ink-faint); margin-bottom: 8px;
+  display: flex; justify-content: space-between;
+}
+.progress-bar { height: 3px; background: var(--rule); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
+.progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width .3s ease; }
+nav.toc { margin-top: 8px; }
+.nav-chapter { margin-bottom: 4px; }
+.nav-ch-toggle {
+  width: 100%; text-align: left; background: transparent; border: 0;
+  padding: 8px 4px; cursor: pointer; font: inherit;
+  display: flex; align-items: baseline; gap: 8px;
+  color: var(--ink); font-family: "Noto Sans TC", system-ui, sans-serif;
+  font-size: 13px; font-weight: 700;
+}
+.nav-ch-toggle:hover { color: var(--accent); }
+.nav-ch-toggle .ch-num { color: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+.nav-ch-toggle .ch-title { flex: 1; overflow-wrap: break-word; word-break: break-word; }
+.nav-ch-toggle .ch-arrow { font-size: 10px; color: var(--ink-faint); transition: transform .2s; }
+.nav-chapter[data-open="true"] .ch-arrow { transform: rotate(90deg); }
+.nav-lessons {
+  list-style: none; padding: 0 0 0 18px; margin: 4px 0 12px;
+  display: none; border-left: 1px solid var(--rule);
+}
+.nav-chapter[data-open="true"] .nav-lessons { display: block; }
+.nav-lessons li { margin: 2px 0; }
+.nav-lessons a {
+  display: block; padding: 4px 8px;
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12.5px; line-height: 1.45;
+  color: var(--ink-soft); text-decoration: none;
+  border-radius: 2px; transition: background .12s, color .12s;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.nav-lessons a:hover { background: var(--paper); color: var(--accent); }
+.nav-lessons a.done::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+.nav-lessons .lnum { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--ink-faint); width: 30px; }
+
+/* ===== 主要內容區與章節 ===== */
+main.content { padding: 60px 64px 120px; max-width: calc(var(--max-read) + 200px); margin: 0 auto; min-width: 0; }
+.hero { margin-bottom: 80px; padding-bottom: 40px; border-bottom: 4px double var(--rule); }
+.hero-eyebrow {
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 11px; letter-spacing: 0.3em;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 900;
+  font-size: 64px; line-height: 1.05; letter-spacing: -0.02em;
+  margin: 0 0 16px;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.hero-lede { font-size: 22px; line-height: 1.55; color: var(--ink-soft); font-style: italic; max-width: 600px; margin-bottom: 24px; }
+.hero-meta { font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 13px; color: var(--ink-faint); letter-spacing: 0.05em; display: flex; gap: 24px; flex-wrap: wrap; }
+.hero-meta strong { color: var(--accent); font-weight: 700; }
+section.chapter { margin: 80px 0 0; }
+.ch-header { margin-bottom: 60px; padding: 48px 0 40px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); text-align: center; }
+.ch-eyebrow { font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.ch-header .ch-title { font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 900; font-size: 44px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.01em; overflow-wrap: break-word; word-break: break-word; }
+.ch-header .ch-subtitle { font-size: 17px; color: var(--ink-soft); font-style: italic; max-width: 600px; margin: 0 auto 16px; overflow-wrap: break-word; }
+.ch-header .ch-meta { font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12px; color: var(--ink-faint); letter-spacing: 0.15em; }
+article.lesson { max-width: var(--max-read); margin: 0 auto 80px; background: var(--paper); padding: 48px 56px; border: 1px solid var(--rule); box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.04); position: relative; }
+.lesson-header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+.lesson-meta-row { display: flex; align-items: center; gap: 16px; font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 11.5px; color: var(--ink-faint); letter-spacing: 0.1em; margin-bottom: 12px; text-transform: uppercase; flex-wrap: wrap; }
+.lesson-num { color: var(--accent); font-weight: 700; }
+.progress-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; text-transform: none; letter-spacing: 0; font-size: 12px; }
+.progress-toggle input { cursor: pointer; accent-color: var(--accent); }
+.lesson-title { font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 900; font-size: 36px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.015em; overflow-wrap: break-word; word-break: break-word; }
+.lesson.done .lesson-title::after { content: " ✓"; color: var(--accent); font-size: 24px; }
+.lesson-subtitle { font-size: 17px; color: var(--ink-soft); font-style: italic; overflow-wrap: break-word; }
+
+/* ===== 課文元件（提示、列表、Q&A、程式碼） ===== */
+.lesson-section { margin: 36px 0; }
+.section-title { font-family: "Noto Sans TC", system-ui, sans-serif; font-weight: 700; font-size: 12px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.section-body p { margin: 0 0 1.2em; overflow-wrap: break-word; }
+.hint { display: flex; gap: 16px; background: var(--bg-tint); border-left: 4px solid var(--accent); padding: 20px 24px; margin: 24px 0; border-radius: 2px; }
+.hint.warn { border-left-color: #d97706; }
+.hint.stop { border-left-color: #dc2626; }
+.hint-icon { font-size: 22px; line-height: 1.4; }
+.hint-body { flex: 1; font-style: italic; color: var(--ink-soft); overflow-wrap: break-word; }
+ul.bullets { list-style: none; padding: 0; margin: 16px 0; }
+ul.bullets li { position: relative; padding: 6px 0 6px 24px; border-bottom: 1px dotted var(--rule); overflow-wrap: break-word; }
+ul.bullets li:last-child { border-bottom: 0; }
+ul.bullets li::before { content: "—"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+ul.bullets .sub { font-size: 14.5px; color: var(--ink-faint); padding-left: 16px; margin-top: 4px; }
+ul.bullets .answer { font-size: 14.5px; color: var(--accent); padding-left: 16px; margin-top: 4px; font-weight: 700; }
+.qa { background: rgba(0,0,0,0.03); border: 1px solid var(--rule); padding: 18px 22px; margin: 16px 0; border-radius: 2px; }
+.qa .qtext { font-weight: 700; margin-bottom: 8px; overflow-wrap: break-word; }
+.qa .opt { padding: 4px 0 4px 18px; position: relative; font-size: 15px; color: var(--ink-soft); overflow-wrap: break-word; }
+.qa .opt::before { content: "○"; position: absolute; left: 0; color: var(--ink-faint); font-size: 11px; top: 8px; }
+.qa .answer { color: var(--accent); font-weight: 700; margin-top: 8px; padding-left: 18px; overflow-wrap: break-word; }
+pre.code { background: var(--code-bg); color: var(--code-fg); padding: 18px 22px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; margin: 16px 0; border-radius: 2px; }
+.subhead { font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 700; font-size: 20px; margin: 24px 0 12px; color: var(--ink); overflow-wrap: break-word; }
+.lesson.hidden, .chapter.hidden { display: none; }
+.search-empty { text-align: center; color: var(--ink-faint); font-style: italic; padding: 80px 20px; }
+
+/* ===== 響應式設計（RWD） ===== */
+/* RWD：≤900px 時 sidebar 轉為頁面頂部區塊（非 sticky、不佔滿高），內文轉為單欄可讀寬度 */
+@media (max-width: 900px) {
+  .app { display: block; }
+  aside.sidebar {
+    position: static;
+    height: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  main.content { padding: 32px 20px 80px; max-width: 100%; }
+  article.lesson { padding: 28px 22px; }
+  .hero h1 { font-size: 40px; }
+  .hero-lede { font-size: 18px; }
+  .ch-header .ch-title { font-size: 32px; }
+  .lesson-title { font-size: 28px; }
+}
+
+/* 邊界情況：長標題／長字串在窄螢幕不破版 */
+@media (max-width: 480px) {
+  .hero h1 { font-size: 32px; }
+  .lesson-title { font-size: 24px; }
+  .ch-header .ch-title { font-size: 26px; }
+}
+
+/* 邊界情況：使用者開啟「減少動態效果」時，關閉所有 smooth 動畫與 transition */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Claude Academy</div>
+    <div class="brand-sub">從 Prompt 到 Agent 的完整實戰課程 — Claude 基礎、API、Tool Use、MCP、Claude Code、Agent Skills 與多代理架構</div>
+    <div class="search"><input type="search" id="search" placeholder="搜尋課程內容..." autocomplete="off"></div>
+    <div class="progress-summary"><span>學習進度</span><span><span id="progress-count">0</span> / 40</span></div>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
+    <!-- ===== M8: 目錄（由課綱生成）｜Claude Fable 5 ===== -->
+    <nav class="toc"><div class="nav-chapter" data-ch="01"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH01</span><span class="ch-title">認識 Claude</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L1.1" data-lid="1.1"><span class="lnum">1.1</span> Claude 是什麼</a></li>
+<li><a href="#L1.2" data-lid="1.2"><span class="lnum">1.2</span> Claude 能做什麼</a></li>
+<li><a href="#L1.3" data-lid="1.3"><span class="lnum">1.3</span> 選對模型</a></li>
+<li><a href="#L1.4" data-lid="1.4"><span class="lnum">1.4</span> 安全與 Constitutional AI</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="02"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH02</span><span class="ch-title">Prompt Engineering 基礎</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L2.1" data-lid="2.1"><span class="lnum">2.1</span> 好 Prompt 的解剖學</a></li>
+<li><a href="#L2.2" data-lid="2.2"><span class="lnum">2.2</span> 給範例最有效</a></li>
+<li><a href="#L2.3" data-lid="2.3"><span class="lnum">2.3</span> 讓 Claude 先思考</a></li>
+<li><a href="#L2.4" data-lid="2.4"><span class="lnum">2.4</span> 常見失敗模式與除錯</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="03"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH03</span><span class="ch-title">Claude API 入門</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L3.1" data-lid="3.1"><span class="lnum">3.1</span> 第一次呼叫</a></li>
+<li><a href="#L3.2" data-lid="3.2"><span class="lnum">3.2</span> 核心參數</a></li>
+<li><a href="#L3.3" data-lid="3.3"><span class="lnum">3.3</span> 多輪對話、串流與視覺輸入</a></li>
+<li><a href="#L3.4" data-lid="3.4"><span class="lnum">3.4</span> 省錢之道</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="04"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH04</span><span class="ch-title">Tool Use 工具使用</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L4.1" data-lid="4.1"><span class="lnum">4.1</span> 什麼是 tool use</a></li>
+<li><a href="#L4.2" data-lid="4.2"><span class="lnum">4.2</span> 定義好用的工具 schema</a></li>
+<li><a href="#L4.3" data-lid="4.3"><span class="lnum">4.3</span> Agentic loop</a></li>
+<li><a href="#L4.4" data-lid="4.4"><span class="lnum">4.4</span> 結構化輸出與錯誤處理</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="05"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH05</span><span class="ch-title">MCP 入門</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L5.1" data-lid="5.1"><span class="lnum">5.1</span> 為什麼需要 MCP</a></li>
+<li><a href="#L5.2" data-lid="5.2"><span class="lnum">5.2</span> MCP 架構</a></li>
+<li><a href="#L5.3" data-lid="5.3"><span class="lnum">5.3</span> 三大原語</a></li>
+<li><a href="#L5.4" data-lid="5.4"><span class="lnum">5.4</span> 動手用現成的 MCP server</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="06"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH06</span><span class="ch-title">MCP 進階</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L6.1" data-lid="6.1"><span class="lnum">6.1</span> 打造自己的 MCP server</a></li>
+<li><a href="#L6.2" data-lid="6.2"><span class="lnum">6.2</span> sampling 與 elicitation</a></li>
+<li><a href="#L6.3" data-lid="6.3"><span class="lnum">6.3</span> Remote MCP 與 OAuth 認證</a></li>
+<li><a href="#L6.4" data-lid="6.4"><span class="lnum">6.4</span> MCP 安全性與最佳實踐</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="07"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH07</span><span class="ch-title">Claude Code 實戰</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L7.1" data-lid="7.1"><span class="lnum">7.1</span> Claude Code 是什麼</a></li>
+<li><a href="#L7.2" data-lid="7.2"><span class="lnum">7.2</span> 核心工作流</a></li>
+<li><a href="#L7.3" data-lid="7.3"><span class="lnum">7.3</span> CLAUDE.md 與專案記憶</a></li>
+<li><a href="#L7.4" data-lid="7.4"><span class="lnum">7.4</span> Hooks、Slash Commands 與自動化</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="08"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH08</span><span class="ch-title">Agent Skills</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L8.1" data-lid="8.1"><span class="lnum">8.1</span> 什麼是 Skill</a></li>
+<li><a href="#L8.2" data-lid="8.2"><span class="lnum">8.2</span> SKILL.md 的結構</a></li>
+<li><a href="#L8.3" data-lid="8.3"><span class="lnum">8.3</span> Skill、Tool、MCP 怎麼選</a></li>
+<li><a href="#L8.4" data-lid="8.4"><span class="lnum">8.4</span> 打造並測試你的第一個 Skill</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="09"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH09</span><span class="ch-title">Subagents 與多代理架構</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L9.1" data-lid="9.1"><span class="lnum">9.1</span> 為什麼需要 subagent</a></li>
+<li><a href="#L9.2" data-lid="9.2"><span class="lnum">9.2</span> 定義 subagent</a></li>
+<li><a href="#L9.3" data-lid="9.3"><span class="lnum">9.3</span> Orchestrator 模式</a></li>
+<li><a href="#L9.4" data-lid="9.4"><span class="lnum">9.4</span> 多代理的常見陷阱</a></li>
+</ul></div>
+<div class="nav-chapter" data-ch="10"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH10</span><span class="ch-title">部署、評估與 AI Fluency</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+<li><a href="#L10.1" data-lid="10.1"><span class="lnum">10.1</span> 部署選項</a></li>
+<li><a href="#L10.2" data-lid="10.2"><span class="lnum">10.2</span> Evals 評估基本功</a></li>
+<li><a href="#L10.3" data-lid="10.3"><span class="lnum">10.3</span> AI Fluency 4D 框架</a></li>
+<li><a href="#L10.4" data-lid="10.4"><span class="lnum">10.4</span> 負責任地用 AI</a></li>
+</ul></div></nav>
+  </aside>
+  <main class="content">
+    <header class="hero">
+      <div class="hero-eyebrow">Anthropic Academy · 繁體中文版</div>
+      <h1>Claude Academy</h1>
+      <p class="hero-lede">從 Prompt 到 Agent 的完整實戰課程 — Claude 基礎、API、Tool Use、MCP、Claude Code、Agent Skills 與多代理架構</p>
+      <div class="hero-meta">
+        <span><strong>10</strong> 章</span>
+        <span><strong>40</strong> 課</span>
+        <span>預估 ~3.3 小時</span>
+      </div>
+    </header>
+<!-- ===== M3–M5: 課程內容｜Claude Sonnet 5 ===== -->
+<!-- 模組 M3｜負責模型: Claude Sonnet 5 -->
+<section class="chapter" id="C01"><header class="ch-header"><div class="ch-eyebrow">章節 01</div><h2 class="ch-title">認識 Claude</h2><div class="ch-subtitle">從模型家族到安全理念</div><div class="ch-meta">4課 · ⏱ ~18 分鐘</div></header>
+<article class="lesson" id="L1.1" data-lid="1.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.1"><span>已讀</span></label></div><h3 class="lesson-title">Claude 是什麼</h3><div class="lesson-subtitle">Anthropic 與 Claude 模型家族總覽</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude 是 Anthropic 開發的 AI 助理，你可能已經在網頁版、App、或某個工具的「AI 功能」背後見過它。但「Claude」不是單一一個東西——它其實是一整個模型家族的名字，背後撐著這個家族的公司叫 Anthropic，2021 年由一群曾在其他 AI 實驗室工作的研究者創立，成立宗旨很直白：確保通用 AI（transformative AI）的發展是安全、有益的，而不是先衝規模再回頭補安全。這也是為什麼 Anthropic 常被稱作一家「AI 安全公司」——安全不是附加條款，是創業的起點。</p>
+  <p>Claude 這個名字取自資訊理論之父 Claude Shannon，算是向「用數學馴服複雜系統」的傳統致敬。你在市面上看到的 Claude，不是只有一個版本在運作，而是分成 Opus、Sonnet、Haiku 三個系列，各自對應不同的能力、速度、成本組合——這件事會在後面幾課細講。現在你只需要知道：選 Claude，其實是在選一整個工具箱，而不是一把固定的槌子。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Anthropic 想成一家蓋房子的營造商，很在意結構安全；Claude 則是他們蓋出來的一整棟系列建案——有豪華款、標準款、快速款，但地基（安全理念）都是同一套。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Anthropic 是 2021 年成立的 AI 安全公司，使命是確保先進 AI 安全有益</li>
+  <li>Claude 是 Anthropic 開發的 AI 助理／模型家族的名稱，不是單一模型</li>
+  <li>Claude 之名來自資訊理論之父 Claude Shannon</li>
+  <li>Claude 模型家族分成 Opus、Sonnet、Haiku 三個系列</li>
+  <li>選擇用哪個 Claude，其實是在能力、速度、成本間做取捨</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Anthropic 公司的核心使命最接近下列哪一項？</div><div class="opt">盡快推出最大規模的模型搶市占</div><div class="opt">確保先進 AI 的發展安全且對人類有益</div><div class="opt">專注開發遊戲用的 AI</div><div class="answer">✅ 確保先進 AI 的發展安全且對人類有益</div></div>
+  <div class="qa"><div class="qtext">Q2: 「Claude」這個名字的由來是？</div><div class="opt">公司創辦人的名字</div><div class="opt">隨機命名，沒有特別意義</div><div class="opt">向資訊理論之父 Claude Shannon 致敬</div><div class="answer">✅ 向資訊理論之父 Claude Shannon 致敬</div></div>
+  <div class="qa"><div class="qtext">Q3: Claude 模型家族目前分成哪三個系列？</div><div class="opt">Alpha、Beta、Gamma</div><div class="opt">Opus、Sonnet、Haiku</div><div class="opt">Pro、Plus、Free</div><div class="answer">✅ Opus、Sonnet、Haiku</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.2" data-lid="1.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.2 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.2"><span>已讀</span></label></div><h3 class="lesson-title">Claude 能做什麼</h3><div class="lesson-subtitle">從對話、分析、寫程式到 Agent</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>如果你的印象還停留在「Claude 就是一個聊天機器人」，那該更新一下了。日常對話當然是最基本的用法——問問題、腦力激盪、潤稿，這些 Claude 都做得順手。但往上一層，Claude 更擅長長文件理解與分析：丟一份幾十頁的合約、財報、研究論文進去，它可以抓重點、找矛盾、做摘要，這靠的正是夠大的 context window（上下文視窗），下一課會細講。</p>
+  <p>寫程式是 Claude 另一個被大量依賴的場景，從讀懂一整個程式碼庫、抓 bug，到直接生成可執行的功能，Claude Code 這類工具讓它從「寫程式建議」進化成「真的動手改程式碼」。再往上，Claude 具備 tool use（工具使用）能力，能呼叫外部 API、查資料庫、執行搜尋，把自己從「只會講」的助理變成「講完還會做」的 agent（代理人）——查天氣、訂票、跑分析全部自己接手完成中間步驟，不用你一步步餵指令。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Claude 想成一位很會做事的助理，剛認識時你只會請他幫忙回信；熟了之後你發現他還會做財報摘要、抓程式 bug，甚至能自己串連步驟幫你把事情辦完——能力其實一直都在，只是看你有沒有用到。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>基礎能力：日常對話、腦力激盪、潤稿</li>
+  <li>進階能力：長文件理解與分析，靠夠大的 context window 支撐</li>
+  <li>寫程式：讀懂程式碼庫、抓 bug、生成功能，Claude Code 是代表工具</li>
+  <li>tool use 讓 Claude 能呼叫外部 API、查資料，不只是回答文字</li>
+  <li>agent（代理人）模式：Claude 自主串連多個步驟完成任務，不需逐步下指令</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude 處理長文件時能抓重點、找矛盾，主要依靠什麼能力支撐？</div><div class="opt">context window（上下文視窗）</div><div class="opt">temperature 參數</div><div class="opt">API key 的權限等級</div><div class="answer">✅ context window（上下文視窗）</div></div>
+  <div class="qa"><div class="qtext">Q2: 讓 Claude 從「只會講」進化成「講完還會做」的關鍵能力是？</div><div class="opt">溫度調整</div><div class="opt">tool use（工具使用）</div><div class="opt">字數限制</div><div class="answer">✅ tool use（工具使用）</div></div>
+  <div class="qa"><div class="qtext">Q3: 下列哪一項最貼近 Claude Code 的定位？</div><div class="opt">只能給程式碼建議，不能實際修改檔案</div><div class="opt">讓 Claude 真的動手讀懂並修改程式碼庫</div><div class="opt">單純的程式語法檢查工具</div><div class="answer">✅ 讓 Claude 真的動手讀懂並修改程式碼庫</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.3" data-lid="1.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.3"><span>已讀</span></label></div><h3 class="lesson-title">選對模型</h3><div class="lesson-subtitle">能力、速度、成本的三角取捨</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Opus、Sonnet、Haiku 這三個名字，你可以直接理解成「重型、中型、輕型」三種交通工具。Opus 是家族裡推理能力最強的一款，面對複雜的多步驟邏輯、艱深的研究問題、需要深度思考的策略規劃，它的表現最扎實，但相對的回應速度較慢、運算成本也較高。Sonnet 走的是平衡路線，在能力和速度之間抓一個「大多數任務都夠用」的甜蜜點，是很多正式產品、日常開發工作的預設選擇。Haiku 則是為速度和成本優化的輕量款，回應快、費用低，很適合客服快速回覆、大量重複性的分類或抽取任務、或是需要毫秒級反應的即時應用。</p>
+  <p>選模型的原則很簡單：先問「這個任務需要多深的推理？」再問「用量大不大、延遲敏感不敏感？」一個處理數萬筆訂單分類的批次任務，用 Opus 是殺雞用牛刀，錢跟時間都浪費；但一個需要拆解法律合約矛盾點的任務，用 Haiku 可能會漏掉關鍵細節。實務上很多團隊會混用——用 Haiku 做初篩、Sonnet 做主力、Opus 處理少數真正棘手的案例。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像叫車：急件用摩托車（Haiku）最快最省；一般載貨用轎車（Sonnet）最實用；搬重型設備才需要吊車（Opus）——用錯車不是不能到，是划不來。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Opus：推理能力最強，適合複雜多步驟任務，速度與成本較高</li>
+  <li>Sonnet：能力與速度的平衡點，多數正式應用的預設選擇</li>
+  <li>Haiku：速度快、成本低，適合大量、簡單、延遲敏感的任務</li>
+  <li>選模型看兩個問題：任務推理深度、以及用量與延遲需求</li>
+  <li>實務常見做法：依任務難度混用多個模型分層處理</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 需要拆解一份複雜法律合約中隱藏矛盾條款的任務，最適合優先考慮哪個系列？</div><div class="opt">Haiku</div><div class="opt">Opus</div><div class="opt">三者效果完全一樣，隨便選</div><div class="answer">✅ Opus</div></div>
+  <div class="qa"><div class="qtext">Q2: 每天要處理十萬筆訂單做簡單分類，哪個系列的取捨最划算？</div><div class="opt">Haiku</div><div class="opt">Opus</div><div class="opt">一定要用最貴的才準確</div><div class="answer">✅ Haiku</div></div>
+  <div class="qa"><div class="qtext">Q3: Sonnet 系列在能力三角取捨中的定位最接近？</div><div class="opt">速度與成本優先，能力較弱</div><div class="opt">能力與速度之間的平衡點</div><div class="opt">推理能力最強、速度最慢</div><div class="answer">✅ 能力與速度之間的平衡點</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.4" data-lid="1.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.4"><span>已讀</span></label></div><h3 class="lesson-title">安全與 Constitutional AI</h3><div class="lesson-subtitle">為什麼 Claude 有時會拒絕你</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>你可能遇過 Claude 委婉拒絕某個請求，或是明明只是想開玩笑卻被它一本正經地提醒風險。這不是系統故障，而是 Anthropic 從訓練階段就刻意設計的行為，方法論的核心叫 Constitutional AI（憲法式 AI）。傳統訓練安全模型的做法，很依賴大量人工標註「這個回答好不好、有沒有害」，成本高、標準也容易因人而異。Constitutional AI 換了個做法：先給模型一套明確的原則（憲法），讓模型依照這套原則自己批評、修正自己的回答，再用這個過程產生的資料去訓練，大幅減少對人工標註有害內容的依賴。</p>
+  <p>這套機制的目標，是讓 Claude 在「有幫助」（helpful）和「無害」（harmless）之間找到平衡，而不是走極端。走太偏有幫助那端，模型可能配合任何要求，包含真的有風險的；走太偏無害那端，模型會變得動不動就拒絕、對正常請求也疑神疑鬼，體驗很差。你偶爾感受到的「過度謹慎」，其實就是這個平衡點還在調校的證據——而不是 Claude 存心跟你作對。理解這個背景，你就更容易判斷什麼時候該換個問法，而不是單純覺得被卡住。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：以為「拒絕」代表 Claude 讀不懂你的意思。多數時候它讀懂了，只是判斷這個請求落在它被訓練要謹慎處理的區域——換個更明確、無害的說法（例如說明你的正當用途），常常就能得到協助。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude 偶爾的拒絕或提醒，來自訓練時設計的安全機制，不是系統錯誤</li>
+  <li>Constitutional AI（憲法式 AI）用一套明確原則讓模型自我批評、自我修正</li>
+  <li>這種方法減少了對大量人工標註「有害內容」的依賴</li>
+  <li>目標是在「有幫助」與「無害」之間取得平衡，不走極端</li>
+  <li>感覺被過度拒絕時，換個更明確、說明正當用途的問法通常有效</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Constitutional AI（憲法式 AI）的核心做法是？</div><div class="opt">完全依賴大量人工標註有害內容</div><div class="opt">讓模型依照一套明確原則自我批評與修正</div><div class="opt">關閉模型的所有安全機制</div><div class="answer">✅ 讓模型依照一套明確原則自我批評與修正</div></div>
+  <div class="qa"><div class="qtext">Q2: Claude 訓練時追求的平衡是什麼？</div><div class="opt">有幫助與無害之間的平衡</div><div class="opt">速度與價格之間的平衡</div><div class="opt">中文與英文輸出的平衡</div><div class="answer">✅ 有幫助與無害之間的平衡</div></div>
+  <div class="qa"><div class="qtext">Q3: 遇到 Claude 委婉拒絕請求時，比較有效的做法是？</div><div class="opt">重複貼上同一句話</div><div class="opt">說明正當用途、換個更明確的問法</div><div class="opt">認定它讀不懂中文</div><div class="answer">✅ 說明正當用途、換個更明確的問法</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C02"><header class="ch-header"><div class="ch-eyebrow">章節 02</div><h2 class="ch-title">Prompt Engineering 基礎</h2><div class="ch-subtitle">把話說清楚是一種技術</div><div class="ch-meta">4課 · ⏱ ~21 分鐘</div></header>
+<article class="lesson" id="L2.1" data-lid="2.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.1"><span>已讀</span></label></div><h3 class="lesson-title">好 Prompt 的解剖學</h3><div class="lesson-subtitle">角色、脈絡、任務、格式</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>很多人寫 prompt 的方式，就是把心裡想的話原封不動打出來，然後對結果失望。問題往往不是 Claude 不夠聰明，是 prompt 本身缺了結構。一個穩定好用的 prompt，通常可以拆成四個部分：角色（role）、脈絡（context）、任務（task）、格式（format）。角色告訴 Claude「你現在是誰」，例如「你是一位資深法務顧問」，這會影響它用什麼語氣、站在什麼專業角度回答。脈絡是背景資訊——你的公司、你的讀者是誰、這份輸出要用在哪裡，缺了脈絡，Claude 只能用最通用、最安全的方式猜。</p>
+  <p>任務是具體要做的事，動詞要明確：「摘要」「比較」「改寫」「找出風險」都比籠統的「幫我看一下這個」有效。格式則是輸出長相的規格——要條列還是段落、要不要表格、字數上限、要不要中英夾雜。這四塊不是每次都要寫滿，但你可以把它當成一張檢查清單：結果不如預期時，回頭看是不是漏了角色、脈絡、任務、還是格式其中一塊，通常就能抓出問題在哪。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像寫 prompt 像交代新來的工讀生做事——你會告訴他「你負責客服窗口」（角色）、「我們是賣手工皂的」（脈絡）、「幫我回覆這封客訴信」（任務）、「用 200 字內、語氣要誠懇」（格式）。四項都講清楚，交出來的東西才不會走鐘。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>好 prompt 可拆成四塊：角色、脈絡、任務、格式</li>
+  <li>角色決定語氣與專業視角，脈絡補足背景資訊</li>
+  <li>任務要用明確動詞描述，避免籠統的請求</li>
+  <li>格式規定輸出長相：條列/段落、字數、要不要表格等</li>
+  <li>結果不理想時，可用這四塊當檢查清單回頭排查問題</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 好 prompt 的解剖學通常拆成哪四個部分？</div><div class="opt">角色、脈絡、任務、格式</div><div class="opt">開頭、中段、結尾、附註</div><div class="opt">溫度、token、模型、費用</div><div class="answer">✅ 角色、脈絡、任務、格式</div></div>
+  <div class="qa"><div class="qtext">Q2: 「幫我看一下這個」屬於哪一種常見問題？</div><div class="opt">格式規定太嚴格</div><div class="opt">任務描述太籠統、動詞不明確</div><div class="opt">脈絡資訊過多</div><div class="answer">✅ 任務描述太籠統、動詞不明確</div></div>
+  <div class="qa"><div class="qtext">Q3: 「你是一位資深法務顧問」這句話主要在設定 prompt 的哪一塊？</div><div class="opt">格式</div><div class="opt">角色</div><div class="opt">任務</div><div class="answer">✅ 角色</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L2.2" data-lid="2.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.2"><span>已讀</span></label></div><h3 class="lesson-title">給範例最有效</h3><div class="lesson-subtitle">few-shot prompting 的威力</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>如果只能學一個 prompt 技巧，很多實務工作者會選 few-shot prompting（少樣本提示）。概念很簡單：與其一直用文字描述你要的格式和風格，不如直接給 Claude 看一兩個「輸入 → 輸出」的範例，讓它照著範例的樣子做，而不是照你的文字說明去猜。相對的，完全不給範例、只靠文字指令的做法叫 zero-shot（零樣本），能用但精準度通常比較低，尤其是輸出格式比較特殊或風格要求很細的時候。</p>
+  <p>few-shot 特別有效的場景，是那些「用文字很難講清楚，但看範例秒懂」的任務：客服信件的語氣拿捏、資料抽取要輸出的精確欄位順序、程式碼註解的風格。你只需要給 2-3 個具代表性的範例，涵蓋一般情況和至少一個邊界案例，Claude 就能抓到規律並套用到新的輸入上。範例的品質比數量重要——三個精挑細選、真的反映你要的結果的範例，勝過十個隨便湊的。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">就像教新人寫工作報告，你與其口頭講半小時「要簡潔、要條列、語氣要中性」，不如直接丟一份寫得好的舊報告給他參考——「照這個感覺寫」比長篇說明有效多了。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>few-shot prompting：給 1-3 個「輸入→輸出」範例讓模型模仿</li>
+  <li>zero-shot：只靠文字指令、不給範例，精準度通常較低</li>
+  <li>few-shot 特別適合語氣、格式、風格難以純用文字描述的任務</li>
+  <li>範例品質比數量重要，2-3 個精準範例通常就夠</li>
+  <li>建議至少包含一個邊界案例，讓模型學到規則的界線</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: few-shot prompting 的核心做法是？</div><div class="opt">給模型看幾個輸入輸出範例讓它模仿</div><div class="opt">完全不給任何說明，讓模型自由發揮</div><div class="opt">把 temperature 調到最高</div><div class="answer">✅ 給模型看幾個輸入輸出範例讓它模仿</div></div>
+  <div class="qa"><div class="qtext">Q2: 不給範例、只靠文字指令的方式稱為？</div><div class="opt">zero-shot</div><div class="opt">chain of thought</div><div class="opt">Batch API</div><div class="answer">✅ zero-shot</div></div>
+  <div class="qa"><div class="qtext">Q3: 挑選 few-shot 範例時，比數量更重要的是什麼？</div><div class="opt">範例的品質與代表性</div><div class="opt">範例字數越多越好</div><div class="opt">範例一定要用英文寫</div><div class="answer">✅ 範例的品質與代表性</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L2.3" data-lid="2.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.3 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.3"><span>已讀</span></label></div><h3 class="lesson-title">讓 Claude 先思考</h3><div class="lesson-subtitle">chain of thought 與 XML 標籤</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>面對需要多步驟推理的問題，直接要 Claude 給答案，常常會得到一個「看起來合理但沒細想過」的結果。chain of thought（思考鏈，簡稱 CoT）的做法很直覺：明確請 Claude「先一步步想清楚，再給出最終答案」。這個簡單的指示，會讓模型把中間的推理過程寫出來，而不是直接跳到結論——寫出來的過程本身也會提升最終答案的品質，因為模型是照著自己寫下的邏輯繼續往下推，比腦內直接跳答案更不容易漏掉步驟。</p>
+  <p>要讓思考過程和最終答案不混在一起，一個好用的技巧是用 XML 標籤組織 prompt 和期待的輸出，例如請 Claude 把推理放進 &lt;thinking&gt;...&lt;/thinking&gt;，把要交付的答案放進 &lt;answer&gt;...&lt;/answer&gt;。Claude 對 XML 標籤的結構特別敏感、遵循度高，這也是為什麼很多正式 prompt 會用 &lt;context&gt;、&lt;document&gt;、&lt;instructions&gt; 這類標籤把長 prompt 的不同區塊清楚分開，而不是全部擠成一大段文字。區塊分清楚了，Claude 比較不會把「參考資料」和「要執行的指令」搞混。</p>
+  <pre class="code">請先在 &lt;thinking&gt; 標籤中列出你的推理步驟，
+再把最終結論寫在 &lt;answer&gt; 標籤中。
+
+&lt;context&gt;
+（這裡放參考資料或背景文件）
+&lt;/context&gt;
+
+&lt;instructions&gt;
+請根據以上 context，判斷這份合約是否有隱藏的自動續約條款。
+&lt;/instructions&gt;</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 CoT 想成考試要求「寫出計算過程」——不是老師想刁難你，是逼你自己檢查每一步邏輯，答案自然比憑直覺亂猜穩。XML 標籤則像用資料夾分類文件，「合約」「附件」「待辦」分開放，你自己都不容易拿錯，Claude 也一樣。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>chain of thought（思考鏈）：請模型先寫推理過程，再給最終答案</li>
+  <li>寫出中間步驟能提升複雜任務的答案品質，減少跳步驟出錯</li>
+  <li>Claude 對 XML 標籤遵循度高，適合用來切分 prompt 的不同區塊</li>
+  <li>常見標籤：&lt;thinking&gt;、&lt;answer&gt;、&lt;context&gt;、&lt;instructions&gt;</li>
+  <li>把推理過程和最終答案分開放，方便你只取用你要的那一段</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: chain of thought 的核心指示是什麼？</div><div class="opt">請模型直接給最短答案</div><div class="opt">請模型先一步步思考，再給最終答案</div><div class="opt">請模型不要解釋任何推理過程</div><div class="answer">✅ 請模型先一步步思考，再給最終答案</div></div>
+  <div class="qa"><div class="qtext">Q2: Claude 對哪一種標籤結構特別敏感、遵循度高？</div><div class="opt">XML 標籤</div><div class="opt">Markdown 表格</div><div class="opt">CSV 逗號分隔</div><div class="answer">✅ XML 標籤</div></div>
+  <div class="qa"><div class="qtext">Q3: 用 &lt;thinking&gt; 和 &lt;answer&gt; 分開標記的主要好處是？</div><div class="opt">可以把推理過程和最終答案清楚分開</div><div class="opt">能讓模型回答得更短</div><div class="opt">能自動翻譯成英文</div><div class="answer">✅ 可以把推理過程和最終答案清楚分開</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L2.4" data-lid="2.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.4"><span>已讀</span></label></div><h3 class="lesson-title">常見失敗模式與除錯</h3><div class="lesson-subtitle">prompt 不聽話的時候怎麼辦</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Prompt 寫不好，症狀通常長得很像：答非所問、格式亂跳、明明說了不要卻還是做了。第一個常見病因是指令模糊——「幫我優化這份文案」太籠統，Claude 只能猜你想優化的是長度、語氣、還是說服力，猜錯了你會覺得它「不聽話」，但問題其實出在指令本身沒講清楚要優化哪個面向。第二個常見病因是一次塞太多任務——一段 prompt 裡同時要求摘要、翻譯、抓風險、寫建議，模型的注意力被分散，每件事都做得普普，不如拆成幾次請求或用清楚的分點列出優先順序。</p>
+  <p>第三個是過度依賴 negative instruction（負面指令），像是「不要用被動語態」「不要太長」。負面指令只告訴模型「不要做什麼」，卻沒說「要做什麼」，效果通常比正面描述弱，把「不要用被動語態」換成「全程用主詞開頭的主動句」，模型更容易照做。除錯的方法也很直接：先把 prompt 拆解回角色、脈絡、任務、格式四塊檢查有沒有缺漏；用小範例先測，觀察模型輸出卡在哪一步；懷疑是任務太多，就先拆分成單一任務測試，確認每一塊都對了，再組回完整版本。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：把「這次沒做好」的失敗結果直接丟回去說「不對，重寫」，卻不解釋哪裡不對。模型沒有你腦內的標準答案，只能繼續猜，你會陷入越改越模糊的迴圈。具體指出哪裡不符合預期，才是有效的除錯。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>常見失敗一：指令模糊，模型只能用最通用的方式猜測意圖</li>
+  <li>常見失敗二：一次塞太多任務，拆分成單一任務通常效果更好</li>
+  <li>常見失敗三：過度依賴負面指令，正面描述「要做什麼」更有效</li>
+  <li>除錯第一步：回頭檢查角色、脈絡、任務、格式是否有缺漏</li>
+  <li>除錯第二步：用小範例測試、拆解任務逐一排查卡點</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 「幫我優化這份文案」這個指令最主要的問題是？</div><div class="opt">字數太少</div><div class="opt">沒說清楚要優化哪個面向</div><div class="opt">使用了負面指令</div><div class="answer">✅ 沒說清楚要優化哪個面向</div></div>
+  <div class="qa"><div class="qtext">Q2: 一段 prompt 同時要求摘要、翻譯、抓風險、寫建議，最可能的結果是？</div><div class="opt">每件事都做得又快又好</div><div class="opt">模型注意力分散，每件事都做得普普</div><div class="opt">模型會自動拒絕整個請求</div><div class="answer">✅ 模型注意力分散，每件事都做得普普</div></div>
+  <div class="qa"><div class="qtext">Q3: 「不要用被動語態」屬於哪一種指令，效果通常較弱？</div><div class="opt">正面指令</div><div class="opt">負面指令</div><div class="opt">格式指令</div><div class="answer">✅ 負面指令</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C03"><header class="ch-header"><div class="ch-eyebrow">章節 03</div><h2 class="ch-title">Claude API 入門</h2><div class="ch-subtitle">對應官方課程 Claude with the Anthropic API</div><div class="ch-meta">4課 · ⏱ ~21 分鐘</div></header>
+<article class="lesson" id="L3.1" data-lid="3.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.1"><span>已讀</span></label></div><h3 class="lesson-title">第一次呼叫</h3><div class="lesson-subtitle">API key 與 Messages API</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>要讓 Claude 接進你自己的程式或產品，起點是申請一把 API key——在 Anthropic 的開發者主控台（Console）建立帳號後就能產生，這把 key 是你的身分憑證，要當密碼一樣保管，不要寫進會被公開的程式碼或上傳到公開的程式碼庫。拿到 key 之後，你會透過官方提供的 SDK（Python、TypeScript 都有）呼叫 Messages API（訊息 API），這是目前 Claude API 的核心介面，取代了早期比較陽春的 completion 介面。</p>
+  <p>一次呼叫最基本要準備三樣東西：要用哪個 model（模型代號）、這次回應的 max_tokens 上限、以及 messages 陣列——裡面放使用者說的話。API 回傳的結果裡，實際文字內容放在 content 欄位，是一個區塊（block）的陣列，因為 Claude 的輸出除了文字，未來也可能包含其他類型的區塊（例如工具呼叫，第四章會講到）。第一次呼叫成功、印出模型的回覆，是接下來所有進階用法——多輪對話、工具串接、串流輸出——的共同起點。</p>
+  <pre class="code">import anthropic
+
+client = anthropic.Anthropic(api_key="你的 API key")
+
+message = client.messages.create(
+    model="你選用的 Claude 模型代號",  # 實際代號請查官方文件
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "用一句話介紹台北 101"}
+    ]
+)
+
+print(message.content)</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 API key 想成飯店房卡——弄丟或外流，別人就能刷你的房間、花你的錢，發現外流要立刻在 Console 裡作廢重發，跟掛失信用卡是同一個邏輯。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>呼叫 Claude API 前要先在 Console 申請 API key，需妥善保管不外流</li>
+  <li>Messages API 是目前呼叫 Claude 的核心介面</li>
+  <li>一次呼叫至少要指定 model、max_tokens、messages 三樣</li>
+  <li>messages 是陣列，裡面放對話中每一句話與說話者角色</li>
+  <li>回傳結果的 content 是區塊陣列，可能包含文字以外的類型</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 呼叫 Claude API 之前，第一步要做什麼？</div><div class="opt">直接寫程式呼叫，不需要任何憑證</div><div class="opt">在 Console 申請 API key</div><div class="opt">先安裝 Claude Code</div><div class="answer">✅ 在 Console 申請 API key</div></div>
+  <div class="qa"><div class="qtext">Q2: 一次 Messages API 呼叫至少需要指定哪三樣？</div><div class="opt">model、max_tokens、messages</div><div class="opt">temperature、system、api_version</div><div class="opt">username、password、region</div><div class="answer">✅ model、max_tokens、messages</div></div>
+  <div class="qa"><div class="qtext">Q3: API key 外流時最正確的處理方式是？</div><div class="opt">不用理它，反正很難被利用</div><div class="opt">立刻在 Console 作廢並重新產生</div><div class="opt">把它分享給更多人稀釋風險</div><div class="answer">✅ 立刻在 Console 作廢並重新產生</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L3.2" data-lid="3.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.2"><span>已讀</span></label></div><h3 class="lesson-title">核心參數</h3><div class="lesson-subtitle">system、max_tokens、temperature</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>呼叫 Messages API 時，除了必要的 model、messages，還有幾個參數會直接影響輸出的樣子和品質。system 是一個獨立於 messages 陣列之外的頂層參數，用來設定「這次對話 Claude 要扮演什麼角色、遵守什麼規則」——例如「你是一個只用繁體中文回答、語氣正式的客服助理」。把角色設定放進 system 而不是塞進第一句 user 訊息，效果通常更穩定，也更不容易被使用者後續的訊息覆蓋掉。</p>
+  <p>max_tokens 是必要參數，設定這次回應最多能生成多少 token（權杖，語言模型處理文字的基本單位），太小會讓長回答被硬生生截斷，太大則沒有實際意義只是留了空間。temperature 控制輸出的隨機性，範圍通常在 0 到 1 之間：數值低（接近 0）代表模型會偏好選擇最有把握的字詞，回答比較穩定、適合需要一致性的任務，例如資料抽取、程式碼生成；數值高則輸出更有變化、適合需要創意發散的任務，例如寫文案、腦力激盪。同一個 prompt，光是調整 temperature，拿到的個性可能完全不一樣。</p>
+  <pre class="code">message = client.messages.create(
+    model="你選用的 Claude 模型代號",
+    max_tokens=1024,
+    system="你是一位只用繁體中文回答的客服助理，語氣親切但專業。",
+    temperature=0.3,
+    messages=[
+        {"role": "user", "content": "訂單還沒到怎麼辦？"}
+    ]
+)</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：把角色設定寫在使用者的第一句訊息裡，而不是用 system 參數。這樣做在多輪對話後，角色設定很容易被使用者中途的訊息「蓋掉」或稀釋，穩定性不如把它放進 system。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>system 是頂層參數，用來設定角色與規則，比塞進 user 訊息更穩定</li>
+  <li>max_tokens 是必要參數，設定這次回應最多能生成的 token 數量</li>
+  <li>temperature 控制輸出隨機性，範圍常見是 0 到 1</li>
+  <li>temperature 低：穩定一致，適合資料抽取、程式碼等任務</li>
+  <li>temperature 高：更有創意變化，適合文案發想、腦力激盪</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 設定 Claude 的角色與行為規則，建議放在哪個參數？</div><div class="opt">temperature</div><div class="opt">system</div><div class="opt">max_tokens</div><div class="answer">✅ system</div></div>
+  <div class="qa"><div class="qtext">Q2: 需要穩定一致輸出的資料抽取任務，temperature 通常該設高還是低？</div><div class="opt">設高，接近 1</div><div class="opt">設低，接近 0</div><div class="opt">temperature 跟穩定性無關</div><div class="answer">✅ 設低，接近 0</div></div>
+  <div class="qa"><div class="qtext">Q3: max_tokens 這個參數的作用是？</div><div class="opt">控制回應的隨機性</div><div class="opt">設定這次回應最多能生成的 token 數量</div><div class="opt">決定要不要開啟串流</div><div class="answer">✅ 設定這次回應最多能生成的 token 數量</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L3.3" data-lid="3.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.3 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.3"><span>已讀</span></label></div><h3 class="lesson-title">多輪對話、串流與視覺輸入</h3><div class="lesson-subtitle">從單發問答到真正的應用</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude API 本身是無狀態（stateless）的——它不會幫你記住上一次呼叫聊了什麼，每一次呼叫都是全新的。要做出「記得前面聊過什麼」的多輪對話，責任在你這邊：把每一輪的使用者訊息和 Claude 的回覆都存下來，下一次呼叫時把完整的歷史（history）連同新的問題一起放進 messages 陣列，並且維持 user、assistant 角色交替出現。歷史留得越完整，Claude 的回答就越能接上前文，但也代表每次呼叫要傳送和處理的內容越多。</p>
+  <p>串流（streaming）解決的是體驗問題：預設情況下你要等 Claude 把整段回應生成完才會拿到結果，字數一長，使用者會盯著空白畫面等好幾秒。開啟串流後，文字會像打字機一樣一段段即時吐出來，讓使用者感覺回應「馬上開始」，特別適合聊天介面。視覺輸入（vision）則是讓 Claude 不只讀文字，也能看圖——把圖片以 base64 編碼或圖片網址放進 content 區塊裡，就能請它描述截圖、讀圖表數字、辨認照片裡的物件，這對處理發票、圖表、UI 截圖這類任務特別實用。</p>
+  <pre class="code">messages = [
+    {"role": "user", "content": "台北明天會下雨嗎？"},
+    {"role": "assistant", "content": "目前資訊有限，建議查氣象局預報。"},
+    {"role": "user", "content": "那我該帶傘嗎？"},
+]
+
+with client.messages.stream(
+    model="你選用的 Claude 模型代號",
+    max_tokens=512,
+    messages=messages,
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像 Claude 是一個很聰明但沒有記憶的顧問，每次見面都要你重新自我介紹——多輪對話就是你隨身帶著一份「之前聊過什麼」的筆記，每次見面先遞給他看一眼，他馬上就能接著聊。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude API 是無狀態的，多輪對話的歷史要由你自己保存並每次傳入</li>
+  <li>messages 陣列需維持 user、assistant 角色交替</li>
+  <li>串流讓文字逐段即時輸出，改善使用者等待體驗</li>
+  <li>視覺輸入可在 content 區塊放入圖片，讓 Claude 讀圖表、截圖、照片</li>
+  <li>歷史留得越完整，回答越能接上前文，但傳輸與處理量也越大</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude API 的「無狀態」特性代表什麼？</div><div class="opt">每次呼叫都自動記得所有歷史對話</div><div class="opt">每次呼叫都是全新的，歷史要由你自己保存傳入</div><div class="opt">API 完全不能做多輪對話</div><div class="answer">✅ 每次呼叫都是全新的，歷史要由你自己保存傳入</div></div>
+  <div class="qa"><div class="qtext">Q2: 開啟串流輸出主要解決的是什麼問題？</div><div class="opt">降低 API 呼叫費用</div><div class="opt">改善使用者等待整段回應的體驗</div><div class="opt">讓模型的答案更準確</div><div class="answer">✅ 改善使用者等待整段回應的體驗</div></div>
+  <div class="qa"><div class="qtext">Q3: 要讓 Claude 讀圖表、辨認照片內容，應該使用哪種輸入方式？</div><div class="opt">視覺輸入（vision），把圖片放進 content 區塊</div><div class="opt">把圖片檔名打進純文字訊息</div><div class="opt">调高 temperature 參數</div><div class="answer">✅ 視覺輸入（vision），把圖片放進 content 區塊</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L3.4" data-lid="3.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.4"><span>已讀</span></label></div><h3 class="lesson-title">省錢之道</h3><div class="lesson-subtitle">prompt caching 與 Batch API</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>API 用量一大，成本就會變成認真要管理的事，Anthropic 提供兩個機制專門處理這個問題。第一個是 prompt caching（提示詞快取）：如果你的 prompt 裡有一大段內容是重複、不太會變的——例如很長的 system 指示、固定的參考文件、範例集——你可以把這段內容標記為可快取，之後的呼叫只要內容沒變，Claude 就不用重新「處理」這段一模一樣的內容，能明顯降低延遲和成本。特別適合那種「一份長文件、被問很多次不同問題」的場景，例如針對同一份合約反覆提問。</p>
+  <p>第二個是 Batch API（批次 API），針對的是「不急著馬上拿到結果」的大量請求，例如晚上要把一整天累積的十萬筆客服訊息做情緒分類。你把所有請求打包一次送出，Anthropic 在背景非同步處理，通常在一定時間內完成，換來的是比即時呼叫更低的單位成本。兩者的判斷邏輯不同：prompt caching 解決「同樣的內容被重複使用」，Batch API 解決「大量但不急」。實務上常常兩個一起用，把重複的長文件快取起來，再把大量非即時的請求丟進批次處理。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：以為 Batch API 是「比較慢的即時 API」。它是完全不同的用法——你不會在使用者等待畫面時用它，適合的是報表產出、離線分析、大量分類這類背景任務。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>prompt caching：把重複、不常變動的長內容標記快取，降低延遲與成本</li>
+  <li>prompt caching 適合場景：同一份長文件被反覆提問的情境</li>
+  <li>Batch API：把大量不急迫的請求打包非同步處理，單位成本更低</li>
+  <li>Batch API 適合場景：離線分析、大量分類、報表產出等背景任務</li>
+  <li>實務上常兩者併用：快取重複內容 + 批次處理大量請求</li>
+  <li>實際費率與折扣幅度請以官方 pricing 頁面為準</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 同一份長合約被反覆提問不同問題，最適合用哪個機制降低成本？</div><div class="opt">prompt caching</div><div class="opt">temperature 調整</div><div class="opt">縮短 max_tokens</div><div class="answer">✅ prompt caching</div></div>
+  <div class="qa"><div class="qtext">Q2: 要把十萬筆客服訊息做離線情緒分類、不急著拿結果，適合用哪個機制？</div><div class="opt">Batch API</div><div class="opt">串流輸出</div><div class="opt">視覺輸入</div><div class="answer">✅ Batch API</div></div>
+  <div class="qa"><div class="qtext">Q3: 下列敘述何者正確？</div><div class="opt">Batch API 適合聊天介面即時回覆使用者</div><div class="opt">Batch API 適合離線、非即時的大量請求</div><div class="opt">prompt caching 只能用在圖片輸入</div><div class="answer">✅ Batch API 適合離線、非即時的大量請求</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C04"><header class="ch-header"><div class="ch-eyebrow">章節 04</div><h2 class="ch-title">Tool Use 工具使用</h2><div class="ch-subtitle">讓 Claude 動手做事</div><div class="ch-meta">4課 · ⏱ ~22 分鐘</div></header>
+<article class="lesson" id="L4.1" data-lid="4.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.1"><span>已讀</span></label></div><h3 class="lesson-title">什麼是 tool use</h3><div class="lesson-subtitle">從純文字到能查能算</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude 本身是一個語言模型，它擅長理解和生成文字，但它不會憑空知道「現在台北的氣溫」，也沒辦法真的幫你查資料庫、算今天的匯率、或是預訂一張機票——這些都需要接到外部系統。tool use（工具使用，有時也稱 function calling）就是解決這個落差的機制：你先把可用的工具描述給 Claude 聽（這個工具叫什麼名字、做什麼事、需要什麼參數），Claude 在對話過程中如果判斷「這個問題需要用工具才能回答」，就會回傳一個結構化的請求，說明它想呼叫哪個工具、帶什麼參數，而不是自己亂猜答案。</p>
+  <p>要注意的是，Claude 本身並不會真的去執行工具——呼叫外部 API、查資料庫這些動作，是你的程式碼負責執行的，Claude 只負責「判斷該用哪個工具、該帶什麼參數」這個決策層。執行完之後，你把結果回傳給 Claude，它才會根據真實的結果組織成人話回覆使用者。這個設計讓 Claude 從「只會講」升級成「講完還能接手動作」，是 agent（代理人）能自主完成多步驟任務的核心機制，後面幾課會細講這個來回的完整迴圈。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Claude 想成一位很聰明但不會自己開車的顧問——他知道該查哪張地圖、該打哪通電話，但踩油門、撥號這些實際動作要靠你（你的程式碼）幫他做，做完把結果回報給他，他再幫你整理成一段話。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>tool use（工具使用）讓 Claude 能在回答中判斷「這題需要查外部資訊」</li>
+  <li>Claude 只負責決定要呼叫哪個工具、帶什麼參數，不會自己執行</li>
+  <li>實際執行工具（呼叫 API、查資料庫）是由你的程式碼負責</li>
+  <li>執行結果要回傳給 Claude，它才能組織成最終的自然語言回覆</li>
+  <li>tool use 是 agent 能自主完成多步驟任務的核心機制</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude 想查詢外部資料時，實際執行 API 呼叫的是誰？</div><div class="opt">Claude 自己直接執行</div><div class="opt">你的程式碼負責執行</div><div class="opt">使用者手動執行</div><div class="answer">✅ 你的程式碼負責執行</div></div>
+  <div class="qa"><div class="qtext">Q2: tool use 又常被稱為什麼？</div><div class="opt">function calling</div><div class="opt">prompt caching</div><div class="opt">chain of thought</div><div class="answer">✅ function calling</div></div>
+  <div class="qa"><div class="qtext">Q3: tool use 機制讓 Claude 從「只會講」升級成什麼？</div><div class="opt">只會拒絕請求</div><div class="opt">講完還能接手動作的 agent</div><div class="opt">完全不需要人類介入的獨立系統</div><div class="answer">✅ 講完還能接手動作的 agent</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L4.2" data-lid="4.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.2"><span>已讀</span></label></div><h3 class="lesson-title">定義好用的工具 schema</h3><div class="lesson-subtitle">描述寫得好，模型用得對</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>定義一個工具，本質上是在填三件事：name（工具名稱）、description（工具描述）、input_schema（輸入參數的 JSON Schema）。很多人以為 name 取得清楚就夠了，但實務上 description 才是決定 Claude 用不用得對這個工具的關鍵——它讀的是你寫的描述文字，不是你腦中的意圖。一個模糊的描述像「查詢資料」，Claude 很難判斷什麼情境該用它；一個具體的描述像「查詢指定城市今天的天氣狀況與攝氏氣溫，僅支援台灣縣市」，Claude 才能準確判斷這個工具適不適合眼前這個問題。</p>
+  <p>input_schema 用標準的 JSON Schema 格式定義參數，包含每個參數的型別、是否必填、以及同樣重要的參數描述。參數命名和描述一樣不能馬虎——city 這個參數如果描述寫「城市名稱，例如台北」，Claude 傳進來的值就會比較穩定；什麼都不寫，模型可能會傳英文、簡體、或加上「市」字不一致的格式。工具描述沒寫好，最常見的症狀是 Claude 該用工具時沒用、不該用時亂用，或是參數格式對不上你程式碼預期的樣子——這些問題往往不是模型能力不夠，是 schema 寫得不夠精準。</p>
+  <pre class="code">tools = [
+    {
+        "name": "get_weather",
+        "description": "查詢指定城市今天的天氣狀況與攝氏氣溫，僅支援台灣縣市。",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "description": "城市名稱，例如：台北、台中、高雄"
+                }
+            },
+            "required": ["city"]
+        }
+    }
+]</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：把多個功能塞進同一個工具，用一個 mode 參數切換行為。這會讓 description 很難寫清楚，Claude 也更容易選錯 mode。拆成幾個名字、用途單一的工具，通常比一個萬用工具好用。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>定義工具要填 name、description、input_schema 三個部分</li>
+  <li>description 是 Claude 判斷「該不該用這個工具」的主要依據</li>
+  <li>description 越具體、越明確標示適用範圍，模型用得越準</li>
+  <li>input_schema 用 JSON Schema 定義參數型別、必填與描述</li>
+  <li>一個工具只負責單一功能，通常比塞多個 mode 的萬用工具好用</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 決定 Claude 會不會用對工具的最關鍵欄位是？</div><div class="opt">name</div><div class="opt">description</div><div class="opt">參數的排列順序</div><div class="answer">✅ description</div></div>
+  <div class="qa"><div class="qtext">Q2: input_schema 主要用什麼格式定義參數？</div><div class="opt">JSON Schema</div><div class="opt">CSV</div><div class="opt">純文字說明，沒有固定格式</div><div class="answer">✅ JSON Schema</div></div>
+  <div class="qa"><div class="qtext">Q3: 把多個功能塞進同一個工具、用 mode 參數切換，常見的問題是？</div><div class="opt">完全沒有影響</div><div class="opt">description 難寫清楚，模型容易選錯 mode</div><div class="opt">會讓 API 呼叫費用變貴</div><div class="answer">✅ description 難寫清楚，模型容易選錯 mode</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L4.3" data-lid="4.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.3 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.3"><span>已讀</span></label></div><h3 class="lesson-title">Agentic loop</h3><div class="lesson-subtitle">從工具請求到結果回傳的完整迴圈</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>理解 tool use 最重要的一步，是搞懂它其實不是「問一次答一次」，而是一個來回的迴圈，通稱 agentic loop（代理迴圈）。流程是這樣的：你發送請求給 Claude，並附上可用的工具列表；如果 Claude 判斷需要用工具，它回傳的 stop_reason（停止原因）會是 tool_use，內容裡包含它想呼叫的工具名稱和參數，而不是最終答案。你的程式碼這時要做的事，是真正執行那個工具（呼叫 API、跑查詢……），拿到結果後，把 Claude 上一輪的完整回覆和你執行的結果一起送回去——結果要包成一個 tool_result（工具結果）區塊，並且帶上對應的 tool_use_id，讓 Claude 知道這是哪一次呼叫的答案。</p>
+  <p>送出之後，Claude 會根據這個真實結果，決定要不要再呼叫另一個工具、還是已經有足夠資訊可以組織成最終文字回覆給使用者。這個迴圈可能只跑一輪（查一次天氣就夠了），也可能連續跑好幾輪（先查匯率、再查商品價格、最後算出換算後金額）——迴圈會一直持續，直到 Claude 判斷不再需要工具、回傳 stop_reason 為 end_turn 的最終回答為止。這就是為什麼 agent 能自主完成多步驟任務：迴圈的每一輪，都是模型根據新資訊重新做一次判斷。</p>
+  <pre class="code">response = client.messages.create(
+    model="你選用的 Claude 模型代號",
+    max_tokens=1024,
+    tools=tools,
+    messages=messages,
+)
+
+if response.stop_reason == "tool_use":
+    tool_call = next(b for b in response.content if b.type == "tool_use")
+    result = run_tool(tool_call.name, tool_call.input)
+
+    messages.append({"role": "assistant", "content": response.content})
+    messages.append({
+        "role": "user",
+        "content": [{
+            "type": "tool_result",
+            "tool_use_id": tool_call.id,
+            "content": str(result),
+        }],
+    })
+    # 再送出一次 messages.create(...)，迴圈繼續</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像 Claude 和你的程式碼在打乒乓球——Claude 發球說「我需要查天氣」，你的程式碼接球去查、把結果打回去，Claude 再判斷要不要繼續發球（查下一件事）還是收拍給使用者總結。球來回幾次，取決於任務需要幾個步驟。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>agentic loop：請求 → Claude 回 tool_use → 你執行 → 回傳 tool_result → 繼續</li>
+  <li>stop_reason 為 tool_use 時，代表 Claude 想呼叫工具、還沒給最終答案</li>
+  <li>tool_result 要帶上對應的 tool_use_id，讓 Claude 知道這是哪次呼叫的結果</li>
+  <li>迴圈可能一輪就結束，也可能連續多輪，視任務需要幾個步驟</li>
+  <li>stop_reason 變成 end_turn，代表 Claude 已組織出最終回覆</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 當 response.stop_reason 是 tool_use 時，代表什麼？</div><div class="opt">Claude 已經給出最終答案</div><div class="opt">Claude 想呼叫工具，還沒給最終答案</div><div class="opt">這次呼叫發生了錯誤</div><div class="answer">✅ Claude 想呼叫工具，還沒給最終答案</div></div>
+  <div class="qa"><div class="qtext">Q2: 回傳 tool_result 時，為什麼要帶上 tool_use_id？</div><div class="opt">純粹是格式要求，沒有實際作用</div><div class="opt">讓 Claude 知道這是對應哪一次工具呼叫的結果</div><div class="opt">用來計算這次呼叫的費用</div><div class="answer">✅ 讓 Claude 知道這是對應哪一次工具呼叫的結果</div></div>
+  <div class="qa"><div class="qtext">Q3: agentic loop 什麼時候會結束？</div><div class="opt">固定跑三輪後強制停止</div><div class="opt">Claude 回傳 stop_reason 為 end_turn 的最終回答時</div><div class="opt">程式碼主動中斷連線時</div><div class="answer">✅ Claude 回傳 stop_reason 為 end_turn 的最終回答時</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L4.4" data-lid="4.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.4 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.4"><span>已讀</span></label></div><h3 class="lesson-title">結構化輸出與錯誤處理</h3><div class="lesson-subtitle">穩定拿到你要的 JSON</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>tool use 除了拿來串接真正的外部功能，還有一個很實用的延伸用法：強制 Claude 輸出結構化資料。做法是定義一個「假工具」——它不真的執行任何動作，input_schema 就是你想要的資料格式，例如「從這段文字抽取出姓名、日期、金額」。搭配 tool_choice 參數指定要求 Claude 必須呼叫這個工具（而不是自由決定要不要用），Claude 就會把答案套進你定義好的 schema 裡回傳，而不是生成一段可能格式跑掉的自由文字。這比要求 Claude「請用 JSON 格式回答」穩定得多，因為 schema 本身就是規格，不是一句期待模型自己遵守的口頭指示。</p>
+  <p>有了 schema 保底，錯誤處理還是不能省。工具的輸入可能不完整、外部 API 可能逾時或回傳錯誤、Claude 傳來的參數也可能和你預期的格式對不上。穩健的做法是：執行工具前先驗證輸入（缺必要欄位就直接拒絕，不要硬跑）；執行失敗時，把錯誤訊息也包進 tool_result 回傳給 Claude（可以標記 is_error），讓它有機會根據錯誤內容調整、重試或換個工具，而不是讓整個流程直接崩潰；對外部依賴設定合理的逾時和重試次數，避免一次呼叫卡住整個 agentic loop。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：工具執行失敗時直接吞掉錯誤、回傳空字串或假資料給 Claude。Claude 會把它當成真實結果繼續往下推論，最後產出一個看起來自信滿滿、實際上完全建立在錯誤資訊上的答案，比明講失敗更危險。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>定義一個「假工具」、schema 就是想要的資料格式，可強制拿到結構化輸出</li>
+  <li>搭配 tool_choice 要求 Claude 必須呼叫該工具，比純文字要求 JSON 更穩定</li>
+  <li>執行工具前應先驗證輸入，缺必要欄位就不要硬跑</li>
+  <li>工具執行失敗要把錯誤訊息誠實回傳給 Claude，讓它能調整或重試</li>
+  <li>對外部依賴設定逾時與重試上限，避免卡住整個 agentic loop</li>
+  <li>錯誤處理不完整時，不要用假資料頂替，會讓後續推論建立在錯誤前提上</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 想穩定拿到符合特定格式的 JSON 輸出，比較可靠的做法是？</div><div class="opt">在 prompt 裡口頭要求「請用 JSON 格式回答」</div><div class="opt">定義一個工具，用 input_schema 規定資料格式並搭配 tool_choice 強制呼叫</div><div class="opt">把 temperature 調到 1</div><div class="answer">✅ 定義一個工具，用 input_schema 規定資料格式並搭配 tool_choice 強制呼叫</div></div>
+  <div class="qa"><div class="qtext">Q2: 工具執行失敗時，比較穩健的處理方式是？</div><div class="opt">回傳空字串讓 Claude 自己猜</div><div class="opt">把錯誤訊息誠實包進 tool_result 回傳給 Claude</div><div class="opt">直接中斷整個程式，不回傳任何東西</div><div class="answer">✅ 把錯誤訊息誠實包進 tool_result 回傳給 Claude</div></div>
+  <div class="qa"><div class="qtext">Q3: 執行工具前，穩健的做法應該先做什麼？</div><div class="opt">直接執行，出錯再處理</div><div class="opt">先驗證輸入，缺必要欄位就不要硬跑</div><div class="opt">先把 max_tokens 調到最大</div><div class="answer">✅ 先驗證輸入，缺必要欄位就不要硬跑</div></div>
+</div></div>
+</div></article>
+</section>
+
+<!-- 模組 M4｜負責模型: Claude Sonnet 5 -->
+<section class="chapter" id="C05"><header class="ch-header"><div class="ch-eyebrow">章節 05</div><h2 class="ch-title">MCP 入門</h2><div class="ch-subtitle">對應官方課程 Introduction to Model Context Protocol</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L5.1" data-lid="5.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.1"><span>已讀</span></label></div><h3 class="lesson-title">為什麼需要 MCP</h3><div class="lesson-subtitle">N×M 整合問題</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>在 MCP（Model Context Protocol，模型情境協定）出現之前，如果你想讓 Claude 讀你的 Google Drive、查你的資料庫、又順便叫 Slack 發訊息，每一個都要各家自己寫一套串接邏輯。假設你有 M 個 AI 應用（Claude Desktop、Claude Code、其他 agent 框架⋯），又想接 N 個外部系統（GitHub、Notion、資料庫、內部 API⋯），沒有共同協定的世界裡，你得寫 M×N 種客製整合，任何一邊變動，整條線都要重接。這就是所謂的「N×M 整合問題」。</p><p>MCP 的想法很單純：定義一套所有人都遵守的協定，讓「應用端」和「工具端」各自只需要對協定講一次話，不用互相遷就。這樣一來，整合數量從 M×N 降成 M+N——每個應用寫一次 MCP client、每個系統寫一次 MCP server，就能任意組合，不用再為每一對關係各寫一份客製程式。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">USB-C 比喻：在有 USB-C 之前，每台筆電、每支手機、每個充電器都有自己的接頭；現在只要一種接頭，任何裝置接任何線都能用。MCP 對 AI 應用和外部工具的關係，就像 USB-C 對硬體裝置的關係。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>沒有共同協定時，M 個應用 × N 個系統 = M×N 種客製整合，維護成本隨兩邊成長而爆炸</li>
+<li>MCP（Model Context Protocol，模型情境協定）是 Anthropic 提出、開放的協定標準</li>
+<li>有了 MCP，整合量從 M×N 降成 M+N：應用寫一次 client、系統寫一次 server</li>
+<li>常被比喻成「AI 應用的 USB-C」：統一的接頭，任何相容裝置都能接上</li>
+<li>對工具開發者來說，寫一個 MCP server 就能被所有支援 MCP 的應用重複使用</li>
+<li>對應用開發者來說，接上 MCP client 就能瞬間取用整個生態系已經寫好的 server</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: MCP 主要想解決的問題是什麼？</div><div class="opt">讓模型的回答變得更聰明</div><div class="opt">AI 應用與外部系統之間的 N×M 整合問題</div><div class="opt">降低 API 呼叫的費用</div><div class="answer">✅ AI 應用與外部系統之間的 N×M 整合問題</div></div>
+<div class="qa"><div class="qtext">Q2: MCP 常被拿來比喻成什麼？</div><div class="opt">網路的 TCP/IP</div><div class="opt">硬體世界的 USB-C</div><div class="opt">手機的 SIM 卡</div><div class="answer">✅ 硬體世界的 USB-C</div></div>
+<div class="qa"><div class="qtext">Q3: 若沒有 MCP，M 個應用要接 N 個系統，整合工作量大約是？</div><div class="opt">M×N</div><div class="opt">M+N</div><div class="opt">固定不變，跟數量無關</div><div class="answer">✅ M×N</div></div></div></div>
+</div></article>
+<article class="lesson" id="L5.2" data-lid="5.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.2"><span>已讀</span></label></div><h3 class="lesson-title">MCP 架構</h3><div class="lesson-subtitle">host、client、server 各做什麼</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>MCP 的架構分成三個角色。Host（主機）是使用者實際互動的應用程式，例如 Claude Desktop、Claude Code，或是你自己寫的 agent 程式；它負責管理整個對話、決定要不要把某個工具結果交給模型。Client（客戶端）活在 host 裡面，每個 client 對應一個 server，負責用協定跟那個 server 講話——傳送請求、接收結果、維持連線狀態；一個 host 通常會同時開好幾個 client，各自連到不同的 server。</p><p>Server（伺服端）則是實際提供能力的那一方，例如「GitHub MCP server」知道怎麼查 issue、開 PR；「檔案系統 MCP server」知道怎麼讀寫本機檔案。Server 不需要知道自己被哪個 host 使用，也不用管背後是哪個模型，它只要遵守協定就能被任何相容的 client 接上。三者的分工可以簡化成一句話：host 管對話、client 管連線、server 管能力。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像一間餐廳：host 是外場經理，負責跟客人互動、決定上菜順序；client 是傳菜員，一個傳菜員專門跑一個廚房窗口；server 是後面的廚房，各自專精某種菜色，廚房不需要認識外場經理是誰，只要看得懂點菜單（協定）就能出菜。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Host：使用者實際互動的應用（Claude Desktop、Claude Code 等），管理整體對話與決策</li>
+<li>Client：存在於 host 內部，一對一連接一個 server，負責協定層的溝通</li>
+<li>Server：實際提供 tools／resources／prompts 能力的一方，可以是本機程式或遠端服務</li>
+<li>一個 host 可以同時管理多個 client，等於同時接上多個 server</li>
+<li>Server 只需要遵守 MCP 協定，不需要知道是被哪個 host、哪個模型呼叫</li>
+<li>這種分層讓 server 開發者和 host 開發者可以各自獨立演進，互不綁死</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 在 MCP 架構中，負責跟使用者直接互動、管理整體對話的角色是？</div><div class="opt">server</div><div class="opt">client</div><div class="opt">host</div><div class="answer">✅ host</div></div>
+<div class="qa"><div class="qtext">Q2: 一個 host 可以同時連接幾個 server？</div><div class="opt">只能一個</div><div class="opt">可以多個，各自透過對應的 client 連線</div><div class="opt">最多兩個</div><div class="answer">✅ 可以多個，各自透過對應的 client 連線</div></div>
+<div class="qa"><div class="qtext">Q3: 下列敘述何者正確？</div><div class="opt">server 需要知道自己被哪個 host 呼叫才能運作</div><div class="opt">client 存在於 host 內部，負責與特定 server 的協定溝通</div><div class="opt">host 就是 server 的另一種稱呼</div><div class="answer">✅ client 存在於 host 內部，負責與特定 server 的協定溝通</div></div></div></div>
+</div></article>
+<article class="lesson" id="L5.3" data-lid="5.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.3"><span>已讀</span></label></div><h3 class="lesson-title">三大原語</h3><div class="lesson-subtitle">tools、resources、prompts</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>MCP server 能提供給 client 的能力，收斂成三種「原語」(primitives)。Tools（工具）是模型可以主動呼叫的函式，例如「查詢資料庫」「建立 GitHub issue」；它們的設計精神跟你在 CH04 學過的 tool use 一致——模型自己決定要不要呼叫、什麼時候呼叫、傳什麼參數。Resources（資源）是應用讀取的資料，例如一份檔案內容、一則資料庫紀錄、一段日誌；重點是 resources 通常由「應用」（host/client 端的程式邏輯或使用者）決定要不要抓進來，而不是模型自主呼叫，這跟 tools 的「模型主導」剛好相反。</p><p>Prompts（提示）是使用者觸發的範本，通常包在選單或斜線指令裡，例如「/summarize-pr」，讓使用者一鍵套用一段設計好的提示語，不用每次手打。三者的呼叫發起者不同：tools 由模型發起、resources 由應用發起、prompts 由使用者發起。分清楚這一點，設計自己的 server 時就知道某個能力該包成哪一種原語。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">簡單記憶法：tools 像餐廳的「服務鈴」，模型按下去廚房就動作；resources 像菜單背後的「食材庫存表」，是外場自己想看才會翻的參考資料；prompts 像貼在牆上的「套餐推薦卡」，是客人自己選了才會用的範本。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Tools：模型可主動呼叫的函式，用來「做事」，例如查詢、寫入、執行動作</li>
+<li>Resources：應用讀取的唯讀資料，通常由應用邏輯或使用者決定要不要載入</li>
+<li>Prompts：使用者觸發的提示範本，常見於選單或斜線指令，幫使用者套用設計好的提示</li>
+<li>三者的發起者不同：tools 由模型主導、resources 由應用主導、prompts 由使用者主導</li>
+<li>設計 server 時，先想清楚這個能力「誰來決定要不要用」，再決定包成哪種原語</li>
+<li>三大原語都定義在同一份協定裡，client 連上 server 後可以列出它支援哪些</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 模型可以主動決定呼叫、用來執行動作的原語是？</div><div class="opt">resources</div><div class="opt">tools</div><div class="opt">prompts</div><div class="answer">✅ tools</div></div>
+<div class="qa"><div class="qtext">Q2: 通常由使用者主動觸發、像斜線指令一樣套用的原語是？</div><div class="opt">prompts</div><div class="opt">tools</div><div class="opt">resources</div><div class="answer">✅ prompts</div></div>
+<div class="qa"><div class="qtext">Q3: resources 這個原語最大的特色是？</div><div class="opt">由模型自主決定何時呼叫</div><div class="opt">是使用者輸入的密碼</div><div class="opt">是應用讀取的唯讀資料，通常由應用邏輯決定要不要載入</div><div class="answer">✅ 是應用讀取的唯讀資料，通常由應用邏輯決定要不要載入</div></div></div></div>
+</div></article>
+<article class="lesson" id="L5.4" data-lid="5.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.4"><span>已讀</span></label></div><h3 class="lesson-title">動手用現成的 MCP server</h3><div class="lesson-subtitle">十分鐘接上你的第一個 server</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>理論講完，來實際接一個。不管是 Claude Desktop 或 Claude Code，設定現成 MCP server 的方式都類似：寫一段 JSON 設定，告訴 host 要怎麼啟動這個 server。最常見的是本機（stdio）型 server，host 會用你指定的指令把它跑起來，透過標準輸入輸出跟它講話。舉例來說，接上一個檔案系統 server 的設定大致長這樣：</p>
+<pre class="code">{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]
+    }
+  }
+}</pre>
+<p>存好設定、重啟應用後，host 會自動啟動這個 server 並列出它提供的 tools／resources／prompts，之後只要用自然語言請 Claude 操作，它就會在需要時自己呼叫對應的 tool。Claude Code 也支援用指令行直接新增 server，不用手動編輯 JSON，對第一次嘗試的人更省事。裝好之後第一件事，永遠是先問 Claude「你現在有哪些工具可以用」，確認 server 真的連上、能力清單符合預期，再開始正式操作。</p>
+<div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：很多人裝完 server 沒反應就以為壞了，其實多半是設定檔路徑打錯字，或指令需要的執行環境（例如 Node、Python）沒裝好。先看 host 的 log／錯誤訊息，通常一眼就能定位問題。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>現成 MCP server 通常透過一段 JSON 設定接上 host，指定啟動指令與參數</li>
+<li>本機型 server 常用 stdio（標準輸入輸出）transport，host 直接把它當子行程啟動</li>
+<li>Claude Code 也提供指令行方式新增 server，不用手動寫 JSON</li>
+<li>裝好後先請 Claude 列出目前可用的工具，確認連線成功、能力清單正確</li>
+<li>連不上時，第一步永遠是檢查設定檔路徑與執行環境，而不是急著重裝</li>
+<li>官方與社群都維護了現成 server 清單，涵蓋檔案系統、版本控制、資料庫等常見情境</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 現成 MCP server 通常透過什麼方式接上 Claude Desktop？</div><div class="opt">直接把程式碼貼進對話框</div><div class="opt">編輯一段 JSON 設定指定啟動指令</div><div class="opt">只能用滑鼠拖拉安裝</div><div class="answer">✅ 編輯一段 JSON 設定指定啟動指令</div></div>
+<div class="qa"><div class="qtext">Q2: 裝好一個新 server 之後，第一件該做的事是？</div><div class="opt">立刻刪除設定檔</div><div class="opt">請 Claude 列出目前可用的工具，確認連線成功</div><div class="opt">重灌作業系統</div><div class="answer">✅ 請 Claude 列出目前可用的工具，確認連線成功</div></div>
+<div class="qa"><div class="qtext">Q3: Server 連不上時，最該優先檢查的是？</div><div class="opt">網路頻寬</div><div class="opt">設定檔路徑與執行環境是否正確</div><div class="opt">電腦的電池電量</div><div class="answer">✅ 設定檔路徑與執行環境是否正確</div></div></div></div>
+</div></article>
+</section>
+<section class="chapter" id="C06"><header class="ch-header"><div class="ch-eyebrow">章節 06</div><h2 class="ch-title">MCP 進階</h2><div class="ch-subtitle">對應官方課程 MCP: Advanced Topics</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L6.1" data-lid="6.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.1"><span>已讀</span></label></div><h3 class="lesson-title">打造自己的 MCP server</h3><div class="lesson-subtitle">用 SDK 從零寫一個</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>接上別人寫好的 server 只是第一步，真正的威力在於你能把公司內部系統包成 MCP server，讓 Claude 直接操作。官方提供 Python（FastMCP）與 TypeScript 的 SDK，把協定細節都封裝好，你只需要專心定義「這個 server 提供什麼能力」。用 FastMCP 寫一個最小可用的 server 大概長這樣：</p>
+<pre class="code">from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("weather")
+
+@mcp.tool()
+def get_weather(city: str) -&gt; str:
+    """查詢指定城市的目前天氣"""
+    return f"{city} 目前晴天，25 度"
+
+if __name__ == "__main__":
+    mcp.run()</pre>
+<p>這段程式碼定義了一個名叫 get_weather 的 tool，函式的 docstring／型別標註會被 SDK 自動轉成 tool 的 schema，也就是模型用來判斷「這個工具是做什麼、要傳什麼參數」的說明書——跟 CH04 學的 tool schema 是同一套精神。寫完之後啟動它，再把它接進 Claude Desktop／Claude Code 的設定裡測試。第一次寫的建議是：先做一個功能單純的 tool，確定整條路能通，再逐步加更多能力，不要一開始就想包山包海。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想成你在寫一支「客服窗口」的 SOP：docstring 就是掛在窗口前的告示牌，寫清楚這裡辦什麼業務、要帶什麼文件（參數），模型看到告示牌才知道什麼時候該走進來辦事。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>官方提供 Python（FastMCP）與 TypeScript SDK，封裝協定細節，讓你專心定義能力</li>
+<li>用裝飾器（如 @mcp.tool()）搭配函式的型別標註與 docstring，SDK 會自動產生 tool schema</li>
+<li>Tool schema 的角色跟 CH04 的 tool use schema 相同：是模型判斷何時、如何呼叫的說明書</li>
+<li>建議先做一個單純的 tool，打通「啟動、連線、呼叫、回傳」全流程，再逐步擴充</li>
+<li>Server 開發完成後，用本機設定接進 Claude Desktop 或 Claude Code 就能測試</li>
+<li>一個 server 可以同時定義多個 tools、resources、prompts，彼此獨立註冊</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 官方提供哪兩種語言的 MCP SDK？</div><div class="opt">Java 與 Go</div><div class="opt">Python 與 TypeScript</div><div class="opt">Ruby 與 PHP</div><div class="answer">✅ Python 與 TypeScript</div></div>
+<div class="qa"><div class="qtext">Q2: 在 FastMCP 中，函式的 docstring 與型別標註主要用來做什麼？</div><div class="opt">加快程式執行速度</div><div class="opt">自動產生給模型判斷用的 tool schema</div><div class="opt">只是註解，SDK 不會使用</div><div class="answer">✅ 自動產生給模型判斷用的 tool schema</div></div>
+<div class="qa"><div class="qtext">Q3: 第一次寫 MCP server，比較好的做法是？</div><div class="opt">一次定義大量 tools 求快</div><div class="opt">先做一個單純 tool 打通全流程，再逐步擴充</div><div class="opt">跳過本機測試直接上線</div><div class="answer">✅ 先做一個單純 tool 打通全流程，再逐步擴充</div></div></div></div>
+</div></article>
+<article class="lesson" id="L6.2" data-lid="6.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.2"><span>已讀</span></label></div><h3 class="lesson-title">sampling 與 elicitation</h3><div class="lesson-subtitle">server 反過來請 client 幫忙</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>到目前為止都是「client 呼叫 server」的方向，但 MCP 也定義了反過來的機制。Sampling 讓 server 在執行任務的過程中，回頭請 client 代打一次 LLM 呼叫——例如 server 收集到一堆資料，想先請模型幫忙摘要或判斷，但 server 本身沒有、也不該自己持有 API key，於是它把「幫我問一下模型」這個請求丟回 client，由 client 用使用者已經授權的模型額度去執行，結果再回傳給 server 使用。這樣的好處是：server 開發者不用管理自己的模型金鑰與費用，權限與成本控管都留在 client／使用者手上。</p><p>Elicitation 則是另一個方向的「求助」：server 在執行到一半，發現需要使用者提供額外資訊才能繼續（例如「你要刪除的是哪個檔案？」），它可以透過協定向 client 發出請求，由 client 跳出介面讓使用者回答，而不是自己亂猜或直接中斷。這兩個機制的共通點是：server 不是孤立運作，它可以在需要時把「思考」或「決策」的權力交還給 client 端。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">sampling 像是廚房臨時需要有人試味道，就探頭出去請外場（client）幫忙嚐一口再回報；elicitation 像廚房做到一半發現客人沒說要不要辣，直接請外場回頭問客人，而不是自己亂猜。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Sampling：server 請 client 代為呼叫 LLM，結果回傳給 server 繼續使用</li>
+<li>Sampling 的好處是 server 不需要自己管理模型金鑰與費用，成本與權限留在 client 端控管</li>
+<li>Elicitation：server 在執行過程中向使用者要額外輸入，透過 client 呈現互動介面</li>
+<li>兩者都是「server 反向請求」的機制，跟平常 client 呼叫 server 的方向相反</li>
+<li>使用這兩個機制時，client 通常仍會做確認或授權把關，不會無條件配合 server 的請求</li>
+<li>善用這兩個機制能讓 server 的邏輯更靈活，不必把所有判斷都寫死在程式裡</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: server 想借用使用者已授權的模型額度來做一次 LLM 呼叫，用的是哪個機制？</div><div class="opt">elicitation</div><div class="opt">sampling</div><div class="opt">OAuth</div><div class="answer">✅ sampling</div></div>
+<div class="qa"><div class="qtext">Q2: server 執行到一半需要使用者補充資訊（例如確認要刪除哪個檔案），該用哪個機制？</div><div class="opt">sampling</div><div class="opt">elicitation</div><div class="opt">transport</div><div class="answer">✅ elicitation</div></div>
+<div class="qa"><div class="qtext">Q3: sampling 機制的主要好處是？</div><div class="opt">server 可以直接持有並管理自己的模型 API key</div><div class="opt">server 不需要自己管理模型金鑰，成本與權限留在 client 端</div><div class="opt">讓 server 完全不需要與 client 溝通</div><div class="answer">✅ server 不需要自己管理模型金鑰，成本與權限留在 client 端</div></div></div></div>
+</div></article>
+<article class="lesson" id="L6.3" data-lid="6.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.3"><span>已讀</span></label></div><h3 class="lesson-title">Remote MCP 與 OAuth 認證</h3><div class="lesson-subtitle">從本機走向雲端</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>前面的例子多半是本機 server，用 stdio transport（標準輸入輸出）跟 client 講話，適合單機工具，但沒辦法給團隊共用，也沒辦法給雲端服務用。這就是 remote MCP 要解決的問題：把 server 架成一個網路服務，用 streamable HTTP transport 讓任何地方的 client 都能連上——不只是你自己的電腦，也可以是雲端上跑的 agent。</p><p>本機 server 通常假設「跑起來的人就是使用者本人」，不太需要認證；但一旦 server 搬到網路上，任何人理論上都能連進來，就必須有認證機制確認「這個 client 到底代表誰在講話、有沒有權限」。MCP 採用業界標準的 OAuth 流程處理這件事：使用者透過瀏覽器登入、授權 client 可存取的範圍（scope），client 拿到 token 後才能繼續跟 server 溝通，之後每次請求都帶著 token 證明身分。重點不是背 OAuth 的每個步驟，而是建立一個原則：server 一旦離開你自己的機器，認證與授權就不是加分項，而是必要條件。</p>
+<div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：有人為了方便，把 remote server 設計成不需要認證、任何人拿到網址就能用，這在測試階段或許無傷大雅，一旦接上真實資料或內部系統，就等於把大門鑰匙插在門外。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>本機 server 常用 stdio transport，適合單機工具，難以給團隊或雲端服務共用</li>
+<li>Remote MCP 讓 server 架成網路服務，用 streamable HTTP transport 供任何地方的 client 連線</li>
+<li>Server 離開本機、成為網路服務後，認證與授權從「可選」變成「必要」</li>
+<li>MCP 採用 OAuth 這套業界標準流程處理授權：使用者登入、授權範圍、client 取得 token</li>
+<li>Client 之後的每次請求都帶著 token，讓 server 確認這個請求代表誰、能做什麼</li>
+<li>部署 remote server 前，先確認認證機制到位，不要因為圖方便而先跳過</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 本機型 MCP server 最常見的 transport 是？</div><div class="opt">streamable HTTP</div><div class="opt">stdio（標準輸入輸出）</div><div class="opt">FTP</div><div class="answer">✅ stdio（標準輸入輸出）</div></div>
+<div class="qa"><div class="qtext">Q2: 讓 server 從本機走向雲端、供多方 client 連線的做法是？</div><div class="opt">sampling</div><div class="opt">remote MCP，搭配 streamable HTTP transport</div><div class="opt">關閉 server 的 tools</div><div class="answer">✅ remote MCP，搭配 streamable HTTP transport</div></div>
+<div class="qa"><div class="qtext">Q3: Remote MCP server 為什麼必須認真處理認證？</div><div class="opt">因為認證能加快回應速度</div><div class="opt">因為任何人理論上都能連進網路上的 server，需要確認身分與權限</div><div class="opt">因為 OAuth 是唯一支援的程式語言</div><div class="answer">✅ 因為任何人理論上都能連進網路上的 server，需要確認身分與權限</div></div></div></div>
+</div></article>
+<article class="lesson" id="L6.4" data-lid="6.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.4"><span>已讀</span></label></div><h3 class="lesson-title">MCP 安全性與最佳實踐</h3><div class="lesson-subtitle">prompt injection 與權限最小化</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>MCP 讓 Claude 能直接碰觸真實系統，威力越大，風險也越大，這一課整理幾個必須放在心上的安全原則。第一是 prompt injection（提示注入）：如果一個 tool 的回傳內容（例如一封信、一個網頁、一份文件）裡藏著偽裝成指令的文字，模型有可能把它當成使用者的新指示去執行，尤其是「幫我讀某個外部內容」這類 tool 特別危險。第二是 confused deputy（受騙的代理人）問題：server 本身權限很大（例如能存取整個資料庫），但呼叫它的人／模型未必該有那麼大的權限，如果 server 沒有做好授權檢查，就等於把自己的高權限借給了不該用的人。</p><p>第三是權限最小化：一個 server、一個 tool 該有的權限，就是完成任務所需的最小範圍，不要因為「以後可能用得到」就先開好所有存取權。第四是供應鏈信任：安裝別人寫的 server 前，要清楚它會存取什麼、程式碼是否可信，就像你不會隨便執行來路不明的程式一樣，接一個 MCP server 本質上也是在讓一段外部程式碼碰你的資料。</p>
+<div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：不要把資料庫的完整管理員權限直接接給一個 MCP server 圖方便；一旦這個 server 或它背後的邏輯出錯（或被注入），後果就是整個資料庫的讀寫權限都暴露出去，沒有回頭路。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Prompt injection：藏在 tool 回傳內容裡的偽裝指令，可能被模型誤當成真正的使用者指示執行</li>
+<li>Confused deputy：權限很大的 server 若沒做好授權檢查，等於把高權限借給不該有權限的呼叫者</li>
+<li>權限最小化原則：每個 server／tool 只給完成任務所需的最小存取範圍，不要先開好備用權限</li>
+<li>供應鏈信任：安裝別人寫的 server 前，要清楚它的來源、程式碼與存取範圍是否可信</li>
+<li>對會讀取外部內容（信件、網頁、文件）的 tool 要特別警覺，這是 prompt injection 最常見的入口</li>
+<li>安全不是裝完 server 就結束，而是持續盤點權限、更新來源、留意異常行為的過程</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 藏在網頁或文件內容裡、偽裝成指令試圖操控模型行為的攻擊手法叫做？</div><div class="opt">confused deputy</div><div class="opt">prompt injection（提示注入）</div><div class="opt">OAuth hijacking</div><div class="answer">✅ prompt injection（提示注入）</div></div>
+<div class="qa"><div class="qtext">Q2:「每個 server／tool 只給完成任務所需的最小存取範圍」屬於哪個原則？</div><div class="opt">供應鏈信任</div><div class="opt">權限最小化</div><div class="opt">sampling</div><div class="answer">✅ 權限最小化</div></div>
+<div class="qa"><div class="qtext">Q3: confused deputy 問題描述的是什麼情境？</div><div class="opt">使用者忘記自己的密碼</div><div class="opt">權限很大的 server 因缺乏授權檢查，被不該有權限的呼叫者濫用</div><div class="opt">server 回傳的資料格式錯誤</div><div class="answer">✅ 權限很大的 server 因缺乏授權檢查，被不該有權限的呼叫者濫用</div></div></div></div>
+</div></article>
+</section>
+<section class="chapter" id="C07"><header class="ch-header"><div class="ch-eyebrow">章節 07</div><h2 class="ch-title">Claude Code 實戰</h2><div class="ch-subtitle">對應官方課程 Claude Code in Action</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L7.1" data-lid="7.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.1"><span>已讀</span></label></div><h3 class="lesson-title">Claude Code 是什麼</h3><div class="lesson-subtitle">安裝與第一次對話</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>Claude Code 是一個跑在終端機（terminal）裡的 agentic coding 工具，跟你平常用網頁版或 IDE 外掛聊天最大的不同，是它可以直接讀你的專案檔案、執行指令、修改程式碼，而不只是幫你生成一段貼上去的文字。你在終端機打開專案資料夾、輸入啟動指令，Claude Code 就會以那個資料夾為工作範圍開始對話；你可以像跟同事講話一樣描述需求，例如「幫我把這個函式的錯誤處理補齊」，它會自己去讀相關檔案、理解上下文，再提出或直接進行修改。</p><p>第一次使用最重要的心態調整是：Claude Code 不是自動完成，而是一個會主動探索、會問你問題、也會執行指令的協作者，你講得越清楚、給的脈絡越完整，它做出來的東西就越貼近你要的。跟它的第一次對話，不妨從一個小範圍的任務開始，例如請它先解釋某段程式碼在做什麼，感受一下它讀程式碼、回覆的方式，再逐步交付比較大的任務。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把它想成一位剛加入團隊、什麼都能學得很快的新工程師——他會先去讀 codebase、問清楚需求，而不是憑空亂猜；你給的任務描述越像交接文件，他做出來的結果越不會走鐘。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Claude Code 是跑在終端機裡的 agentic coding 工具，能讀檔案、執行指令、直接修改程式碼</li>
+<li>啟動時以當下資料夾為工作範圍，對話脈絡跟著這個專案走</li>
+<li>與純聊天工具的差異：它會主動探索專案、執行指令，而不只是生成一段文字讓你自己貼上</li>
+<li>描述需求時給的脈絡越完整（目的、限制、期望格式），產出越貼近需求</li>
+<li>建議從小範圍任務開始熟悉互動節奏，例如先請它解釋一段程式碼，再逐步交付大任務</li>
+<li>它會在必要時主動提問或請你確認，而不是悶著頭亂做</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: Claude Code 與純聊天式 AI 工具最大的差異是？</div><div class="opt">只能讀不能寫程式碼</div><div class="opt">能直接讀檔案、執行指令、修改程式碼，而不只是生成文字</div><div class="opt">完全不需要人類確認任何步驟</div><div class="answer">✅ 能直接讀檔案、執行指令、修改程式碼，而不只是生成文字</div></div>
+<div class="qa"><div class="qtext">Q2: 第一次使用 Claude Code，比較好的起手方式是？</div><div class="opt">直接丟一個牽涉整個系統重構的大任務</div><div class="opt">從小範圍任務開始，例如請它解釋一段程式碼</div><div class="opt">完全不給任何脈絡，看它自己猜</div><div class="answer">✅ 從小範圍任務開始，例如請它解釋一段程式碼</div></div>
+<div class="qa"><div class="qtext">Q3: Claude Code 啟動時的工作範圍是？</div><div class="opt">整台電腦所有檔案，不分專案</div><div class="opt">當下所在的資料夾（專案）</div><div class="opt">只有它自己內建的範例程式碼</div><div class="answer">✅ 當下所在的資料夾（專案）</div></div></div></div>
+</div></article>
+<article class="lesson" id="L7.2" data-lid="7.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.2"><span>已讀</span></label></div><h3 class="lesson-title">核心工作流</h3><div class="lesson-subtitle">探索、規劃、實作、驗證</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>面對一個有點複雜的任務，Claude Code 比較穩健的做法不是一頭栽進去改程式碼，而是走一輪「探索 → 規劃 → 實作 → 驗證」的循環。探索階段，會先讀相關檔案、搜尋關鍵字、理解現有架構，搞清楚「這件事現在是怎麼運作的」，再動手。規劃階段，把要做的改動拆成明確步驟，尤其是牽涉多個檔案或有風險的改動，先講出計畫讓你能確認方向對不對，比悶頭改完才發現方向錯划算得多。</p><p>實作階段才是真正動手寫、改程式碼，這時因為前面探索夠紮實、規劃夠清楚，改動通常會比較集中、精準，不會東改一點西改一點。驗證階段是最容易被跳過、卻最重要的一步：跑測試、實際執行一次、檢查輸出是否符合預期，而不是「看起來應該沒問題」就結束。這個循環不是一次性的，遇到大任務時，你可以要求先只做探索和規劃、跟你確認過再進入實作，把風險控制在你想要的顆粒度上。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">這跟蓋房子的順序很像——探索是「先看基地和現況」，規劃是「畫設計圖給你看過」，實作是「動工」，驗證是「驗屋」。跳過設計圖直接動工，通常返工成本更高。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>核心工作流四步驟：探索、規劃、實作、驗證，循序漸進降低風險</li>
+<li>探索：讀相關檔案、搜尋關鍵字，先搞懂現有架構再動手</li>
+<li>規劃：把改動拆成明確步驟，牽涉多檔案或高風險的改動先講計畫讓你確認</li>
+<li>實作：在前面基礎紮實的前提下動手修改，改動通常更集中、精準</li>
+<li>驗證：跑測試、實際執行、檢查輸出，不能只憑「看起來沒問題」收尾</li>
+<li>大任務可以要求先只做到規劃、跟你確認方向後再進入實作，控制風險顆粒度</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: Claude Code 核心工作流的四個步驟依序是？</div><div class="opt">實作、驗證、探索、規劃</div><div class="opt">探索、規劃、實作、驗證</div><div class="opt">規劃、驗證、探索、實作</div><div class="answer">✅ 探索、規劃、實作、驗證</div></div>
+<div class="qa"><div class="qtext">Q2: 面對牽涉多個檔案的高風險改動，比較穩健的做法是？</div><div class="opt">直接動手改，改完再說</div><div class="opt">先講出規劃步驟，確認方向後再進入實作</div><div class="opt">完全交給它自行決定，不需要確認</div><div class="answer">✅ 先講出規劃步驟，確認方向後再進入實作</div></div>
+<div class="qa"><div class="qtext">Q3: 驗證階段最容易犯的錯誤是什麼？</div><div class="opt">花太多時間跑測試</div><div class="opt">只憑「看起來應該沒問題」就結束，沒有實際執行檢查</div><div class="opt">驗證的步驟做得太仔細</div><div class="answer">✅ 只憑「看起來應該沒問題」就結束，沒有實際執行檢查</div></div></div></div>
+</div></article>
+<article class="lesson" id="L7.3" data-lid="7.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.3"><span>已讀</span></label></div><h3 class="lesson-title">CLAUDE.md 與專案記憶</h3><div class="lesson-subtitle">讓每次對話都懂你的專案</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>每次開新對話都要重新解釋一次「這個專案用什麼框架、程式碼風格是什麼、哪些事絕對不能做」很浪費時間，這就是 CLAUDE.md 存在的理由：一份放在專案裡、Claude Code 每次啟動都會讀的專案記憶檔案。適合放進去的內容包括：專案的技術棧與架構慣例（例如用什麼測試框架、目錄怎麼分）、團隊約定的程式碼風格、常用指令（怎麼跑測試、怎麼建置）、以及明確的邊界（例如「這個目錄的檔案不要動」「資料庫遷移一律要先問過我」）。</p><p>不適合放進去的是：會頻繁變動、容易過時的細節（例如某個功能今天的進度），或是太長、太瑣碎、模型讀了也用不上的資訊——CLAUDE.md 不是專案的百科全書，塞太多反而稀釋了真正重要的規則。好的 CLAUDE.md 應該是「新同事到職第一天，你會口頭交代的那幾件事」的濃縮版：講清楚規矩、講清楚地雷，而不是鉅細靡遺地寫流水帳。可以把它想成隨專案一起進版本控制、隨時間逐步修正的活文件，發現 Claude Code 一直犯同一種錯，通常就是該回頭補一條規則的訊號。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想成新人到職第一天你會交代的事——「我們用 pytest 不是 unittest」「這支腳本是自動產生的別手改」「動資料庫前一定要跟我確認」，講的是規矩和地雷，不是逐行流水帳。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>CLAUDE.md 是放在專案裡、每次啟動都會被讀取的專案記憶檔案</li>
+<li>適合放：技術棧與架構慣例、程式碼風格、常用指令、明確的邊界與禁區</li>
+<li>不適合放：容易過時的進度細節、太長太瑣碎、模型用不上的資訊</li>
+<li>目標是濃縮版的「新同事到職交接」，講清楚規矩與地雷，不是流水帳</li>
+<li>CLAUDE.md 可以隨專案進版本控制，隨時間逐步修正、精煉</li>
+<li>發現 Claude Code 一直重複犯同一種錯，通常代表該補一條規則進 CLAUDE.md</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: CLAUDE.md 最適合拿來放什麼？</div><div class="opt">今天某個功能做到一半的即時進度</div><div class="opt">專案的技術棧、程式碼風格、明確的邊界與禁區</div><div class="opt">跟專案完全無關的個人筆記</div><div class="answer">✅ 專案的技術棧、程式碼風格、明確的邊界與禁區</div></div>
+<div class="qa"><div class="qtext">Q2: 為什麼不建議把太瑣碎、容易過時的細節塞進 CLAUDE.md？</div><div class="opt">因為檔案大小有嚴格上限無法超過</div><div class="opt">會稀釋真正重要的規則，也容易過時失準</div><div class="opt">因為 Claude Code 不會讀取這個檔案</div><div class="answer">✅ 會稀釋真正重要的規則，也容易過時失準</div></div>
+<div class="qa"><div class="qtext">Q3: 發現 Claude Code 一直重複犯同一種錯，比較好的處理方式是？</div><div class="opt">換一個完全不同的工具</div><div class="opt">把對應的規則補進 CLAUDE.md，減少下次重犯的機會</div><div class="opt">什麼都不用做，模型會自己學會</div><div class="answer">✅ 把對應的規則補進 CLAUDE.md，減少下次重犯的機會</div></div></div></div>
+</div></article>
+<article class="lesson" id="L7.4" data-lid="7.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.4"><span>已讀</span></label></div><h3 class="lesson-title">Hooks、Slash Commands 與自動化</h3><div class="lesson-subtitle">把重複的事交給機器</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>除了 CLAUDE.md，Claude Code 還提供兩種讓工作流更順手的機制。Slash commands（斜線指令）是你自己定義的提示範本，把常常重複打的一長串指示存成一個指令，例如打 /review 就自動套用一段「請照這幾個標準審查目前的改動」的完整提示，不用每次重新打字，也能確保團隊裡每個人用的審查標準一致。Hooks（掛鉤）則更進一步，是在特定事件發生時自動觸發的腳本，例如「每次它要執行指令前」「每次它修改完檔案後」，讓你能插入自己的檢查或自動化，不需要每次都口頭提醒它「記得跑一下 linter」。</p><p>兩者分工清楚：slash commands 是「主動觸發」的捷徑，hooks 是「事件自動觸發」的守門員。要用到什麼程度，牽涉 permission（權限）模式的取捨——每個動作都先問過你再執行最安全但最慢；放寬讓它在明確範圍內自主執行能換取速度，但要承擔非預期改動的風險。實務上常見做法是：先從嚴格權限熟悉行為，搭好 hooks 這類防護網後再逐步放寬。</p>
+<div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：一上來就把權限開到最寬、什麼都不用確認，圖一時方便，但如果專案還沒建立起測試、hooks 這類防護網，一次沒預期到的大改動可能要花更久時間收拾。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Slash commands：自訂的提示範本，把常重複的指示存成一個指令，一鍵套用、團隊標準一致</li>
+<li>Hooks：在特定事件（例如指令執行前、檔案修改後）自動觸發的腳本，不用每次口頭提醒</li>
+<li>分工原則：slash commands 是使用者主動觸發的捷徑，hooks 是事件驅動的自動守門員</li>
+<li>Permission 模式是速度與安全的取捨：每步都確認最安全但慢，放寬自主執行換取效率但擔風險</li>
+<li>實務上建議先用較嚴格的權限熟悉行為，累積信任、搭好自動化防護網後再逐步放寬</li>
+<li>這些機制的共同目標：把重複性高、規則明確的事情交給機器，把判斷留給你自己</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 把一長串常重複的審查指示存成一鍵套用的指令，用的是哪個機制？</div><div class="opt">hooks</div><div class="opt">slash commands（斜線指令）</div><div class="opt">CLAUDE.md</div><div class="answer">✅ slash commands（斜線指令）</div></div>
+<div class="qa"><div class="qtext">Q2: 在「每次修改完檔案後自動執行 linter」這種需求上，比較適合用的機制是？</div><div class="opt">slash commands</div><div class="opt">hooks（掛鉤）</div><div class="opt">手動口頭提醒</div><div class="answer">✅ hooks（掛鉤）</div></div>
+<div class="qa"><div class="qtext">Q3: 關於 permission 模式的取捨，下列敘述何者正確？</div><div class="opt">每步都先確認最安全，但速度較慢</div><div class="opt">放寬權限完全沒有任何風險</div><div class="opt">permission 模式與工作速度無關</div><div class="answer">✅ 每步都先確認最安全，但速度較慢</div></div></div></div>
+</div></article>
+</section>
+
+<!-- 模組 M5｜負責模型: Claude Sonnet 5 -->
+<section class="chapter" id="C08"><header class="ch-header"><div class="ch-eyebrow">章節 08</div><h2 class="ch-title">Agent Skills</h2><div class="ch-subtitle">對應官方課程 Introduction to Agent Skills</div><div class="ch-meta">4課 · ⏱ ~18 分鐘</div></header>
+<article class="lesson" id="L8.1" data-lid="8.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.1"><span>已讀</span></label></div><h3 class="lesson-title">什麼是 Skill</h3><div class="lesson-subtitle">漸進式揭露的知識包</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Agent Skill（代理技能）說穿了很簡單：一個資料夾，裡面至少有一份 <code>SKILL.md</code>。它不是工具（tool），不會幫 Claude 多一個「能做的動作」，而是一包<strong>知識與流程</strong>——教 Claude 遇到某種情境時，該怎麼想、按什麼順序做、要注意哪些眉角。你可以把公司的報帳 SOP、品牌文案規範、退款審核流程，通通寫成一個 Skill，讓它變成可以重複使用、可以搬到別的專案的知識包。</p>
+  <p>Skill 真正厲害的地方在於 <strong>progressive disclosure（漸進式揭露）</strong>：Claude 不會一開始就把所有 Skill 的完整內容塞進 context（上下文視窗），那樣太浪費。它分層載入——平常只有每個 Skill 的 name（名稱）和 description（說明）常駐在背景，成本極低；任務看起來用得上時，才讀完整的 <code>SKILL.md</code>；若還帶了腳本、範本、參考文件，等真正動手做的那一刻才會被讀取。</p>
+  <pre class="code">skills/
+└── expense-policy-check/
+    ├── SKILL.md
+    ├── scripts/
+    │   └── check_limit.py
+    └── references/
+        └── policy.md</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像一下：這就像餐廳的菜單設計。平常客人只看得到封面幾道招牌菜的名字和一句話介紹（name/description）；點了某一道，服務生才會去廚房翻出完整食譜（SKILL.md 本文）；真的要現做，才會走進倉庫拿特定食材和器具（資源檔）。你不會叫每個客人先讀完整本廚房手冊才能點餐。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Skill 是資料夾＋<code>SKILL.md</code>，可以額外包含腳本、範本、參考文件等資源檔</li>
+  <li>平常只有 name 與 description 常駐在 context 裡，成本很低</li>
+  <li>只有任務可能用得上時，Claude 才會讀取完整的 SKILL.md 內容</li>
+  <li>更深一層的資源檔（腳本、長文件、範本）等真正需要動手時才會被載入</li>
+  <li>Skill 讓組織的 SOP、風格指南變成可重複使用、可攜帶的知識包</li>
+  <li>跟把所有規則硬塞進 system prompt 不同，Skill 讓平常的 context 保持精簡</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Agent Skill 最基本的組成是什麼？</div><div class="opt">一個資料夾＋SKILL.md 檔案</div><div class="opt">一段很長的 system prompt</div><div class="opt">一支獨立部署的 API 服務</div><div class="answer">✅ 一個資料夾＋SKILL.md 檔案</div></div>
+  <div class="qa"><div class="qtext">Q2: progressive disclosure（漸進式揭露）的用意是什麼？</div><div class="opt">讓所有 Skill 內容一次全部塞進 context</div><div class="opt">依需要分層載入內容，平常只留最精簡的資訊</div><div class="opt">把 Skill 隨機顯示給使用者看</div><div class="answer">✅ 依需要分層載入內容，平常只留最精簡的資訊</div></div>
+  <div class="qa"><div class="qtext">Q3: 下列何者最平常就會常駐在 context 裡？</div><div class="opt">SKILL.md 裡所有資源檔的完整內容</div><div class="opt">Skill 的 name 與 description</div><div class="opt">Skill 資料夾裡所有腳本的原始碼</div><div class="answer">✅ Skill 的 name 與 description</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L8.2" data-lid="8.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.2"><span>已讀</span></label></div><h3 class="lesson-title">SKILL.md 的結構</h3><div class="lesson-subtitle">frontmatter、說明與資源檔</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p><code>SKILL.md</code> 開頭一定是一段 YAML frontmatter（檔案最前面用 <code>---</code> 包起來的中繼資料），至少要有 <strong>name</strong> 和 <strong>description</strong> 兩個欄位。這兩個欄位就是 Skill 平常唯一會被 Claude 看到的部分，所以 description 寫得好不好，直接決定這個 Skill 會不會在對的時機被叫出來。</p>
+  <p>好的 description 不是抽象介紹「這是什麼」，而是具體寫出「什麼情境該用」——用第三人稱描述任務類型、關鍵字、使用者可能問的問題形式。frontmatter 之後就是本文，通常會列操作步驟、注意事項、範例輸出。如果流程需要固定的檢查清單、範本或可執行腳本，就把它們放進同一個資料夾的子目錄（例如 <code>scripts/</code>、<code>references/</code>），在本文裡指示 Claude 什麼時候該去讀或去執行它們。</p>
+  <pre class="code">---
+name: expense-policy-check
+description: 當使用者要核對報帳金額、詢問&lt;差旅&gt;或&lt;交際費&gt;額度上限時使用，檢查是否符合公司報支政策
+---
+
+## 使用時機
+1. 讀取使用者提供的金額與費用類型
+2. 對照 references/policy.md 裡的額度表
+3. 回報是否超標，超標時引用對應政策條款</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：description 只寫「這是一個財務相關的 Skill」，太抽象，Claude 很難判斷什麼時候該打開它。要寫成「當使用者要求…、詢問…、需要核對…時使用」這種具體到會出現在真實提問裡的觸發句。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>SKILL.md 開頭是 YAML frontmatter，至少包含 name 與 description</li>
+  <li>description 是平常唯一常駐的說明文字，寫法要具體到「什麼情境該用」</li>
+  <li>frontmatter 之後的本文放操作步驟、注意事項與範例</li>
+  <li>資源檔（scripts、references、templates）放在同一資料夾的子目錄</li>
+  <li>本文要明確指示 Claude 什麼情況該去讀取或執行哪個資源檔</li>
+  <li>description 用詞越貼近使用者實際會講的話，觸發準確率通常越高</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: SKILL.md 的 frontmatter 至少要包含哪兩個欄位？</div><div class="opt">name 與 description</div><div class="opt">title 與 author</div><div class="opt">version 與 license</div><div class="answer">✅ name 與 description</div></div>
+  <div class="qa"><div class="qtext">Q2: 好的 description 應該怎麼寫？</div><div class="opt">抽象描述這個 Skill 的功能定位</div><div class="opt">具體寫出「什麼情境該用」的觸發條件</div><div class="opt">盡量簡短、用一個詞帶過即可</div><div class="answer">✅ 具體寫出「什麼情境該用」的觸發條件</div></div>
+  <div class="qa"><div class="qtext">Q3: 資源檔（scripts、references、templates）通常放在哪裡？</div><div class="opt">直接寫死在 frontmatter 裡</div><div class="opt">SKILL.md 同一個資料夾下的子目錄</div><div class="opt">完全不需要，都寫進本文就好</div><div class="answer">✅ SKILL.md 同一個資料夾下的子目錄</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L8.3" data-lid="8.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.3 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.3"><span>已讀</span></label></div><h3 class="lesson-title">Skill、Tool、MCP 怎麼選</h3><div class="lesson-subtitle">三種擴充方式的分工</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>這三個名詞常常被混在一起講，但它們各自負責不同層次的事。<strong>Tool（工具）</strong>是單一、明確定義的動作，有輸入輸出的 schema（結構定義），讓 Claude 能真的「做事」——查資料庫、算數字、呼叫某支 API。<strong>MCP（Model Context Protocol）</strong>是一種標準協議，負責把 Claude 用統一的方式「接上」外部系統；一個 MCP server 可以同時提供 tools、resources、prompts，是「怎麼連上東西」的管道，不是動作本身。</p>
+  <p><strong>Skill</strong> 則是知識與流程的封裝，它不執行動作，而是教 Claude 在特定任務裡「該怎麼組合這些工具、按什麼順序、要注意什麼」。三者不是三選一的競爭關係，實務上常常疊在一起：MCP 負責連線與授權，Tool 是連上之後可以呼叫的具體動作，Skill 是那本告訴 Claude 什麼時候該用哪個工具、用完該怎麼收尾的操作手冊。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像做菜：MCP 是把你家廚房接上瓦斯管線和自來水——讓你能連上外部資源；Tool 是瓦斯爐、菜刀這些單一工具本身；Skill 則是那本寫著「三杯雞怎麼做、先炒薑再下九層塔」的食譜，教你怎麼組合工具完成一道菜。少了任何一塊，這頓飯都做不出來。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Tool 負責「執行」，一次呼叫完成一件明確定義的動作</li>
+  <li>MCP 負責「連線」，用標準協議把外部系統的 tools/resources/prompts 接進來</li>
+  <li>Skill 負責「知識與流程」，教 Claude 何時、如何組合工具完成任務</li>
+  <li>三者不是互斥選項，實務上經常疊在一起使用</li>
+  <li>判斷準則：要新增一個「動作」用 Tool；要接一個「外部系統」用 MCP；要沉澱一套「做法」用 Skill</li>
+  <li>換團隊、換專案時，Skill 資料夾通常能直接搬過去複用</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 想讓 Claude 能查詢公司的即時庫存資料庫，最直接該用哪一種擴充方式？</div><div class="opt">定義一個查詢庫存的 Tool（或透過 MCP 提供）</div><div class="opt">寫一個 Skill 說明庫存查詢流程</div><div class="opt">都不需要，直接用一句 prompt 描述就好</div><div class="answer">✅ 定義一個查詢庫存的 Tool（或透過 MCP 提供）</div></div>
+  <div class="qa"><div class="qtext">Q2: MCP 的角色定位比較接近下列哪一個？</div><div class="opt">單一函式呼叫</div><div class="opt">連接外部系統的標準協議管道</div><div class="opt">一份操作手冊</div><div class="answer">✅ 連接外部系統的標準協議管道</div></div>
+  <div class="qa"><div class="qtext">Q3: 「教 Claude 遇到退款申請時該先查訂單、再核對金額、最後才核准」比較適合用什麼方式承載？</div><div class="opt">Tool</div><div class="opt">Skill</div><div class="opt">都不適合，只能寫在使用者訊息裡</div><div class="answer">✅ Skill</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L8.4" data-lid="8.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 8.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="8.4"><span>已讀</span></label></div><h3 class="lesson-title">打造並測試你的第一個 Skill</h3><div class="lesson-subtitle">從想法到可重複使用</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>第一個 Skill 不用想得太宏大，最好的題材就是「你已經反覆手動教過 Claude 好幾次的事」。流程大致是：先挑一個重複出現的任務；接著寫 <code>SKILL.md</code>，description 寫清楚使用情境，本文列出步驟與注意事項；如果流程需要固定範本、檢查清單或可執行腳本，才另外建資源檔——不用一開始就求完整。</p>
+  <p>寫完之後最容易被跳過、卻最重要的一步是<strong>測試觸發</strong>。拿幾種不同措辭的真實提問去試，看 Claude 會不會正確判斷「這時候該打開這個 Skill」；同時也要丟一些看起來相關、但其實不該觸發的問題，確認沒有誤觸發。根據測試結果回頭調整 description 的用詞——通常觸發不準的問題，八成都出在 description 沒寫到使用者實際會用的說法。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像在教新人：你不會把公司十年份的 SOP 一次塞給他背，而是先讓他知道「遇到什麼狀況要翻哪本手冊」，真正用到才去翻開細節。測試 Skill 觸不觸發，就像觀察新人「遇到退款單，有沒有想到要翻退款手冊」，而不是「他能不能把整本手冊背出來」。</div></div>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：只測試「應該觸發」的情境就直接上線，卻沒測「容易誤觸發」的情境。結果 Skill 在不相關的任務裡也被叫出來，反而讓回答變得奇怪、離題，比沒有這個 Skill 之前更糟。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>先挑一個你反覆手動說明的重複性任務當作第一個 Skill 候選</li>
+  <li>description 要涵蓋使用者可能用的多種措辭與情境關鍵字</li>
+  <li>本文用清楚的步驟與注意事項，不必塞入不必要的細節</li>
+  <li>資源檔按實際需要才建立，避免一開始就過度複雜</li>
+  <li>測試要同時包含「該觸發」與「不該觸發」兩種情境</li>
+  <li>依實測結果反覆調整 description，觸發率才會穩定</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 挑選第一個 Skill 題材時，最適合的來源是什麼？</div><div class="opt">隨便找一個從沒做過的任務</div><div class="opt">你反覆手動教 Claude 做的重複性任務</div><div class="opt">公司最複雜、最少人懂的流程</div><div class="answer">✅ 你反覆手動教 Claude 做的重複性任務</div></div>
+  <div class="qa"><div class="qtext">Q2: 測試 Skill 觸發時，除了「應該觸發」的情境，還必須測試什麼？</div><div class="opt">使用者的打字速度</div><div class="opt">「不該觸發」的情境，確認沒有誤觸發</div><div class="opt">SKILL.md 檔案的大小</div><div class="answer">✅ 「不該觸發」的情境，確認沒有誤觸發</div></div>
+  <div class="qa"><div class="qtext">Q3: 如果 Skill 常常該觸發卻沒觸發，最先該調整的通常是什麼？</div><div class="opt">換一個模型</div><div class="opt">description 的用詞與涵蓋的情境關鍵字</div><div class="opt">把整份 SKILL.md 刪掉重寫</div><div class="answer">✅ description 的用詞與涵蓋的情境關鍵字</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C09"><header class="ch-header"><div class="ch-eyebrow">章節 09</div><h2 class="ch-title">Subagents 與多代理架構</h2><div class="ch-subtitle">對應官方課程 Introduction to Subagents</div><div class="ch-meta">4課 · ⏱ ~18 分鐘</div></header>
+<article class="lesson" id="L9.1" data-lid="9.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.1"><span>已讀</span></label></div><h3 class="lesson-title">為什麼需要 subagent</h3><div class="lesson-subtitle">context 隔離與專業分工</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Subagent（子代理）是另一個獨立的 Claude 實例，有自己的 context window（上下文視窗）、自己的 system prompt、自己的工具權限，由主對話（也叫 orchestrator，協調者）在需要時呼叫，去處理某個子任務。乍看之下多一層很麻煩，但它解決的是一個很實際的問題：<strong>context 會被子任務的雜亂過程塞爆</strong>。</p>
+  <p>如果什麼事都在同一個對話裡做——翻十份文件找一句話、試了五次才成功的指令、大量的中間輸出——主對話的 context 很快就被這些「過程垃圾」占滿，模型反而抓不到重點。把子任務丟給 subagent，它在自己的空間裡搞定所有嘗試與失敗，只回傳整理過的結論，主對話因此保持乾淨。除了 context 隔離，subagent 還帶來另外兩個好處：可以<strong>平行</strong>執行多個獨立子任務，不用排隊一件一件做；也可以針對性地給每個 subagent 專屬的角色設定，讓它把一件事做得更專精。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像你是專案經理，手上一個大案子。你不會自己下海查遍每一份文件、自己寫每一行測試——你會把「查資料」交給一個助理、「寫測試」交給另一個，你只要收最後的結論報告，自己的桌面（也就是 context）才不會被一堆草稿淹沒。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Subagent 是有自己 context window、system prompt、工具權限的獨立 Claude 實例</li>
+  <li>最大好處之一是 context 隔離：子任務的雜亂過程不會污染主對話</li>
+  <li>彼此獨立的子任務可以平行派工，不用排隊等</li>
+  <li>針對性的角色設定（窄工具白名單、專屬 system prompt）讓子任務做得更專精</li>
+  <li>主對話（orchestrator）通常只需要看子任務整理過的結論，不用看完整過程</li>
+  <li>不是所有任務都值得拆給 subagent，過於簡單的事直接做可能更快</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: subagent 最主要解決的問題之一是什麼？</div><div class="opt">讓 Claude 變得更便宜</div><div class="opt">context 被子任務的雜亂過程塞爆</div><div class="opt">讓使用者不用打字</div><div class="answer">✅ context 被子任務的雜亂過程塞爆</div></div>
+  <div class="qa"><div class="qtext">Q2: 下列何者是使用 subagent 的合理理由？</div><div class="opt">任務本身很簡單，一句話就能做完</div><div class="opt">任務可以拆成多個獨立子任務，能平行處理</div><div class="opt">想讓回覆看起來比較長</div><div class="answer">✅ 任務可以拆成多個獨立子任務，能平行處理</div></div>
+  <div class="qa"><div class="qtext">Q3: 主對話（orchestrator）通常會收到 subagent 的什麼？</div><div class="opt">完整、未經整理的原始工具輸出</div><div class="opt">整理過的結論與必要資訊</div><div class="opt">什麼都不會收到</div><div class="answer">✅ 整理過的結論與必要資訊</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L9.2" data-lid="9.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.2"><span>已讀</span></label></div><h3 class="lesson-title">定義 subagent</h3><div class="lesson-subtitle">角色、工具與權限邊界</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>定義一個 subagent，通常要交代清楚三件事。第一是<strong>角色與 system prompt</strong>：這個 subagent 是誰、負責什麼範圍、輸出格式的期待是什麼。第二是<strong>工具白名單</strong>：只給它完成任務所必要的工具，沒有列進白名單的工具，就是它做不到的事——這是一個硬性的權限邊界，不是「反正給多一點也沒差」。第三是<strong>觸發描述</strong>：讓 orchestrator 知道什麼情境該指派給它，寫法跟 Skill 的 description 概念很像，要具體到「什麼任務該找它」。</p>
+  <p>工具白名單特別值得認真對待。一個只負責讀程式碼、給審查建議的 subagent，原則上不該擁有能刪除檔案、能執行 <code>git push</code> 的工具——就算它「應該」不會亂用，把危險工具排除在外，本身就是一種防呆設計。</p>
+  <pre class="code">---
+name: code-reviewer
+description: 當使用者要求審查程式碼變更、找出潛在 bug 或風格問題時使用，只做唯讀分析
+tools: Read, Grep, Glob
+model: sonnet
+---
+
+你是一個嚴謹的資深工程師，只做唯讀的程式碼審查，
+不修改任何檔案，發現問題時指出具體行號與原因。</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：把 subagent 的工具權限開得跟主對話一樣寬，等於失去了「權限邊界」這個好處。工具白名單越窄、角色越專一，這個 subagent 犯下高風險錯誤的空間就越小。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>定義 subagent 三要素：角色與 system prompt、工具白名單、觸發描述</li>
+  <li>工具白名單是明確的權限邊界，不是「反正給多一點沒差」</li>
+  <li>觸發描述的寫法和 Skill 類似，要具體到「什麼情境該指派給它」</li>
+  <li>角色越窄、越專一，子任務的品質通常越穩定</li>
+  <li>高風險操作（刪除、部署、金錢相關）的工具權限要格外謹慎</li>
+  <li>subagent 能不能再往下呼叫其他 subagent，要看系統整體的設計</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 定義一個 subagent 通常需要哪三個要素？</div><div class="opt">角色/system prompt、工具白名單、觸發描述</div><div class="opt">顏色、名字、圖示</div><div class="opt">價格、速度、廠牌</div><div class="answer">✅ 角色/system prompt、工具白名單、觸發描述</div></div>
+  <div class="qa"><div class="qtext">Q2: 一個「唯讀程式碼審查」的 subagent，工具白名單原則上不該包含什麼？</div><div class="opt">讀取檔案的工具</div><div class="opt">搜尋程式碼的工具</div><div class="opt">刪除或寫入檔案的工具</div><div class="answer">✅ 刪除或寫入檔案的工具</div></div>
+  <div class="qa"><div class="qtext">Q3: 為什麼工具白名單要盡量收窄而不是給滿？</div><div class="opt">因為工具越多耗電越快</div><div class="opt">因為窄工具白名單就是明確的權限邊界，能降低誤操作風險</div><div class="opt">因為系統規定每個 subagent 最多三個工具</div><div class="answer">✅ 因為窄工具白名單就是明確的權限邊界，能降低誤操作風險</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L9.3" data-lid="9.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.3"><span>已讀</span></label></div><h3 class="lesson-title">Orchestrator 模式</h3><div class="lesson-subtitle">任務分派、平行執行與匯整</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Orchestrator-worker（協調者－工作者）模式大致分三步。第一步，主模型先<strong>規劃</strong>：把一個大任務拆成可以獨立執行的子任務，判斷哪些彼此獨立、可以平行做，哪些有先後依賴、必須照順序來。第二步，把子任務<strong>分派</strong>給對應的 subagent，獨立的部分同時進行，不必排隊等。第三步，也是最容易被省略的一步：主模型要<strong>驗收匯整</strong>——檢查每個 subagent 回報的結果是否合理、彼此有沒有矛盾，再統整成最終要給使用者的答案，而不是把幾份結果直接拼貼轉貼。</p>
+  <p>拆分的粒度也要拿捏：切得太細，光是協調與整合的成本就會超過平行化省下的時間；切得太粗，又會失去平行處理的好處。一般來說，值得拆分的子任務要「夠大、夠獨立」，光是查一個小數字這種事，直接自己做通常比開一個 subagent 快。</p>
+  <pre class="code">任務：分析三個競品的定價頁面
+
+1. 主模型規劃：拆成「分析競品 A」「分析競品 B」「分析競品 C」三個獨立子任務
+2. 平行分派給三個 subagent，各自抓取並整理該競品的定價資料
+3. 主模型驗收：比對三份結果格式是否一致，有沒有明顯矛盾或缺漏
+4. 主模型整合三份結果，寫成一份比較報告回覆使用者</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像一場團體報告：你（主模型）先把題目拆成幾個子題分給組員（subagent），組員各自回來報告，但你不會不看內容就直接把每個人的投影片疊在一起交出去——你要先看過、挑出矛盾的地方、統一格式，這樣才是一份完整報告。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Orchestrator 先規劃拆解任務，判斷子任務的獨立性與依賴順序</li>
+  <li>獨立的子任務平行分派，有依賴關係的子任務照順序處理</li>
+  <li>subagent 各自在自己的 context 裡執行，回傳整理過的結果</li>
+  <li>主模型要做「驗收」：檢查結果是否合理、彼此是否矛盾</li>
+  <li>最終呈現給使用者的答案是主模型整合過的版本，不是子任務結果的直接拼貼</li>
+  <li>拆分粒度要拿捏：太細增加溝通與整合成本，太粗會失去平行化的好處</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Orchestrator-worker 模式的第一步是什麼？</div><div class="opt">直接把整段使用者提問轉給某個 subagent</div><div class="opt">主模型先規劃拆解，判斷任務的獨立性與依賴順序</div><div class="opt">隨機分配任務給任一個 subagent</div><div class="answer">✅ 主模型先規劃拆解，判斷任務的獨立性與依賴順序</div></div>
+  <div class="qa"><div class="qtext">Q2: 主模型收到多個 subagent 的結果後，最重要卻常被忽略的步驟是什麼？</div><div class="opt">立刻轉貼給使用者</div><div class="opt">驗收：檢查結果是否合理、有沒有互相矛盾</div><div class="opt">把結果全部刪掉重做</div><div class="answer">✅ 驗收：檢查結果是否合理、有沒有互相矛盾</div></div>
+  <div class="qa"><div class="qtext">Q3: 什麼樣的子任務適合平行分派？</div><div class="opt">彼此獨立、不依賴對方結果的子任務</div><div class="opt">一定要照嚴格順序才能做的子任務</div><div class="opt">完全一樣的同一個任務重複做三次</div><div class="answer">✅ 彼此獨立、不依賴對方結果的子任務</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L9.4" data-lid="9.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 9.4 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="9.4"><span>已讀</span></label></div><h3 class="lesson-title">多代理的常見陷阱</h3><div class="lesson-subtitle">過度分派、結果失真與驗收</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>多代理架構好用，但也容易踩坑。最常見的是<strong>過度分派</strong>：連查一行程式碼、算一個簡單數字這種事都開一個 subagent，多繞一圈的延遲與成本卻沒換到對應好處。第二個是<strong>結果未驗證就照單全收</strong>：subagent 也是模型，一樣會出錯或產生幻覺（hallucination，講得煞有其事但其實不對），主模型如果不檢查就直接採用，錯誤反而被放大、包裝得更像真的。</p>
+  <p>第三個是 <strong>context 傳遞不完整</strong>：分派任務時只丟了一句指令，沒把「為什麼要做這件事、背景是什麼」一起交代，subagent 做出來的東西方向對，但深度不夠，甚至答非所問。第四個是<strong>成本與延遲失控</strong>：每個 subagent 都是獨立的 context 與 token 消耗，平行開太多、巢狀呼叫（subagent 又呼叫 subagent）疊太深，帳單和等待時間都可能不成比例地暴增。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做的事：把使用者的敏感資料或機密任務不經篩選就丟給一堆 subagent，卻不追蹤誰拿到了什麼資訊，也不驗證最終輸出就直接對外發布。任何牽涉金錢操作、對外發布、刪除資料的最終結果，都必須經過人工或至少主模型明確覆核，才能定案。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>過度分派：小到一行程式碼的事也開 subagent，增加成本與延遲卻沒有實質好處</li>
+  <li>結果未驗證：把 subagent 的輸出當成絕對正確，錯誤會被放大</li>
+  <li>context 傳遞不完整：只丟任務指令、不給背景，容易做出「對但不到位」的結果</li>
+  <li>成本與延遲失控：平行度太高或巢狀呼叫太深，token 消耗與等待時間會迅速膨脹</li>
+  <li>判斷是否值得拆分的準則：任務夠大、夠獨立、夠有平行化空間才值得</li>
+  <li>高風險或對外的最終輸出，一定要有明確的驗收關卡</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 下列哪一種情境最適合直接自己做，不需要開 subagent？</div><div class="opt">只是查一行程式碼的簡單問題</div><div class="opt">需要同時分析五份獨立長文件</div><div class="opt">需要平行呼叫多個外部系統做整合報告</div><div class="answer">✅ 只是查一行程式碼的簡單問題</div></div>
+  <div class="qa"><div class="qtext">Q2: 「context 傳遞不完整」最常導致什麼後果？</div><div class="opt">subagent 完全無法執行</div><div class="opt">subagent 做出方向對但深度不足、甚至答非所問的結果</div><div class="opt">系統會自動報錯</div><div class="answer">✅ subagent 做出方向對但深度不足、甚至答非所問的結果</div></div>
+  <div class="qa"><div class="qtext">Q3: 多代理架構中，成本與延遲最容易在什麼情況下失控？</div><div class="opt">只用一個 subagent 處理單一任務</div><div class="opt">平行度過高或巢狀分派太深</div><div class="opt">完全不使用 subagent</div><div class="answer">✅ 平行度過高或巢狀分派太深</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C10"><header class="ch-header"><div class="ch-eyebrow">章節 10</div><h2 class="ch-title">部署、評估與 AI Fluency</h2><div class="ch-subtitle">把 Claude 帶進正式環境</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L10.1" data-lid="10.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.1"><span>已讀</span></label></div><h3 class="lesson-title">部署選項</h3><div class="lesson-subtitle">Claude API、Amazon Bedrock、Google Vertex AI</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>把 Claude 接進正式產品，主要有三條管道。<strong>Claude API</strong> 是 Anthropic 直接提供的服務，通常最先拿到新模型與新功能，接入方式也最單純。<strong>Amazon Bedrock</strong> 把 Claude 整合進 AWS 生態，如果團隊本來就用 AWS，就能沿用既有的雲端合約、IAM 權限管理與帳務系統，資料處理也留在 AWS 環境內。<strong>Google Vertex AI</strong> 是給 GCP 陣營團隊的對應選項，邏輯類似，一樣能沿用既有的雲端採購關係與權限體系。</p>
+  <p>選哪一條管道，重點不在「哪個 Claude 比較強」——底層模型能力是一致的，差別主要在<strong>怎麼接、資料怎麼流、帳單怎麼算</strong>。實務上要考慮的因素包括：公司既有的雲端合約與採購關係、資料落地與合規要求（資料需不需要留在特定雲端環境或地區）、統一帳務與權限管理是否重要，以及要不要最快拿到新模型或新功能。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像叫車：Claude API 像直接打給計程車行，最直接也最快；Bedrock 或 Vertex AI 像用你已經有的叫車 App 帳戶叫車——車子（模型）一樣，但帳單、發票、里程紀錄都併進你原本熟悉的那套系統。選哪個，看的是你公司的「帳戶」本來開在哪裡。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude API 是 Anthropic 直接提供的管道，通常最快取得新模型與新功能</li>
+  <li>Amazon Bedrock 讓已經在用 AWS 的團隊透過既有帳務、IAM 權限存取 Claude</li>
+  <li>Google Vertex AI 提供給 GCP 陣營團隊類似的整合方式</li>
+  <li>選擇考量：既有雲端合約、資料落地與合規需求、統一帳務與權限管理</li>
+  <li>三種管道底層的模型能力一致，差異主要在接入方式與資料流向</li>
+  <li>沒有絕對最好的選項，要看團隊既有的雲端生態與治理要求</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 哪一個部署管道通常最快拿到 Anthropic 釋出的新模型與新功能？</div><div class="opt">Claude API 直連</div><div class="opt">一定是 Amazon Bedrock</div><div class="opt">一定是 Google Vertex AI</div><div class="answer">✅ Claude API 直連</div></div>
+  <div class="qa"><div class="qtext">Q2: 一家公司原本所有系統都在 AWS 上、希望帳務與權限統一管理，比較適合考慮哪個管道？</div><div class="opt">Claude API 直連</div><div class="opt">Amazon Bedrock</div><div class="opt">都不適合</div><div class="answer">✅ Amazon Bedrock</div></div>
+  <div class="qa"><div class="qtext">Q3: 三種部署管道之間，底層的模型能力有什麼差異？</div><div class="opt">能力完全不同，需要分別評估</div><div class="opt">底層模型能力一致，差異主要在接入方式與資料流向</div><div class="opt">Bedrock 和 Vertex AI 一定比較弱</div><div class="answer">✅ 底層模型能力一致，差異主要在接入方式與資料流向</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L10.2" data-lid="10.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.2"><span>已讀</span></label></div><h3 class="lesson-title">Evals 評估基本功</h3><div class="lesson-subtitle">怎麼知道你的 AI 有沒有變好</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Evals（評估）是把「感覺這次回答得比較好」換成可以重複驗證的具體流程。核心是一份 <strong>golden test set（黃金測試集）</strong>：一組具代表性的輸入與預期結果，用來衡量目前系統的表現。評分方式有很多種，簡單的可以用精確比對或規則式評分；輸出比較開放、難用固定規則量化好壞的情境，可以用 <strong>LLM-as-judge</strong>——另外呼叫一次 Claude，依照你訂的評分標準幫忙打分。</p>
+  <p>Evals 不是做一次就結束的事，而是要持續維護的資產。每次調整 prompt、換模型、改流程，都應該重跑一次評估，這就是<strong>regression test（迴歸測試）</strong>：確認新版本沒有讓原本表現好的案例悄悄變差。實務上，黃金測試集也要隨著使用中發現的真實失敗案例不斷補進去，才能真正貼近實際會遇到的情境，而不是只涵蓋當初設計時想得到的那幾種。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：只憑「感覺這次回答得比較好」就上線新版本。沒有黃金測試集當基準，你根本不知道這次改動是全面進步，還是在某些沒注意到的案例上悄悄變差了。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>黃金測試集是一組具代表性的輸入與預期輸出，作為評估基準</li>
+  <li>評分可以用精確比對／規則，也可以用 LLM-as-judge 處理開放式輸出</li>
+  <li>迴歸測試：每次改動 prompt 或模型，都要重跑一次評估</li>
+  <li>Evals 不是一次性任務，要隨實際使用中發現的失敗案例持續補充</li>
+  <li>目的是把「感覺變好了」換成可以重複驗證的具體指標</li>
+  <li>好的黃金測試集要涵蓋常見情境，也要涵蓋邊界情況與已知的失敗案例</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 黃金測試集（golden test set）的用途是什麼？</div><div class="opt">隨機挑幾筆資料做展示</div><div class="opt">一組具代表性的輸入與預期輸出，作為評估基準</div><div class="opt">只是給主管看的行銷素材</div><div class="answer">✅ 一組具代表性的輸入與預期輸出，作為評估基準</div></div>
+  <div class="qa"><div class="qtext">Q2: 什麼情況比較適合用 LLM-as-judge 而不是規則式精確比對？</div><div class="opt">答案只有唯一正確格式的數字</div><div class="opt">輸出是開放式、難以用固定規則量化好壞的內容</div><div class="opt">完全不需要評估的情境</div><div class="answer">✅ 輸出是開放式、難以用固定規則量化好壞的內容</div></div>
+  <div class="qa"><div class="qtext">Q3: 為什麼每次調整 prompt 或換模型都要重跑迴歸測試？</div><div class="opt">純粹走個流程，沒有實質意義</div><div class="opt">確認新版本沒有讓原本表現好的案例悄悄變差</div><div class="opt">迴歸測試只是為了讓報表好看</div><div class="answer">✅ 確認新版本沒有讓原本表現好的案例悄悄變差</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L10.3" data-lid="10.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.3"><span>已讀</span></label></div><h3 class="lesson-title">AI Fluency 4D 框架</h3><div class="lesson-subtitle">Delegation、Description、Discernment、Diligence</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>AI Fluency（AI 流暢力）4D 框架把「怎麼好好用 AI」拆成四個環環相扣的能力。<strong>Delegation（委派）</strong>：判斷這個任務該交給 AI 做多少、哪些部分該保留人為決策——不是遇到任務就整個丟給 AI。<strong>Description（描述）</strong>：怎麼把任務、脈絡、期待格式講清楚，讓 AI 真正理解你要什麼，這其實就是前面學過的角色、脈絡、任務、格式那一套。</p>
+  <p><strong>Discernment（判斷）</strong>：拿到 AI 的產出後，用專業判斷力評估是否正確、有沒有偏誤或幻覺，而不是照單全收。<strong>Diligence（盡責）</strong>：使用 AI 的人始終對最終結果負責，包括遵守公司政策與法規，對高風險輸出做額外查核。四者缺一不可——委派錯了、描述不清、不做判斷、不負責任，任何一環斷掉，整個流程都會出問題。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像帶一個很快、但沒有社會經驗的實習生：你要決定哪些事讓他自己做、哪些你要親自把關（Delegation）；交辦時要講清楚要什麼（Description）；他交回來的東西你要自己看過、判斷好不好（Discernment）；最後掛你名字送出去的東西，出了錯還是你負責（Diligence）。AI Fluency 講的其實就是這件事。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Delegation：判斷任務該交給 AI 多少、哪些決策該留在人身上</li>
+  <li>Description：清楚描述任務、脈絡與期待格式，AI 才能給出你要的東西</li>
+  <li>Discernment：用專業判斷力檢視 AI 產出，不是照單全收</li>
+  <li>Diligence：使用者對最終結果始終負責，高風險輸出要額外查核</li>
+  <li>四個 D 環環相扣，任何一環做不到位都會拉低整體品質</li>
+  <li>AI Fluency 是一種可以刻意練習的能力，不是天生會或不會</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: AI Fluency 4D 框架中，「判斷該把哪些任務交給 AI、哪些留給人」對應哪一個 D？</div><div class="opt">Delegation</div><div class="opt">Discernment</div><div class="opt">Diligence</div><div class="answer">✅ Delegation</div></div>
+  <div class="qa"><div class="qtext">Q2: 拿到 AI 的產出後，用專業判斷評估正確性、有沒有偏誤，對應哪一個 D？</div><div class="opt">Description</div><div class="opt">Discernment</div><div class="opt">Diligence</div><div class="answer">✅ Discernment</div></div>
+  <div class="qa"><div class="qtext">Q3: 「使用者對最終結果始終負責，高風險輸出要額外查核」對應哪一個 D？</div><div class="opt">Description</div><div class="opt">Discernment</div><div class="opt">Diligence</div><div class="answer">✅ Diligence</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L10.4" data-lid="10.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 10.4 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="10.4"><span>已讀</span></label></div><h3 class="lesson-title">負責任地用 AI</h3><div class="lesson-subtitle">資料、隱私與治理</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>送進 prompt 裡的內容，都要當作「可能被處理」的資料看待。牽涉敏感個資或機密資訊時，先確認資料使用政策，以及所選部署管道（Claude API、Bedrock、Vertex AI）當下的資料保留承諾是否符合規範——各管道細節可能不同，要以官方當下條款為準，不要只憑印象假設。治理面同樣重要：團隊要有清楚的使用規範；高風險或不可逆的操作（金錢、對外發布、刪除資料）要設人工核准關卡；也要保留紀錄與稽核軌跡，方便回溯是誰、何時讓 AI 做了什麼。</p>
+  <p>走到這裡，這門課也接近尾聲了。從 CH01 認識 Claude 開始，一路走過 Prompt Engineering、API、Tool Use、MCP、Claude Code，再到這三章的 Agent Skills、Subagents、部署與 AI Fluency——這些能力是一層層疊上去的：先學會把話講清楚，才有辦法把任務交代給工具、Skill、subagent。找一個手邊真實的任務，把學到的東西串起來動手做，是鞏固所學最快的方式。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：把客戶個資、商業機密或受法規保護的敏感資料，未經確認資料處理政策就貼進 prompt，或串接進沒有審查過的第三方 Skill、MCP server。資料一旦送出去，很難假設「反正沒事」，一定要先確認清楚再動作。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>送進 prompt 的內容都要當作「可能被處理」的資料，先確認清楚資料使用政策</li>
+  <li>不同部署管道的資料保留與使用承諾可能不同，以官方當下條款為準</li>
+  <li>高風險、不可逆的操作要設人工核准關卡，不能讓 AI 全自動執行</li>
+  <li>治理需要清楚的使用規範，讓團隊知道什麼能問、什麼不能問</li>
+  <li>保留紀錄與稽核軌跡，方便回溯輸入、輸出與決策過程</li>
+  <li>從認識 Claude 到部署與 AI Fluency，這條路徑的能力一層層疊上去，找一個真實任務動手練習最能鞏固所學</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 使用者把敏感個資貼進 prompt 前，最應該先做什麼？</div><div class="opt">先確認資料使用政策與所選部署管道是否符合規範</div><div class="opt">不用想太多，先貼再說</div><div class="opt">只要用中文寫就不算資料外洩</div><div class="answer">✅ 先確認資料使用政策與所選部署管道是否符合規範</div></div>
+  <div class="qa"><div class="qtext">Q2: 對於金錢操作、對外發布這類高風險且不可逆的動作，治理上應該怎麼處理？</div><div class="opt">讓 AI 全自動執行，效率最高</div><div class="opt">設人工核准關卡，不能讓 AI 全自動完成</div><div class="opt">完全不用紀錄，事後想不起來也沒關係</div><div class="answer">✅ 設人工核准關卡，不能讓 AI 全自動完成</div></div>
+  <div class="qa"><div class="qtext">Q3: 為什麼要保留 AI 使用的紀錄與稽核軌跡？</div><div class="opt">純粹增加系統負擔</div><div class="opt">方便回溯輸入、輸出與決策過程</div><div class="opt">沒有實際用途</div><div class="answer">✅ 方便回溯輸入、輸出與決策過程</div></div>
+</div></div>
+</div></article>
+</section>
+
+    <div class="search-empty" id="search-empty" style="display:none;">沒有符合的課程。試試其他關鍵字。</div>
+  </main>
+</div>
+<!-- ===== M2: 互動層｜Claude Opus 4.8 ===== -->
+<script>
+// 模組 M2｜負責模型: Claude Opus 4.8
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------------
+  // localStorage keys（DOM 契約，M8 整合時不得變動）
+  // ---------------------------------------------------------------------------
+  var STORAGE_KEY = "claude_academy_progress_v1";
+  var OPEN_KEY = "claude_academy_open_chapters_v1";
+
+  // ---------------------------------------------------------------------------
+  // 安全儲存層
+  //   Safari 私密模式下 localStorage 的存取（甚至只是讀取）可能 throw；
+  //   內容也可能被外部污染成損毀 JSON。任何一種情況都不能讓整段 script 掛掉，
+  //   而是「退化為記憶體內運作」：功能照常，只是重整後不保存。
+  //   我們用一次性探測決定 storage 是否可用，之後所有讀寫都走這層封裝。
+  // ---------------------------------------------------------------------------
+  var storageOK = (function probe() {
+    try {
+      var k = "__academy_probe__";
+      window.localStorage.setItem(k, "1");
+      window.localStorage.removeItem(k);
+      return true;
+    } catch (e) {
+      // SecurityError / QuotaExceededError / localStorage 為 undefined 皆歸此
+      return false;
+    }
+  })();
+
+  function loadJSON(key) {
+    // 回傳一個「乾淨的物件」。任何失敗（storage 不可用、值為 null、
+    // JSON.parse throw、parse 出來不是物件）都退化成 {}，絕不 throw。
+    if (!storageOK) return {};
+    try {
+      var raw = window.localStorage.getItem(key);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      // 防禦：損毀資料可能 parse 成陣列、字串、null。只接受純物件。
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return parsed;
+      }
+      return {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveJSON(key, value) {
+    // storage 不可用時靜默略過（記憶體內的 state 仍是唯一真實來源）。
+    if (!storageOK) return;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      // 寫入期間才失敗（如配額）→ 當作記憶體模式，往後不再嘗試以免噪音。
+      storageOK = false;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 記憶體內 state（storage 只是它的鏡像，不是它的來源）
+  // ---------------------------------------------------------------------------
+  var progress = loadJSON(STORAGE_KEY); // { "5.1": true, ... }
+  var openChapters = loadJSON(OPEN_KEY); // { "05": true, ... }
+
+  // totalLessons 一律由 DOM 推導，永不寫死（強化要求 1）。
+  // 用函式包裝以便測試鉤子能在 DOM 變動後重新計算。
+  function countLessons() {
+    return document.querySelectorAll(".progress-check").length;
+  }
+  var totalLessons = countLessons();
+
+  // ---------------------------------------------------------------------------
+  // 章節折疊：狀態記憶 + 點擊切換
+  //   缺少 nav 時（M8 尚未生成 sidebar）整個功能靜默停用，不報錯。
+  // ---------------------------------------------------------------------------
+  var navChapters = document.querySelectorAll(".nav-chapter");
+
+  navChapters.forEach(function (ch) {
+    // 還原記憶狀態；data-ch 缺失時以空字串當 key，不會 throw。
+    if (openChapters[ch.dataset.ch]) ch.dataset.open = "true";
+  });
+
+  document.querySelectorAll(".nav-ch-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var ch = btn.parentElement;
+      if (!ch) return; // 防禦：理論上 toggle 一定有父層，但不假設
+      var isOpen = ch.dataset.open === "true";
+      var next = !isOpen;
+      ch.dataset.open = next ? "true" : "false";
+      btn.setAttribute("aria-expanded", String(next));
+      openChapters[ch.dataset.ch] = next;
+      saveJSON(OPEN_KEY, openChapters);
+    });
+  });
+
+  // 讓某課所屬章節展開（供 hash 導航使用）。
+  // data-ch 是零補位（"05"）而 data-lid 章節段不是（"5.1"），兩者不能直接前綴比對，
+  // 因此改以「哪個 nav-chapter 內含此 lesson 連結」來反查，最可靠。
+  function expandChapterForLid(lid) {
+    var linkSelector = '.nav-lessons a[data-lid="' + cssAttr(lid) + '"]';
+    navChapters.forEach(function (ch) {
+      if (ch.querySelector(linkSelector)) {
+        ch.dataset.open = "true";
+        var btn = ch.querySelector(".nav-ch-toggle");
+        if (btn) btn.setAttribute("aria-expanded", "true");
+        if (ch.dataset.ch) openChapters[ch.dataset.ch] = true;
+      }
+    });
+    saveJSON(OPEN_KEY, openChapters);
+  }
+
+  // 轉義屬性選擇器中的引號類字元，避免像含引號的 lid 破壞選擇器。
+  function cssAttr(v) {
+    return String(v).replace(/["\\]/g, "\\$&");
+  }
+
+  // ---------------------------------------------------------------------------
+  // 進度：單一 applyProgress() 收斂（強化要求 6）
+  //   checkbox / article.done / nav a.done / 進度條與計數，
+  //   任何路徑（初始化、勾選、測試鉤子）都只透過這裡刷新，四者絕不失同步。
+  // ---------------------------------------------------------------------------
+  var progressCountEl = document.getElementById("progress-count");
+  var progressBarEl = document.getElementById("progress-bar-fill");
+
+  function applyProgress() {
+    var count = 0;
+    document.querySelectorAll(".progress-check").forEach(function (cb) {
+      var lid = cb.dataset.lid;
+      var done = !!progress[lid];
+      cb.checked = done;
+
+      // 用 getElementById 而非 querySelector：id 形如 "L5.1" 含點，
+      // 當成 CSS 選擇器會被誤解析為 class，getElementById 則按字面比對。
+      var article = document.getElementById("L" + lid);
+      if (article) article.classList.toggle("done", done);
+
+      var link = document.querySelector(
+        '.nav-lessons a[data-lid="' + cssAttr(lid) + '"]'
+      );
+      if (link) link.classList.toggle("done", done);
+
+      if (done) count++;
+    });
+
+    // UI 元素可能缺席（整合前）：各自 guard，缺哪個就停用哪個，不連坐。
+    if (progressCountEl) progressCountEl.textContent = String(count);
+    if (progressBarEl) {
+      var pct = totalLessons > 0 ? (count / totalLessons) * 100 : 0;
+      progressBarEl.style.width = pct + "%";
+    }
+    return count;
+  }
+
+  applyProgress();
+
+  document.querySelectorAll(".progress-check").forEach(function (cb) {
+    cb.addEventListener("change", function () {
+      var lid = cb.dataset.lid;
+      if (cb.checked) progress[lid] = true;
+      else delete progress[lid];
+      saveJSON(STORAGE_KEY, progress);
+      applyProgress(); // 收斂：不手動改 UI，一律走單一入口
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 全文即時搜尋：debounce ~120ms + IME 組字保護（強化要求 4）
+  //   組字（compositionstart→end）期間注音/拼音的中間態會連續觸發 input，
+  //   若照跑會過濾到一堆殘缺字。故組字期間完全跳過，compositionend 後補跑一次。
+  // ---------------------------------------------------------------------------
+  var searchInput = document.getElementById("search");
+  var searchEmpty = document.getElementById("search-empty");
+
+  if (searchInput) {
+    var composing = false;
+    var debounceTimer = null;
+
+    function runFilter() {
+      var q = searchInput.value.trim().toLowerCase();
+      var anyMatch = false;
+
+      document.querySelectorAll(".chapter").forEach(function (chSec) {
+        var chMatch = false;
+        chSec.querySelectorAll(".lesson").forEach(function (les) {
+          if (!q) {
+            // 空查詢 = 全部還原可見
+            les.classList.remove("hidden");
+            chMatch = true;
+            return;
+          }
+          var match = les.textContent.toLowerCase().indexOf(q) !== -1;
+          les.classList.toggle("hidden", !match);
+          if (match) chMatch = true;
+        });
+        // 章節沒有任何命中課程時整章收起（僅在有查詢字時）
+        chSec.classList.toggle("hidden", !!q && !chMatch);
+        if (chMatch) anyMatch = true;
+      });
+
+      // #search-empty 可能不存在 → guard
+      if (searchEmpty) {
+        searchEmpty.style.display = q && !anyMatch ? "block" : "none";
+      }
+    }
+
+    function scheduleFilter() {
+      if (composing) return; // 組字中：一律不過濾
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(runFilter, 120);
+    }
+
+    searchInput.addEventListener("input", scheduleFilter);
+    searchInput.addEventListener("compositionstart", function () {
+      composing = true;
+    });
+    searchInput.addEventListener("compositionend", function () {
+      composing = false;
+      // 組字結束才是「一個完整字」落定，立即補跑一次（不等 debounce，體感較跟手）
+      if (debounceTimer) clearTimeout(debounceTimer);
+      runFilter();
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 導航：hash 解析與捲動（強化要求 3、5）
+  // ---------------------------------------------------------------------------
+  // 是否偏好減少動態：respect prefers-reduced-motion，關閉 smooth。
+  var prefersReduced = (function () {
+    try {
+      return (
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    } catch (e) {
+      return false;
+    }
+  })();
+
+  // 從 hash 解析出「有效」的 lid，否則回 null。
+  //   有效 = 形如 #L{章}.{課} 且該課實際存在於 DOM。
+  //   #L99.9（格式對但不存在）、#foo、#、空字串 → 一律 null（靜默忽略）。
+  function lidFromHash(hash) {
+    if (!hash || hash.charAt(0) !== "#") return null;
+    var m = /^#L(\d+\.\d+)$/.exec(hash);
+    if (!m) return null;
+    var lid = m[1];
+    // 以元素存在與否作為最終真值來源，而非只信正則
+    if (!document.getElementById("L" + lid)) return null;
+    return lid;
+  }
+
+  function markActiveNav(lid) {
+    var links = document.querySelectorAll(".nav-lessons a");
+    links.forEach(function (x) {
+      x.classList.remove("active");
+    });
+    if (lid == null) return;
+    var active = document.querySelector(
+      '.nav-lessons a[data-lid="' + cssAttr(lid) + '"]'
+    );
+    if (active) active.classList.add("active");
+  }
+
+  // 導航到某 lid：展開章節 → 標記 nav → 捲動。smooth 可切換（初載入通常不 smooth）。
+  function navigateToLid(lid, smooth) {
+    if (lid == null) return;
+    expandChapterForLid(lid);
+    markActiveNav(lid);
+    var el = document.getElementById("L" + lid);
+    if (!el) return;
+    var behavior = !smooth || prefersReduced ? "auto" : "smooth";
+    // 章節剛展開會改變版面高度，用 rAF 等一次重排後再捲動，落點才準確。
+    requestAnimationFrame(function () {
+      try {
+        el.scrollIntoView({ behavior: behavior, block: "start" });
+      } catch (e) {
+        // 舊版瀏覽器不支援物件參數 → 退回無參數版本
+        el.scrollIntoView();
+      }
+    });
+  }
+
+  // nav 連結點擊：平滑捲動 + pushState + active 標記（強化要求，等價參考頁）
+  document.querySelectorAll(".nav-lessons a").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var href = a.getAttribute("href");
+      if (!href) return;
+      var lid = lidFromHash(href);
+      if (lid == null) return; // 指向不存在的課 → 交回瀏覽器預設，不攔截
+      e.preventDefault();
+      // 先更新網址（pushState 不觸發 hashchange，故手動接續導航）
+      try {
+        history.pushState(null, "", href);
+      } catch (err) {
+        // 某些沙箱/file:// 下 pushState 可能受限 → 退回直接設 hash
+        location.hash = href;
+      }
+      navigateToLid(lid, true);
+    });
+  });
+
+  // 使用者手動改網址列 / 上一頁下一頁 → hashchange
+  window.addEventListener("hashchange", function () {
+    var lid = lidFromHash(location.hash);
+    if (lid == null) {
+      markActiveNav(null); // 導到無效 hash：清掉 active，但不跳動、不報錯
+      return;
+    }
+    navigateToLid(lid, true);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 初始狀態
+  // ---------------------------------------------------------------------------
+  (function initEntry() {
+    var lid = lidFromHash(location.hash);
+    if (lid != null) {
+      // 有效初始 hash：展開對應章節 + 捲動 + 標記（初載入用瞬間捲動，不搶戲）
+      navigateToLid(lid, false);
+      return;
+    }
+    // 無有效 hash 且沒有任何記憶的展開狀態 → 首次進站展開第一章
+    if (Object.keys(openChapters).length === 0) {
+      var first = document.querySelector(".nav-chapter");
+      if (first) {
+        first.dataset.open = "true";
+        var btn = first.querySelector(".nav-ch-toggle");
+        if (btn) btn.setAttribute("aria-expanded", "true");
+        if (first.dataset.ch) openChapters[first.dataset.ch] = true;
+        saveJSON(OPEN_KEY, openChapters);
+      }
+    }
+  })();
+
+  // ---------------------------------------------------------------------------
+  // 選配測試鉤子：唯讀狀態存取 + 重新計算（不洩漏可寫入的內部參考）
+  // ---------------------------------------------------------------------------
+  try {
+    Object.defineProperty(window, "__academy", {
+      value: Object.freeze({
+        // 重新推導 totalLessons 並刷新 UI（DOM 動態變動後可呼叫）
+        recount: function () {
+          totalLessons = countLessons();
+          return applyProgress();
+        },
+        // 進度狀態唯讀快照（複製，外部改動不影響內部 state）
+        get progress() {
+          return Object.assign({}, progress);
+        },
+        get totalLessons() {
+          return totalLessons;
+        },
+        get storageAvailable() {
+          return storageOK;
+        }
+      }),
+      writable: false,
+      configurable: false
+    });
+  } catch (e) {
+    // window 唯讀或屬性已存在時，測試鉤子失敗不影響任何正式功能
+  }
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+/* 模組 M1｜負責模型: Claude Sonnet 5 */
+
+/* ===== CSS 變數定義 ===== */
+:root {
+  --bg: #f0eee6;
+  --bg-tint: #e8e4d8;
+  --paper: #faf9f5;
+  --ink: #1a1410;
+  --ink-soft: #4a3f33;
+  --ink-faint: #8a7a66;
+  --accent: #c96442;
+  --accent-soft: #d97757;
+  --rule: #ddd7c6;
+  --code-bg: #2b1f19;
+  --code-fg: #f2e9db;
+  --sidebar-w: 320px;
+  --max-read: 720px;
+}
+/* ===== 基礎重置與排版 ===== */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif;
+  background: var(--bg); color: var(--ink);
+  line-height: 1.85; font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+/* ===== 版面骨架 ===== */
+.app { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+
+/* ===== Sidebar（導航面板） ===== */
+aside.sidebar {
+  background: var(--bg-tint);
+  border-right: 1px solid var(--rule);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 32px 24px 60px;
+  min-width: 0;
+}
+.brand {
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif;
+  font-weight: 900; font-size: 22px;
+  letter-spacing: -0.01em; line-height: 1.2;
+  color: var(--ink); margin-bottom: 4px;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.brand-sub {
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12px;
+  color: var(--ink-faint); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 24px;
+  overflow-wrap: break-word;
+}
+.search input {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 2px; font: inherit; font-size: 14px;
+  color: var(--ink); outline: none; transition: border-color .15s;
+}
+.search input:focus { border-color: var(--accent); }
+.search { margin-bottom: 20px; }
+.progress-summary {
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12px;
+  color: var(--ink-faint); margin-bottom: 8px;
+  display: flex; justify-content: space-between;
+}
+.progress-bar { height: 3px; background: var(--rule); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
+.progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width .3s ease; }
+nav.toc { margin-top: 8px; }
+.nav-chapter { margin-bottom: 4px; }
+.nav-ch-toggle {
+  width: 100%; text-align: left; background: transparent; border: 0;
+  padding: 8px 4px; cursor: pointer; font: inherit;
+  display: flex; align-items: baseline; gap: 8px;
+  color: var(--ink); font-family: "Noto Sans TC", system-ui, sans-serif;
+  font-size: 13px; font-weight: 700;
+}
+.nav-ch-toggle:hover { color: var(--accent); }
+.nav-ch-toggle .ch-num { color: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+.nav-ch-toggle .ch-title { flex: 1; overflow-wrap: break-word; word-break: break-word; }
+.nav-ch-toggle .ch-arrow { font-size: 10px; color: var(--ink-faint); transition: transform .2s; }
+.nav-chapter[data-open="true"] .ch-arrow { transform: rotate(90deg); }
+.nav-lessons {
+  list-style: none; padding: 0 0 0 18px; margin: 4px 0 12px;
+  display: none; border-left: 1px solid var(--rule);
+}
+.nav-chapter[data-open="true"] .nav-lessons { display: block; }
+.nav-lessons li { margin: 2px 0; }
+.nav-lessons a {
+  display: block; padding: 4px 8px;
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12.5px; line-height: 1.45;
+  color: var(--ink-soft); text-decoration: none;
+  border-radius: 2px; transition: background .12s, color .12s;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.nav-lessons a:hover { background: var(--paper); color: var(--accent); }
+.nav-lessons a.done::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+.nav-lessons .lnum { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--ink-faint); width: 30px; }
+
+/* ===== 主要內容區與章節 ===== */
+main.content { padding: 60px 64px 120px; max-width: calc(var(--max-read) + 200px); margin: 0 auto; min-width: 0; }
+.hero { margin-bottom: 80px; padding-bottom: 40px; border-bottom: 4px double var(--rule); }
+.hero-eyebrow {
+  font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 11px; letter-spacing: 0.3em;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 900;
+  font-size: 64px; line-height: 1.05; letter-spacing: -0.02em;
+  margin: 0 0 16px;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.hero-lede { font-size: 22px; line-height: 1.55; color: var(--ink-soft); font-style: italic; max-width: 600px; margin-bottom: 24px; }
+.hero-meta { font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 13px; color: var(--ink-faint); letter-spacing: 0.05em; display: flex; gap: 24px; flex-wrap: wrap; }
+.hero-meta strong { color: var(--accent); font-weight: 700; }
+section.chapter { margin: 80px 0 0; }
+.ch-header { margin-bottom: 60px; padding: 48px 0 40px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); text-align: center; }
+.ch-eyebrow { font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.ch-header .ch-title { font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 900; font-size: 44px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.01em; overflow-wrap: break-word; word-break: break-word; }
+.ch-header .ch-subtitle { font-size: 17px; color: var(--ink-soft); font-style: italic; max-width: 600px; margin: 0 auto 16px; overflow-wrap: break-word; }
+.ch-header .ch-meta { font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 12px; color: var(--ink-faint); letter-spacing: 0.15em; }
+article.lesson { max-width: var(--max-read); margin: 0 auto 80px; background: var(--paper); padding: 48px 56px; border: 1px solid var(--rule); box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.04); position: relative; }
+.lesson-header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+.lesson-meta-row { display: flex; align-items: center; gap: 16px; font-family: "Noto Sans TC", system-ui, sans-serif; font-size: 11.5px; color: var(--ink-faint); letter-spacing: 0.1em; margin-bottom: 12px; text-transform: uppercase; flex-wrap: wrap; }
+.lesson-num { color: var(--accent); font-weight: 700; }
+.progress-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; text-transform: none; letter-spacing: 0; font-size: 12px; }
+.progress-toggle input { cursor: pointer; accent-color: var(--accent); }
+.lesson-title { font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 900; font-size: 36px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.015em; overflow-wrap: break-word; word-break: break-word; }
+.lesson.done .lesson-title::after { content: " ✓"; color: var(--accent); font-size: 24px; }
+.lesson-subtitle { font-size: 17px; color: var(--ink-soft); font-style: italic; overflow-wrap: break-word; }
+
+/* ===== 課文元件（提示、列表、Q&A、程式碼） ===== */
+.lesson-section { margin: 36px 0; }
+.section-title { font-family: "Noto Sans TC", system-ui, sans-serif; font-weight: 700; font-size: 12px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.section-body p { margin: 0 0 1.2em; overflow-wrap: break-word; }
+.hint { display: flex; gap: 16px; background: var(--bg-tint); border-left: 4px solid var(--accent); padding: 20px 24px; margin: 24px 0; border-radius: 2px; }
+.hint.warn { border-left-color: #d97706; }
+.hint.stop { border-left-color: #dc2626; }
+.hint-icon { font-size: 22px; line-height: 1.4; }
+.hint-body { flex: 1; font-style: italic; color: var(--ink-soft); overflow-wrap: break-word; }
+ul.bullets { list-style: none; padding: 0; margin: 16px 0; }
+ul.bullets li { position: relative; padding: 6px 0 6px 24px; border-bottom: 1px dotted var(--rule); overflow-wrap: break-word; }
+ul.bullets li:last-child { border-bottom: 0; }
+ul.bullets li::before { content: "—"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+ul.bullets .sub { font-size: 14.5px; color: var(--ink-faint); padding-left: 16px; margin-top: 4px; }
+ul.bullets .answer { font-size: 14.5px; color: var(--accent); padding-left: 16px; margin-top: 4px; font-weight: 700; }
+.qa { background: rgba(0,0,0,0.03); border: 1px solid var(--rule); padding: 18px 22px; margin: 16px 0; border-radius: 2px; }
+.qa .qtext { font-weight: 700; margin-bottom: 8px; overflow-wrap: break-word; }
+.qa .opt { padding: 4px 0 4px 18px; position: relative; font-size: 15px; color: var(--ink-soft); overflow-wrap: break-word; }
+.qa .opt::before { content: "○"; position: absolute; left: 0; color: var(--ink-faint); font-size: 11px; top: 8px; }
+.qa .answer { color: var(--accent); font-weight: 700; margin-top: 8px; padding-left: 18px; overflow-wrap: break-word; }
+pre.code { background: var(--code-bg); color: var(--code-fg); padding: 18px 22px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; margin: 16px 0; border-radius: 2px; }
+.subhead { font-family: "Noto Serif TC", Georgia, "Times New Roman", serif; font-weight: 700; font-size: 20px; margin: 24px 0 12px; color: var(--ink); overflow-wrap: break-word; }
+.lesson.hidden, .chapter.hidden { display: none; }
+.search-empty { text-align: center; color: var(--ink-faint); font-style: italic; padding: 80px 20px; }
+
+/* ===== 響應式設計（RWD） ===== */
+/* RWD：≤900px 時 sidebar 轉為頁面頂部區塊（非 sticky、不佔滿高），內文轉為單欄可讀寬度 */
+@media (max-width: 900px) {
+  .app { display: block; }
+  aside.sidebar {
+    position: static;
+    height: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  main.content { padding: 32px 20px 80px; max-width: 100%; }
+  article.lesson { padding: 28px 22px; }
+  .hero h1 { font-size: 40px; }
+  .hero-lede { font-size: 18px; }
+  .ch-header .ch-title { font-size: 32px; }
+  .lesson-title { font-size: 28px; }
+}
+
+/* 邊界情況：長標題／長字串在窄螢幕不破版 */
+@media (max-width: 480px) {
+  .hero h1 { font-size: 32px; }
+  .lesson-title { font-size: 24px; }
+  .ch-header .ch-title { font-size: 26px; }
+}
+
+/* 邊界情況：使用者開啟「減少動態效果」時，關閉所有 smooth 動畫與 transition */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+}

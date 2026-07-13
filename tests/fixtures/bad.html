@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head><meta charset="UTF-8"><title>Fixture: bad</title></head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="search"><input type="search" id="search" placeholder="搜尋課程內容..." autocomplete="off"></div>
+    <div class="progress-summary"><span>學習進度</span><span><span id="progress-count">0</span> / 40</span></div>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
+    <nav class="toc">
+      <div class="nav-chapter" data-ch="01"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH01</span><span class="ch-title">認識 Claude</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+        <li><a href="#L1.1" data-lid="1.1"><span class="lnum">1.1</span> Claude 是什麼</a></li>
+        <li><a href="#L1.2" data-lid="1.2"><span class="lnum">1.2</span> Claude 能做什麼</a></li>
+      </ul></div>
+      <div class="nav-chapter" data-ch="02"><button class="nav-ch-toggle" type="button" aria-expanded="false"><span class="ch-num">CH02</span><span class="ch-title">Prompt Engineering 基礎</span><span class="ch-arrow">▸</span></button><ul class="nav-lessons">
+        <li><a href="#L2.1" data-lid="2.1"><span class="lnum">2.1</span> 好 Prompt 的解剖學</a></li>
+      </ul></div>
+    </nav>
+    <div class="search-empty hidden" id="search-empty">找不到符合的課程內容</div>
+  </aside>
+  <main class="content">
+    <section class="chapter" id="C01"><header class="ch-header"><div class="ch-eyebrow">章節 01</div><h2 class="ch-title">認識 Claude</h2><div class="ch-subtitle">從模型家族到安全理念</div><div class="ch-meta">2課 · ⏱ ~8 分鐘</div></header>
+<article class="lesson" id="L1.1" data-lid="1.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.1"><span>已讀</span></label></div><h3 class="lesson-title">Claude 是什麼</h3><div class="lesson-subtitle">Anthropic 與 Claude 模型家族總覽</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude 是 Anthropic 推出的大型語言模型家族。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Claude 想成一位讀過很多書的助理。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude 是哪家公司推出的？</div><div class="opt">OpenAI</div><div class="opt">Anthropic</div><div class="opt">Google</div><div class="answer">✅ Anthropic</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.2" data-lid="1.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.2 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.2"><span>已讀</span></label></div><h3 class="lesson-title">Claude 能做什麼</h3><div class="lesson-subtitle">從對話、分析、寫程式到 Agent</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude 能做的事情很多，從對話、分析到寫程式都可以。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">不要以為 Claude 什麼都懂，重要決策仍要人類覆核。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude 可以對話、分析、寫程式</li>
+  <li>也能作為 Agent 執行多步驟任務</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 下列何者不是 Claude 的常見用途？</div><div class="opt">寫程式</div><div class="opt">分析文件</div><div class="opt">泡咖啡</div><div class="answer">✅ 親自泡咖啡給你喝</div></div>
+</div></div>
+</div></article>
+</section>
+    <section class="chapter" id="C02"><header class="ch-header"><div class="ch-eyebrow">章節 02</div><h2 class="ch-title">Prompt Engineering 基礎</h2><div class="ch-subtitle">把話說清楚是一種技術</div><div class="ch-meta">1課 · ⏱ ~4 分鐘</div></header>
+<article class="lesson" id="L2.1" data-lid="2.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.1"><span>已讀</span></label></div><h3 class="lesson-title">好 Prompt 的解剖學</h3><div class="lesson-subtitle">角色、脈絡、任務、格式</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>一個好的 prompt 通常包含角色、脈絡、任務與格式四個要素。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 prompt 想成給新同事的交辦說明。</div></div>
+  <pre class="code">範例結構：
+<role>你是一位資深行銷顧問</role>
+<task>幫我寫一封開發信</task></pre>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>角色設定讓 Claude 知道用什麼口吻回答</li>
+  <li>脈絡與任務要講清楚</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 好 prompt 的四個要素不包含下列何者？</div><div class="opt">角色</div><div class="opt">脈絡</div><div class="opt">價格</div><div class="answer">✅ 價格</div></div>
+</div></div>
+</div></article>
+</section>
+  </main>
+</div>
+</body>
+</html>

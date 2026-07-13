@@ -1,0 +1,208 @@
+<!-- 模組 M4｜負責模型: Claude Sonnet 5 -->
+<section class="chapter" id="C05"><header class="ch-header"><div class="ch-eyebrow">章節 05</div><h2 class="ch-title">MCP 入門</h2><div class="ch-subtitle">對應官方課程 Introduction to Model Context Protocol</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L5.1" data-lid="5.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.1"><span>已讀</span></label></div><h3 class="lesson-title">為什麼需要 MCP</h3><div class="lesson-subtitle">N×M 整合問題</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>在 MCP（Model Context Protocol，模型情境協定）出現之前，如果你想讓 Claude 讀你的 Google Drive、查你的資料庫、又順便叫 Slack 發訊息，每一個都要各家自己寫一套串接邏輯。假設你有 M 個 AI 應用（Claude Desktop、Claude Code、其他 agent 框架⋯），又想接 N 個外部系統（GitHub、Notion、資料庫、內部 API⋯），沒有共同協定的世界裡，你得寫 M×N 種客製整合，任何一邊變動，整條線都要重接。這就是所謂的「N×M 整合問題」。</p><p>MCP 的想法很單純：定義一套所有人都遵守的協定，讓「應用端」和「工具端」各自只需要對協定講一次話，不用互相遷就。這樣一來，整合數量從 M×N 降成 M+N——每個應用寫一次 MCP client、每個系統寫一次 MCP server，就能任意組合，不用再為每一對關係各寫一份客製程式。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">USB-C 比喻：在有 USB-C 之前，每台筆電、每支手機、每個充電器都有自己的接頭；現在只要一種接頭，任何裝置接任何線都能用。MCP 對 AI 應用和外部工具的關係，就像 USB-C 對硬體裝置的關係。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>沒有共同協定時，M 個應用 × N 個系統 = M×N 種客製整合，維護成本隨兩邊成長而爆炸</li>
+<li>MCP（Model Context Protocol，模型情境協定）是 Anthropic 提出、開放的協定標準</li>
+<li>有了 MCP，整合量從 M×N 降成 M+N：應用寫一次 client、系統寫一次 server</li>
+<li>常被比喻成「AI 應用的 USB-C」：統一的接頭，任何相容裝置都能接上</li>
+<li>對工具開發者來說，寫一個 MCP server 就能被所有支援 MCP 的應用重複使用</li>
+<li>對應用開發者來說，接上 MCP client 就能瞬間取用整個生態系已經寫好的 server</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: MCP 主要想解決的問題是什麼？</div><div class="opt">讓模型的回答變得更聰明</div><div class="opt">AI 應用與外部系統之間的 N×M 整合問題</div><div class="opt">降低 API 呼叫的費用</div><div class="answer">✅ AI 應用與外部系統之間的 N×M 整合問題</div></div>
+<div class="qa"><div class="qtext">Q2: MCP 常被拿來比喻成什麼？</div><div class="opt">網路的 TCP/IP</div><div class="opt">硬體世界的 USB-C</div><div class="opt">手機的 SIM 卡</div><div class="answer">✅ 硬體世界的 USB-C</div></div>
+<div class="qa"><div class="qtext">Q3: 若沒有 MCP，M 個應用要接 N 個系統，整合工作量大約是？</div><div class="opt">M×N</div><div class="opt">M+N</div><div class="opt">固定不變，跟數量無關</div><div class="answer">✅ M×N</div></div></div></div>
+</div></article>
+<article class="lesson" id="L5.2" data-lid="5.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.2"><span>已讀</span></label></div><h3 class="lesson-title">MCP 架構</h3><div class="lesson-subtitle">host、client、server 各做什麼</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>MCP 的架構分成三個角色。Host（主機）是使用者實際互動的應用程式，例如 Claude Desktop、Claude Code，或是你自己寫的 agent 程式；它負責管理整個對話、決定要不要把某個工具結果交給模型。Client（客戶端）活在 host 裡面，每個 client 對應一個 server，負責用協定跟那個 server 講話——傳送請求、接收結果、維持連線狀態；一個 host 通常會同時開好幾個 client，各自連到不同的 server。</p><p>Server（伺服端）則是實際提供能力的那一方，例如「GitHub MCP server」知道怎麼查 issue、開 PR；「檔案系統 MCP server」知道怎麼讀寫本機檔案。Server 不需要知道自己被哪個 host 使用，也不用管背後是哪個模型，它只要遵守協定就能被任何相容的 client 接上。三者的分工可以簡化成一句話：host 管對話、client 管連線、server 管能力。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像一間餐廳：host 是外場經理，負責跟客人互動、決定上菜順序；client 是傳菜員，一個傳菜員專門跑一個廚房窗口；server 是後面的廚房，各自專精某種菜色，廚房不需要認識外場經理是誰，只要看得懂點菜單（協定）就能出菜。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Host：使用者實際互動的應用（Claude Desktop、Claude Code 等），管理整體對話與決策</li>
+<li>Client：存在於 host 內部，一對一連接一個 server，負責協定層的溝通</li>
+<li>Server：實際提供 tools／resources／prompts 能力的一方，可以是本機程式或遠端服務</li>
+<li>一個 host 可以同時管理多個 client，等於同時接上多個 server</li>
+<li>Server 只需要遵守 MCP 協定，不需要知道是被哪個 host、哪個模型呼叫</li>
+<li>這種分層讓 server 開發者和 host 開發者可以各自獨立演進，互不綁死</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 在 MCP 架構中，負責跟使用者直接互動、管理整體對話的角色是？</div><div class="opt">server</div><div class="opt">client</div><div class="opt">host</div><div class="answer">✅ host</div></div>
+<div class="qa"><div class="qtext">Q2: 一個 host 可以同時連接幾個 server？</div><div class="opt">只能一個</div><div class="opt">可以多個，各自透過對應的 client 連線</div><div class="opt">最多兩個</div><div class="answer">✅ 可以多個，各自透過對應的 client 連線</div></div>
+<div class="qa"><div class="qtext">Q3: 下列敘述何者正確？</div><div class="opt">server 需要知道自己被哪個 host 呼叫才能運作</div><div class="opt">client 存在於 host 內部，負責與特定 server 的協定溝通</div><div class="opt">host 就是 server 的另一種稱呼</div><div class="answer">✅ client 存在於 host 內部，負責與特定 server 的協定溝通</div></div></div></div>
+</div></article>
+<article class="lesson" id="L5.3" data-lid="5.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.3"><span>已讀</span></label></div><h3 class="lesson-title">三大原語</h3><div class="lesson-subtitle">tools、resources、prompts</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>MCP server 能提供給 client 的能力，收斂成三種「原語」(primitives)。Tools（工具）是模型可以主動呼叫的函式，例如「查詢資料庫」「建立 GitHub issue」；它們的設計精神跟你在 CH04 學過的 tool use 一致——模型自己決定要不要呼叫、什麼時候呼叫、傳什麼參數。Resources（資源）是應用讀取的資料，例如一份檔案內容、一則資料庫紀錄、一段日誌；重點是 resources 通常由「應用」（host/client 端的程式邏輯或使用者）決定要不要抓進來，而不是模型自主呼叫，這跟 tools 的「模型主導」剛好相反。</p><p>Prompts（提示）是使用者觸發的範本，通常包在選單或斜線指令裡，例如「/summarize-pr」，讓使用者一鍵套用一段設計好的提示語，不用每次手打。三者的呼叫發起者不同：tools 由模型發起、resources 由應用發起、prompts 由使用者發起。分清楚這一點，設計自己的 server 時就知道某個能力該包成哪一種原語。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">簡單記憶法：tools 像餐廳的「服務鈴」，模型按下去廚房就動作；resources 像菜單背後的「食材庫存表」，是外場自己想看才會翻的參考資料；prompts 像貼在牆上的「套餐推薦卡」，是客人自己選了才會用的範本。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Tools：模型可主動呼叫的函式，用來「做事」，例如查詢、寫入、執行動作</li>
+<li>Resources：應用讀取的唯讀資料，通常由應用邏輯或使用者決定要不要載入</li>
+<li>Prompts：使用者觸發的提示範本，常見於選單或斜線指令，幫使用者套用設計好的提示</li>
+<li>三者的發起者不同：tools 由模型主導、resources 由應用主導、prompts 由使用者主導</li>
+<li>設計 server 時，先想清楚這個能力「誰來決定要不要用」，再決定包成哪種原語</li>
+<li>三大原語都定義在同一份協定裡，client 連上 server 後可以列出它支援哪些</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 模型可以主動決定呼叫、用來執行動作的原語是？</div><div class="opt">resources</div><div class="opt">tools</div><div class="opt">prompts</div><div class="answer">✅ tools</div></div>
+<div class="qa"><div class="qtext">Q2: 通常由使用者主動觸發、像斜線指令一樣套用的原語是？</div><div class="opt">prompts</div><div class="opt">tools</div><div class="opt">resources</div><div class="answer">✅ prompts</div></div>
+<div class="qa"><div class="qtext">Q3: resources 這個原語最大的特色是？</div><div class="opt">由模型自主決定何時呼叫</div><div class="opt">是使用者輸入的密碼</div><div class="opt">是應用讀取的唯讀資料，通常由應用邏輯決定要不要載入</div><div class="answer">✅ 是應用讀取的唯讀資料，通常由應用邏輯決定要不要載入</div></div></div></div>
+</div></article>
+<article class="lesson" id="L5.4" data-lid="5.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 5.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="5.4"><span>已讀</span></label></div><h3 class="lesson-title">動手用現成的 MCP server</h3><div class="lesson-subtitle">十分鐘接上你的第一個 server</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>理論講完，來實際接一個。不管是 Claude Desktop 或 Claude Code，設定現成 MCP server 的方式都類似：寫一段 JSON 設定，告訴 host 要怎麼啟動這個 server。最常見的是本機（stdio）型 server，host 會用你指定的指令把它跑起來，透過標準輸入輸出跟它講話。舉例來說，接上一個檔案系統 server 的設定大致長這樣：</p>
+<pre class="code">{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]
+    }
+  }
+}</pre>
+<p>存好設定、重啟應用後，host 會自動啟動這個 server 並列出它提供的 tools／resources／prompts，之後只要用自然語言請 Claude 操作，它就會在需要時自己呼叫對應的 tool。Claude Code 也支援用指令行直接新增 server，不用手動編輯 JSON，對第一次嘗試的人更省事。裝好之後第一件事，永遠是先問 Claude「你現在有哪些工具可以用」，確認 server 真的連上、能力清單符合預期，再開始正式操作。</p>
+<div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：很多人裝完 server 沒反應就以為壞了，其實多半是設定檔路徑打錯字，或指令需要的執行環境（例如 Node、Python）沒裝好。先看 host 的 log／錯誤訊息，通常一眼就能定位問題。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>現成 MCP server 通常透過一段 JSON 設定接上 host，指定啟動指令與參數</li>
+<li>本機型 server 常用 stdio（標準輸入輸出）transport，host 直接把它當子行程啟動</li>
+<li>Claude Code 也提供指令行方式新增 server，不用手動寫 JSON</li>
+<li>裝好後先請 Claude 列出目前可用的工具，確認連線成功、能力清單正確</li>
+<li>連不上時，第一步永遠是檢查設定檔路徑與執行環境，而不是急著重裝</li>
+<li>官方與社群都維護了現成 server 清單，涵蓋檔案系統、版本控制、資料庫等常見情境</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 現成 MCP server 通常透過什麼方式接上 Claude Desktop？</div><div class="opt">直接把程式碼貼進對話框</div><div class="opt">編輯一段 JSON 設定指定啟動指令</div><div class="opt">只能用滑鼠拖拉安裝</div><div class="answer">✅ 編輯一段 JSON 設定指定啟動指令</div></div>
+<div class="qa"><div class="qtext">Q2: 裝好一個新 server 之後，第一件該做的事是？</div><div class="opt">立刻刪除設定檔</div><div class="opt">請 Claude 列出目前可用的工具，確認連線成功</div><div class="opt">重灌作業系統</div><div class="answer">✅ 請 Claude 列出目前可用的工具，確認連線成功</div></div>
+<div class="qa"><div class="qtext">Q3: Server 連不上時，最該優先檢查的是？</div><div class="opt">網路頻寬</div><div class="opt">設定檔路徑與執行環境是否正確</div><div class="opt">電腦的電池電量</div><div class="answer">✅ 設定檔路徑與執行環境是否正確</div></div></div></div>
+</div></article>
+</section>
+<section class="chapter" id="C06"><header class="ch-header"><div class="ch-eyebrow">章節 06</div><h2 class="ch-title">MCP 進階</h2><div class="ch-subtitle">對應官方課程 MCP: Advanced Topics</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L6.1" data-lid="6.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.1"><span>已讀</span></label></div><h3 class="lesson-title">打造自己的 MCP server</h3><div class="lesson-subtitle">用 SDK 從零寫一個</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>接上別人寫好的 server 只是第一步，真正的威力在於你能把公司內部系統包成 MCP server，讓 Claude 直接操作。官方提供 Python（FastMCP）與 TypeScript 的 SDK，把協定細節都封裝好，你只需要專心定義「這個 server 提供什麼能力」。用 FastMCP 寫一個最小可用的 server 大概長這樣：</p>
+<pre class="code">from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("weather")
+
+@mcp.tool()
+def get_weather(city: str) -&gt; str:
+    """查詢指定城市的目前天氣"""
+    return f"{city} 目前晴天，25 度"
+
+if __name__ == "__main__":
+    mcp.run()</pre>
+<p>這段程式碼定義了一個名叫 get_weather 的 tool，函式的 docstring／型別標註會被 SDK 自動轉成 tool 的 schema，也就是模型用來判斷「這個工具是做什麼、要傳什麼參數」的說明書——跟 CH04 學的 tool schema 是同一套精神。寫完之後啟動它，再把它接進 Claude Desktop／Claude Code 的設定裡測試。第一次寫的建議是：先做一個功能單純的 tool，確定整條路能通，再逐步加更多能力，不要一開始就想包山包海。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想成你在寫一支「客服窗口」的 SOP：docstring 就是掛在窗口前的告示牌，寫清楚這裡辦什麼業務、要帶什麼文件（參數），模型看到告示牌才知道什麼時候該走進來辦事。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>官方提供 Python（FastMCP）與 TypeScript SDK，封裝協定細節，讓你專心定義能力</li>
+<li>用裝飾器（如 @mcp.tool()）搭配函式的型別標註與 docstring，SDK 會自動產生 tool schema</li>
+<li>Tool schema 的角色跟 CH04 的 tool use schema 相同：是模型判斷何時、如何呼叫的說明書</li>
+<li>建議先做一個單純的 tool，打通「啟動、連線、呼叫、回傳」全流程，再逐步擴充</li>
+<li>Server 開發完成後，用本機設定接進 Claude Desktop 或 Claude Code 就能測試</li>
+<li>一個 server 可以同時定義多個 tools、resources、prompts，彼此獨立註冊</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 官方提供哪兩種語言的 MCP SDK？</div><div class="opt">Java 與 Go</div><div class="opt">Python 與 TypeScript</div><div class="opt">Ruby 與 PHP</div><div class="answer">✅ Python 與 TypeScript</div></div>
+<div class="qa"><div class="qtext">Q2: 在 FastMCP 中，函式的 docstring 與型別標註主要用來做什麼？</div><div class="opt">加快程式執行速度</div><div class="opt">自動產生給模型判斷用的 tool schema</div><div class="opt">只是註解，SDK 不會使用</div><div class="answer">✅ 自動產生給模型判斷用的 tool schema</div></div>
+<div class="qa"><div class="qtext">Q3: 第一次寫 MCP server，比較好的做法是？</div><div class="opt">一次定義大量 tools 求快</div><div class="opt">先做一個單純 tool 打通全流程，再逐步擴充</div><div class="opt">跳過本機測試直接上線</div><div class="answer">✅ 先做一個單純 tool 打通全流程，再逐步擴充</div></div></div></div>
+</div></article>
+<article class="lesson" id="L6.2" data-lid="6.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.2"><span>已讀</span></label></div><h3 class="lesson-title">sampling 與 elicitation</h3><div class="lesson-subtitle">server 反過來請 client 幫忙</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>到目前為止都是「client 呼叫 server」的方向，但 MCP 也定義了反過來的機制。Sampling 讓 server 在執行任務的過程中，回頭請 client 代打一次 LLM 呼叫——例如 server 收集到一堆資料，想先請模型幫忙摘要或判斷，但 server 本身沒有、也不該自己持有 API key，於是它把「幫我問一下模型」這個請求丟回 client，由 client 用使用者已經授權的模型額度去執行，結果再回傳給 server 使用。這樣的好處是：server 開發者不用管理自己的模型金鑰與費用，權限與成本控管都留在 client／使用者手上。</p><p>Elicitation 則是另一個方向的「求助」：server 在執行到一半，發現需要使用者提供額外資訊才能繼續（例如「你要刪除的是哪個檔案？」），它可以透過協定向 client 發出請求，由 client 跳出介面讓使用者回答，而不是自己亂猜或直接中斷。這兩個機制的共通點是：server 不是孤立運作，它可以在需要時把「思考」或「決策」的權力交還給 client 端。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">sampling 像是廚房臨時需要有人試味道，就探頭出去請外場（client）幫忙嚐一口再回報；elicitation 像廚房做到一半發現客人沒說要不要辣，直接請外場回頭問客人，而不是自己亂猜。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Sampling：server 請 client 代為呼叫 LLM，結果回傳給 server 繼續使用</li>
+<li>Sampling 的好處是 server 不需要自己管理模型金鑰與費用，成本與權限留在 client 端控管</li>
+<li>Elicitation：server 在執行過程中向使用者要額外輸入，透過 client 呈現互動介面</li>
+<li>兩者都是「server 反向請求」的機制，跟平常 client 呼叫 server 的方向相反</li>
+<li>使用這兩個機制時，client 通常仍會做確認或授權把關，不會無條件配合 server 的請求</li>
+<li>善用這兩個機制能讓 server 的邏輯更靈活，不必把所有判斷都寫死在程式裡</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: server 想借用使用者已授權的模型額度來做一次 LLM 呼叫，用的是哪個機制？</div><div class="opt">elicitation</div><div class="opt">sampling</div><div class="opt">OAuth</div><div class="answer">✅ sampling</div></div>
+<div class="qa"><div class="qtext">Q2: server 執行到一半需要使用者補充資訊（例如確認要刪除哪個檔案），該用哪個機制？</div><div class="opt">sampling</div><div class="opt">elicitation</div><div class="opt">transport</div><div class="answer">✅ elicitation</div></div>
+<div class="qa"><div class="qtext">Q3: sampling 機制的主要好處是？</div><div class="opt">server 可以直接持有並管理自己的模型 API key</div><div class="opt">server 不需要自己管理模型金鑰，成本與權限留在 client 端</div><div class="opt">讓 server 完全不需要與 client 溝通</div><div class="answer">✅ server 不需要自己管理模型金鑰，成本與權限留在 client 端</div></div></div></div>
+</div></article>
+<article class="lesson" id="L6.3" data-lid="6.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.3"><span>已讀</span></label></div><h3 class="lesson-title">Remote MCP 與 OAuth 認證</h3><div class="lesson-subtitle">從本機走向雲端</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>前面的例子多半是本機 server，用 stdio transport（標準輸入輸出）跟 client 講話，適合單機工具，但沒辦法給團隊共用，也沒辦法給雲端服務用。這就是 remote MCP 要解決的問題：把 server 架成一個網路服務，用 streamable HTTP transport 讓任何地方的 client 都能連上——不只是你自己的電腦，也可以是雲端上跑的 agent。</p><p>本機 server 通常假設「跑起來的人就是使用者本人」，不太需要認證；但一旦 server 搬到網路上，任何人理論上都能連進來，就必須有認證機制確認「這個 client 到底代表誰在講話、有沒有權限」。MCP 採用業界標準的 OAuth 流程處理這件事：使用者透過瀏覽器登入、授權 client 可存取的範圍（scope），client 拿到 token 後才能繼續跟 server 溝通，之後每次請求都帶著 token 證明身分。重點不是背 OAuth 的每個步驟，而是建立一個原則：server 一旦離開你自己的機器，認證與授權就不是加分項，而是必要條件。</p>
+<div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：有人為了方便，把 remote server 設計成不需要認證、任何人拿到網址就能用，這在測試階段或許無傷大雅，一旦接上真實資料或內部系統，就等於把大門鑰匙插在門外。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>本機 server 常用 stdio transport，適合單機工具，難以給團隊或雲端服務共用</li>
+<li>Remote MCP 讓 server 架成網路服務，用 streamable HTTP transport 供任何地方的 client 連線</li>
+<li>Server 離開本機、成為網路服務後，認證與授權從「可選」變成「必要」</li>
+<li>MCP 採用 OAuth 這套業界標準流程處理授權：使用者登入、授權範圍、client 取得 token</li>
+<li>Client 之後的每次請求都帶著 token，讓 server 確認這個請求代表誰、能做什麼</li>
+<li>部署 remote server 前，先確認認證機制到位，不要因為圖方便而先跳過</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 本機型 MCP server 最常見的 transport 是？</div><div class="opt">streamable HTTP</div><div class="opt">stdio（標準輸入輸出）</div><div class="opt">FTP</div><div class="answer">✅ stdio（標準輸入輸出）</div></div>
+<div class="qa"><div class="qtext">Q2: 讓 server 從本機走向雲端、供多方 client 連線的做法是？</div><div class="opt">sampling</div><div class="opt">remote MCP，搭配 streamable HTTP transport</div><div class="opt">關閉 server 的 tools</div><div class="answer">✅ remote MCP，搭配 streamable HTTP transport</div></div>
+<div class="qa"><div class="qtext">Q3: Remote MCP server 為什麼必須認真處理認證？</div><div class="opt">因為認證能加快回應速度</div><div class="opt">因為任何人理論上都能連進網路上的 server，需要確認身分與權限</div><div class="opt">因為 OAuth 是唯一支援的程式語言</div><div class="answer">✅ 因為任何人理論上都能連進網路上的 server，需要確認身分與權限</div></div></div></div>
+</div></article>
+<article class="lesson" id="L6.4" data-lid="6.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 6.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="6.4"><span>已讀</span></label></div><h3 class="lesson-title">MCP 安全性與最佳實踐</h3><div class="lesson-subtitle">prompt injection 與權限最小化</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>MCP 讓 Claude 能直接碰觸真實系統，威力越大，風險也越大，這一課整理幾個必須放在心上的安全原則。第一是 prompt injection（提示注入）：如果一個 tool 的回傳內容（例如一封信、一個網頁、一份文件）裡藏著偽裝成指令的文字，模型有可能把它當成使用者的新指示去執行，尤其是「幫我讀某個外部內容」這類 tool 特別危險。第二是 confused deputy（受騙的代理人）問題：server 本身權限很大（例如能存取整個資料庫），但呼叫它的人／模型未必該有那麼大的權限，如果 server 沒有做好授權檢查，就等於把自己的高權限借給了不該用的人。</p><p>第三是權限最小化：一個 server、一個 tool 該有的權限，就是完成任務所需的最小範圍，不要因為「以後可能用得到」就先開好所有存取權。第四是供應鏈信任：安裝別人寫的 server 前，要清楚它會存取什麼、程式碼是否可信，就像你不會隨便執行來路不明的程式一樣，接一個 MCP server 本質上也是在讓一段外部程式碼碰你的資料。</p>
+<div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：不要把資料庫的完整管理員權限直接接給一個 MCP server 圖方便；一旦這個 server 或它背後的邏輯出錯（或被注入），後果就是整個資料庫的讀寫權限都暴露出去，沒有回頭路。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Prompt injection：藏在 tool 回傳內容裡的偽裝指令，可能被模型誤當成真正的使用者指示執行</li>
+<li>Confused deputy：權限很大的 server 若沒做好授權檢查，等於把高權限借給不該有權限的呼叫者</li>
+<li>權限最小化原則：每個 server／tool 只給完成任務所需的最小存取範圍，不要先開好備用權限</li>
+<li>供應鏈信任：安裝別人寫的 server 前，要清楚它的來源、程式碼與存取範圍是否可信</li>
+<li>對會讀取外部內容（信件、網頁、文件）的 tool 要特別警覺，這是 prompt injection 最常見的入口</li>
+<li>安全不是裝完 server 就結束，而是持續盤點權限、更新來源、留意異常行為的過程</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 藏在網頁或文件內容裡、偽裝成指令試圖操控模型行為的攻擊手法叫做？</div><div class="opt">confused deputy</div><div class="opt">prompt injection（提示注入）</div><div class="opt">OAuth hijacking</div><div class="answer">✅ prompt injection（提示注入）</div></div>
+<div class="qa"><div class="qtext">Q2:「每個 server／tool 只給完成任務所需的最小存取範圍」屬於哪個原則？</div><div class="opt">供應鏈信任</div><div class="opt">權限最小化</div><div class="opt">sampling</div><div class="answer">✅ 權限最小化</div></div>
+<div class="qa"><div class="qtext">Q3: confused deputy 問題描述的是什麼情境？</div><div class="opt">使用者忘記自己的密碼</div><div class="opt">權限很大的 server 因缺乏授權檢查，被不該有權限的呼叫者濫用</div><div class="opt">server 回傳的資料格式錯誤</div><div class="answer">✅ 權限很大的 server 因缺乏授權檢查，被不該有權限的呼叫者濫用</div></div></div></div>
+</div></article>
+</section>
+<section class="chapter" id="C07"><header class="ch-header"><div class="ch-eyebrow">章節 07</div><h2 class="ch-title">Claude Code 實戰</h2><div class="ch-subtitle">對應官方課程 Claude Code in Action</div><div class="ch-meta">4課 · ⏱ ~20 分鐘</div></header>
+<article class="lesson" id="L7.1" data-lid="7.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.1"><span>已讀</span></label></div><h3 class="lesson-title">Claude Code 是什麼</h3><div class="lesson-subtitle">安裝與第一次對話</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>Claude Code 是一個跑在終端機（terminal）裡的 agentic coding 工具，跟你平常用網頁版或 IDE 外掛聊天最大的不同，是它可以直接讀你的專案檔案、執行指令、修改程式碼，而不只是幫你生成一段貼上去的文字。你在終端機打開專案資料夾、輸入啟動指令，Claude Code 就會以那個資料夾為工作範圍開始對話；你可以像跟同事講話一樣描述需求，例如「幫我把這個函式的錯誤處理補齊」，它會自己去讀相關檔案、理解上下文，再提出或直接進行修改。</p><p>第一次使用最重要的心態調整是：Claude Code 不是自動完成，而是一個會主動探索、會問你問題、也會執行指令的協作者，你講得越清楚、給的脈絡越完整，它做出來的東西就越貼近你要的。跟它的第一次對話，不妨從一個小範圍的任務開始，例如請它先解釋某段程式碼在做什麼，感受一下它讀程式碼、回覆的方式，再逐步交付比較大的任務。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把它想成一位剛加入團隊、什麼都能學得很快的新工程師——他會先去讀 codebase、問清楚需求，而不是憑空亂猜；你給的任務描述越像交接文件，他做出來的結果越不會走鐘。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Claude Code 是跑在終端機裡的 agentic coding 工具，能讀檔案、執行指令、直接修改程式碼</li>
+<li>啟動時以當下資料夾為工作範圍，對話脈絡跟著這個專案走</li>
+<li>與純聊天工具的差異：它會主動探索專案、執行指令，而不只是生成一段文字讓你自己貼上</li>
+<li>描述需求時給的脈絡越完整（目的、限制、期望格式），產出越貼近需求</li>
+<li>建議從小範圍任務開始熟悉互動節奏，例如先請它解釋一段程式碼，再逐步交付大任務</li>
+<li>它會在必要時主動提問或請你確認，而不是悶著頭亂做</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: Claude Code 與純聊天式 AI 工具最大的差異是？</div><div class="opt">只能讀不能寫程式碼</div><div class="opt">能直接讀檔案、執行指令、修改程式碼，而不只是生成文字</div><div class="opt">完全不需要人類確認任何步驟</div><div class="answer">✅ 能直接讀檔案、執行指令、修改程式碼，而不只是生成文字</div></div>
+<div class="qa"><div class="qtext">Q2: 第一次使用 Claude Code，比較好的起手方式是？</div><div class="opt">直接丟一個牽涉整個系統重構的大任務</div><div class="opt">從小範圍任務開始，例如請它解釋一段程式碼</div><div class="opt">完全不給任何脈絡，看它自己猜</div><div class="answer">✅ 從小範圍任務開始，例如請它解釋一段程式碼</div></div>
+<div class="qa"><div class="qtext">Q3: Claude Code 啟動時的工作範圍是？</div><div class="opt">整台電腦所有檔案，不分專案</div><div class="opt">當下所在的資料夾（專案）</div><div class="opt">只有它自己內建的範例程式碼</div><div class="answer">✅ 當下所在的資料夾（專案）</div></div></div></div>
+</div></article>
+<article class="lesson" id="L7.2" data-lid="7.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.2"><span>已讀</span></label></div><h3 class="lesson-title">核心工作流</h3><div class="lesson-subtitle">探索、規劃、實作、驗證</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>面對一個有點複雜的任務，Claude Code 比較穩健的做法不是一頭栽進去改程式碼，而是走一輪「探索 → 規劃 → 實作 → 驗證」的循環。探索階段，會先讀相關檔案、搜尋關鍵字、理解現有架構，搞清楚「這件事現在是怎麼運作的」，再動手。規劃階段，把要做的改動拆成明確步驟，尤其是牽涉多個檔案或有風險的改動，先講出計畫讓你能確認方向對不對，比悶頭改完才發現方向錯划算得多。</p><p>實作階段才是真正動手寫、改程式碼，這時因為前面探索夠紮實、規劃夠清楚，改動通常會比較集中、精準，不會東改一點西改一點。驗證階段是最容易被跳過、卻最重要的一步：跑測試、實際執行一次、檢查輸出是否符合預期，而不是「看起來應該沒問題」就結束。這個循環不是一次性的，遇到大任務時，你可以要求先只做探索和規劃、跟你確認過再進入實作，把風險控制在你想要的顆粒度上。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">這跟蓋房子的順序很像——探索是「先看基地和現況」，規劃是「畫設計圖給你看過」，實作是「動工」，驗證是「驗屋」。跳過設計圖直接動工，通常返工成本更高。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>核心工作流四步驟：探索、規劃、實作、驗證，循序漸進降低風險</li>
+<li>探索：讀相關檔案、搜尋關鍵字，先搞懂現有架構再動手</li>
+<li>規劃：把改動拆成明確步驟，牽涉多檔案或高風險的改動先講計畫讓你確認</li>
+<li>實作：在前面基礎紮實的前提下動手修改，改動通常更集中、精準</li>
+<li>驗證：跑測試、實際執行、檢查輸出，不能只憑「看起來沒問題」收尾</li>
+<li>大任務可以要求先只做到規劃、跟你確認方向後再進入實作，控制風險顆粒度</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: Claude Code 核心工作流的四個步驟依序是？</div><div class="opt">實作、驗證、探索、規劃</div><div class="opt">探索、規劃、實作、驗證</div><div class="opt">規劃、驗證、探索、實作</div><div class="answer">✅ 探索、規劃、實作、驗證</div></div>
+<div class="qa"><div class="qtext">Q2: 面對牽涉多個檔案的高風險改動，比較穩健的做法是？</div><div class="opt">直接動手改，改完再說</div><div class="opt">先講出規劃步驟，確認方向後再進入實作</div><div class="opt">完全交給它自行決定，不需要確認</div><div class="answer">✅ 先講出規劃步驟，確認方向後再進入實作</div></div>
+<div class="qa"><div class="qtext">Q3: 驗證階段最容易犯的錯誤是什麼？</div><div class="opt">花太多時間跑測試</div><div class="opt">只憑「看起來應該沒問題」就結束，沒有實際執行檢查</div><div class="opt">驗證的步驟做得太仔細</div><div class="answer">✅ 只憑「看起來應該沒問題」就結束，沒有實際執行檢查</div></div></div></div>
+</div></article>
+<article class="lesson" id="L7.3" data-lid="7.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.3"><span>已讀</span></label></div><h3 class="lesson-title">CLAUDE.md 與專案記憶</h3><div class="lesson-subtitle">讓每次對話都懂你的專案</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>每次開新對話都要重新解釋一次「這個專案用什麼框架、程式碼風格是什麼、哪些事絕對不能做」很浪費時間，這就是 CLAUDE.md 存在的理由：一份放在專案裡、Claude Code 每次啟動都會讀的專案記憶檔案。適合放進去的內容包括：專案的技術棧與架構慣例（例如用什麼測試框架、目錄怎麼分）、團隊約定的程式碼風格、常用指令（怎麼跑測試、怎麼建置）、以及明確的邊界（例如「這個目錄的檔案不要動」「資料庫遷移一律要先問過我」）。</p><p>不適合放進去的是：會頻繁變動、容易過時的細節（例如某個功能今天的進度），或是太長、太瑣碎、模型讀了也用不上的資訊——CLAUDE.md 不是專案的百科全書，塞太多反而稀釋了真正重要的規則。好的 CLAUDE.md 應該是「新同事到職第一天，你會口頭交代的那幾件事」的濃縮版：講清楚規矩、講清楚地雷，而不是鉅細靡遺地寫流水帳。可以把它想成隨專案一起進版本控制、隨時間逐步修正的活文件，發現 Claude Code 一直犯同一種錯，通常就是該回頭補一條規則的訊號。</p>
+<div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想成新人到職第一天你會交代的事——「我們用 pytest 不是 unittest」「這支腳本是自動產生的別手改」「動資料庫前一定要跟我確認」，講的是規矩和地雷，不是逐行流水帳。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>CLAUDE.md 是放在專案裡、每次啟動都會被讀取的專案記憶檔案</li>
+<li>適合放：技術棧與架構慣例、程式碼風格、常用指令、明確的邊界與禁區</li>
+<li>不適合放：容易過時的進度細節、太長太瑣碎、模型用不上的資訊</li>
+<li>目標是濃縮版的「新同事到職交接」，講清楚規矩與地雷，不是流水帳</li>
+<li>CLAUDE.md 可以隨專案進版本控制，隨時間逐步修正、精煉</li>
+<li>發現 Claude Code 一直重複犯同一種錯，通常代表該補一條規則進 CLAUDE.md</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: CLAUDE.md 最適合拿來放什麼？</div><div class="opt">今天某個功能做到一半的即時進度</div><div class="opt">專案的技術棧、程式碼風格、明確的邊界與禁區</div><div class="opt">跟專案完全無關的個人筆記</div><div class="answer">✅ 專案的技術棧、程式碼風格、明確的邊界與禁區</div></div>
+<div class="qa"><div class="qtext">Q2: 為什麼不建議把太瑣碎、容易過時的細節塞進 CLAUDE.md？</div><div class="opt">因為檔案大小有嚴格上限無法超過</div><div class="opt">會稀釋真正重要的規則，也容易過時失準</div><div class="opt">因為 Claude Code 不會讀取這個檔案</div><div class="answer">✅ 會稀釋真正重要的規則，也容易過時失準</div></div>
+<div class="qa"><div class="qtext">Q3: 發現 Claude Code 一直重複犯同一種錯，比較好的處理方式是？</div><div class="opt">換一個完全不同的工具</div><div class="opt">把對應的規則補進 CLAUDE.md，減少下次重犯的機會</div><div class="opt">什麼都不用做，模型會自己學會</div><div class="answer">✅ 把對應的規則補進 CLAUDE.md，減少下次重犯的機會</div></div></div></div>
+</div></article>
+<article class="lesson" id="L7.4" data-lid="7.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 7.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="7.4"><span>已讀</span></label></div><h3 class="lesson-title">Hooks、Slash Commands 與自動化</h3><div class="lesson-subtitle">把重複的事交給機器</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body"><p>除了 CLAUDE.md，Claude Code 還提供兩種讓工作流更順手的機制。Slash commands（斜線指令）是你自己定義的提示範本，把常常重複打的一長串指示存成一個指令，例如打 /review 就自動套用一段「請照這幾個標準審查目前的改動」的完整提示，不用每次重新打字，也能確保團隊裡每個人用的審查標準一致。Hooks（掛鉤）則更進一步，是在特定事件發生時自動觸發的腳本，例如「每次它要執行指令前」「每次它修改完檔案後」，讓你能插入自己的檢查或自動化，不需要每次都口頭提醒它「記得跑一下 linter」。</p><p>兩者分工清楚：slash commands 是「主動觸發」的捷徑，hooks 是「事件自動觸發」的守門員。要用到什麼程度，牽涉 permission（權限）模式的取捨——每個動作都先問過你再執行最安全但最慢；放寬讓它在明確範圍內自主執行能換取速度，但要承擔非預期改動的風險。實務上常見做法是：先從嚴格權限熟悉行為，搭好 hooks 這類防護網後再逐步放寬。</p>
+<div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：一上來就把權限開到最寬、什麼都不用確認，圖一時方便，但如果專案還沒建立起測試、hooks 這類防護網，一次沒預期到的大改動可能要花更久時間收拾。</div></div></div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+<li>Slash commands：自訂的提示範本，把常重複的指示存成一個指令，一鍵套用、團隊標準一致</li>
+<li>Hooks：在特定事件（例如指令執行前、檔案修改後）自動觸發的腳本，不用每次口頭提醒</li>
+<li>分工原則：slash commands 是使用者主動觸發的捷徑，hooks 是事件驅動的自動守門員</li>
+<li>Permission 模式是速度與安全的取捨：每步都確認最安全但慢，放寬自主執行換取效率但擔風險</li>
+<li>實務上建議先用較嚴格的權限熟悉行為，累積信任、搭好自動化防護網後再逐步放寬</li>
+<li>這些機制的共同目標：把重複性高、規則明確的事情交給機器，把判斷留給你自己</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body"><div class="qa"><div class="qtext">Q1: 把一長串常重複的審查指示存成一鍵套用的指令，用的是哪個機制？</div><div class="opt">hooks</div><div class="opt">slash commands（斜線指令）</div><div class="opt">CLAUDE.md</div><div class="answer">✅ slash commands（斜線指令）</div></div>
+<div class="qa"><div class="qtext">Q2: 在「每次修改完檔案後自動執行 linter」這種需求上，比較適合用的機制是？</div><div class="opt">slash commands</div><div class="opt">hooks（掛鉤）</div><div class="opt">手動口頭提醒</div><div class="answer">✅ hooks（掛鉤）</div></div>
+<div class="qa"><div class="qtext">Q3: 關於 permission 模式的取捨，下列敘述何者正確？</div><div class="opt">每步都先確認最安全，但速度較慢</div><div class="opt">放寬權限完全沒有任何風險</div><div class="opt">permission 模式與工作速度無關</div><div class="answer">✅ 每步都先確認最安全，但速度較慢</div></div></div></div>
+</div></article>
+</section>

@@ -1,0 +1,397 @@
+<!-- 模組 M3｜負責模型: Claude Sonnet 5 -->
+<section class="chapter" id="C01"><header class="ch-header"><div class="ch-eyebrow">章節 01</div><h2 class="ch-title">認識 Claude</h2><div class="ch-subtitle">從模型家族到安全理念</div><div class="ch-meta">4課 · ⏱ ~18 分鐘</div></header>
+<article class="lesson" id="L1.1" data-lid="1.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.1 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.1"><span>已讀</span></label></div><h3 class="lesson-title">Claude 是什麼</h3><div class="lesson-subtitle">Anthropic 與 Claude 模型家族總覽</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude 是 Anthropic 開發的 AI 助理，你可能已經在網頁版、App、或某個工具的「AI 功能」背後見過它。但「Claude」不是單一一個東西——它其實是一整個模型家族的名字，背後撐著這個家族的公司叫 Anthropic，2021 年由一群曾在其他 AI 實驗室工作的研究者創立，成立宗旨很直白：確保通用 AI（transformative AI）的發展是安全、有益的，而不是先衝規模再回頭補安全。這也是為什麼 Anthropic 常被稱作一家「AI 安全公司」——安全不是附加條款，是創業的起點。</p>
+  <p>Claude 這個名字取自資訊理論之父 Claude Shannon，算是向「用數學馴服複雜系統」的傳統致敬。你在市面上看到的 Claude，不是只有一個版本在運作，而是分成 Opus、Sonnet、Haiku 三個系列，各自對應不同的能力、速度、成本組合——這件事會在後面幾課細講。現在你只需要知道：選 Claude，其實是在選一整個工具箱，而不是一把固定的槌子。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Anthropic 想成一家蓋房子的營造商，很在意結構安全；Claude 則是他們蓋出來的一整棟系列建案——有豪華款、標準款、快速款，但地基（安全理念）都是同一套。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Anthropic 是 2021 年成立的 AI 安全公司，使命是確保先進 AI 安全有益</li>
+  <li>Claude 是 Anthropic 開發的 AI 助理／模型家族的名稱，不是單一模型</li>
+  <li>Claude 之名來自資訊理論之父 Claude Shannon</li>
+  <li>Claude 模型家族分成 Opus、Sonnet、Haiku 三個系列</li>
+  <li>選擇用哪個 Claude，其實是在能力、速度、成本間做取捨</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Anthropic 公司的核心使命最接近下列哪一項？</div><div class="opt">盡快推出最大規模的模型搶市占</div><div class="opt">確保先進 AI 的發展安全且對人類有益</div><div class="opt">專注開發遊戲用的 AI</div><div class="answer">✅ 確保先進 AI 的發展安全且對人類有益</div></div>
+  <div class="qa"><div class="qtext">Q2: 「Claude」這個名字的由來是？</div><div class="opt">公司創辦人的名字</div><div class="opt">隨機命名，沒有特別意義</div><div class="opt">向資訊理論之父 Claude Shannon 致敬</div><div class="answer">✅ 向資訊理論之父 Claude Shannon 致敬</div></div>
+  <div class="qa"><div class="qtext">Q3: Claude 模型家族目前分成哪三個系列？</div><div class="opt">Alpha、Beta、Gamma</div><div class="opt">Opus、Sonnet、Haiku</div><div class="opt">Pro、Plus、Free</div><div class="answer">✅ Opus、Sonnet、Haiku</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.2" data-lid="1.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.2 課</span><span class="lesson-time">⏱ ~4 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.2"><span>已讀</span></label></div><h3 class="lesson-title">Claude 能做什麼</h3><div class="lesson-subtitle">從對話、分析、寫程式到 Agent</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>如果你的印象還停留在「Claude 就是一個聊天機器人」，那該更新一下了。日常對話當然是最基本的用法——問問題、腦力激盪、潤稿，這些 Claude 都做得順手。但往上一層，Claude 更擅長長文件理解與分析：丟一份幾十頁的合約、財報、研究論文進去，它可以抓重點、找矛盾、做摘要，這靠的正是夠大的 context window（上下文視窗），下一課會細講。</p>
+  <p>寫程式是 Claude 另一個被大量依賴的場景，從讀懂一整個程式碼庫、抓 bug，到直接生成可執行的功能，Claude Code 這類工具讓它從「寫程式建議」進化成「真的動手改程式碼」。再往上，Claude 具備 tool use（工具使用）能力，能呼叫外部 API、查資料庫、執行搜尋，把自己從「只會講」的助理變成「講完還會做」的 agent（代理人）——查天氣、訂票、跑分析全部自己接手完成中間步驟，不用你一步步餵指令。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Claude 想成一位很會做事的助理，剛認識時你只會請他幫忙回信；熟了之後你發現他還會做財報摘要、抓程式 bug，甚至能自己串連步驟幫你把事情辦完——能力其實一直都在，只是看你有沒有用到。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>基礎能力：日常對話、腦力激盪、潤稿</li>
+  <li>進階能力：長文件理解與分析，靠夠大的 context window 支撐</li>
+  <li>寫程式：讀懂程式碼庫、抓 bug、生成功能，Claude Code 是代表工具</li>
+  <li>tool use 讓 Claude 能呼叫外部 API、查資料，不只是回答文字</li>
+  <li>agent（代理人）模式：Claude 自主串連多個步驟完成任務，不需逐步下指令</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude 處理長文件時能抓重點、找矛盾，主要依靠什麼能力支撐？</div><div class="opt">context window（上下文視窗）</div><div class="opt">temperature 參數</div><div class="opt">API key 的權限等級</div><div class="answer">✅ context window（上下文視窗）</div></div>
+  <div class="qa"><div class="qtext">Q2: 讓 Claude 從「只會講」進化成「講完還會做」的關鍵能力是？</div><div class="opt">溫度調整</div><div class="opt">tool use（工具使用）</div><div class="opt">字數限制</div><div class="answer">✅ tool use（工具使用）</div></div>
+  <div class="qa"><div class="qtext">Q3: 下列哪一項最貼近 Claude Code 的定位？</div><div class="opt">只能給程式碼建議，不能實際修改檔案</div><div class="opt">讓 Claude 真的動手讀懂並修改程式碼庫</div><div class="opt">單純的程式語法檢查工具</div><div class="answer">✅ 讓 Claude 真的動手讀懂並修改程式碼庫</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.3" data-lid="1.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.3 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.3"><span>已讀</span></label></div><h3 class="lesson-title">選對模型</h3><div class="lesson-subtitle">能力、速度、成本的三角取捨</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Opus、Sonnet、Haiku 這三個名字，你可以直接理解成「重型、中型、輕型」三種交通工具。Opus 是家族裡推理能力最強的一款，面對複雜的多步驟邏輯、艱深的研究問題、需要深度思考的策略規劃，它的表現最扎實，但相對的回應速度較慢、運算成本也較高。Sonnet 走的是平衡路線，在能力和速度之間抓一個「大多數任務都夠用」的甜蜜點，是很多正式產品、日常開發工作的預設選擇。Haiku 則是為速度和成本優化的輕量款，回應快、費用低，很適合客服快速回覆、大量重複性的分類或抽取任務、或是需要毫秒級反應的即時應用。</p>
+  <p>選模型的原則很簡單：先問「這個任務需要多深的推理？」再問「用量大不大、延遲敏感不敏感？」一個處理數萬筆訂單分類的批次任務，用 Opus 是殺雞用牛刀，錢跟時間都浪費；但一個需要拆解法律合約矛盾點的任務，用 Haiku 可能會漏掉關鍵細節。實務上很多團隊會混用——用 Haiku 做初篩、Sonnet 做主力、Opus 處理少數真正棘手的案例。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像叫車：急件用摩托車（Haiku）最快最省；一般載貨用轎車（Sonnet）最實用；搬重型設備才需要吊車（Opus）——用錯車不是不能到，是划不來。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Opus：推理能力最強，適合複雜多步驟任務，速度與成本較高</li>
+  <li>Sonnet：能力與速度的平衡點，多數正式應用的預設選擇</li>
+  <li>Haiku：速度快、成本低，適合大量、簡單、延遲敏感的任務</li>
+  <li>選模型看兩個問題：任務推理深度、以及用量與延遲需求</li>
+  <li>實務常見做法：依任務難度混用多個模型分層處理</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 需要拆解一份複雜法律合約中隱藏矛盾條款的任務，最適合優先考慮哪個系列？</div><div class="opt">Haiku</div><div class="opt">Opus</div><div class="opt">三者效果完全一樣，隨便選</div><div class="answer">✅ Opus</div></div>
+  <div class="qa"><div class="qtext">Q2: 每天要處理十萬筆訂單做簡單分類，哪個系列的取捨最划算？</div><div class="opt">Haiku</div><div class="opt">Opus</div><div class="opt">一定要用最貴的才準確</div><div class="answer">✅ Haiku</div></div>
+  <div class="qa"><div class="qtext">Q3: Sonnet 系列在能力三角取捨中的定位最接近？</div><div class="opt">速度與成本優先，能力較弱</div><div class="opt">能力與速度之間的平衡點</div><div class="opt">推理能力最強、速度最慢</div><div class="answer">✅ 能力與速度之間的平衡點</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L1.4" data-lid="1.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 1.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="1.4"><span>已讀</span></label></div><h3 class="lesson-title">安全與 Constitutional AI</h3><div class="lesson-subtitle">為什麼 Claude 有時會拒絕你</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>你可能遇過 Claude 委婉拒絕某個請求，或是明明只是想開玩笑卻被它一本正經地提醒風險。這不是系統故障，而是 Anthropic 從訓練階段就刻意設計的行為，方法論的核心叫 Constitutional AI（憲法式 AI）。傳統訓練安全模型的做法，很依賴大量人工標註「這個回答好不好、有沒有害」，成本高、標準也容易因人而異。Constitutional AI 換了個做法：先給模型一套明確的原則（憲法），讓模型依照這套原則自己批評、修正自己的回答，再用這個過程產生的資料去訓練，大幅減少對人工標註有害內容的依賴。</p>
+  <p>這套機制的目標，是讓 Claude 在「有幫助」（helpful）和「無害」（harmless）之間找到平衡，而不是走極端。走太偏有幫助那端，模型可能配合任何要求，包含真的有風險的；走太偏無害那端，模型會變得動不動就拒絕、對正常請求也疑神疑鬼，體驗很差。你偶爾感受到的「過度謹慎」，其實就是這個平衡點還在調校的證據——而不是 Claude 存心跟你作對。理解這個背景，你就更容易判斷什麼時候該換個問法，而不是單純覺得被卡住。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：以為「拒絕」代表 Claude 讀不懂你的意思。多數時候它讀懂了，只是判斷這個請求落在它被訓練要謹慎處理的區域——換個更明確、無害的說法（例如說明你的正當用途），常常就能得到協助。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude 偶爾的拒絕或提醒，來自訓練時設計的安全機制，不是系統錯誤</li>
+  <li>Constitutional AI（憲法式 AI）用一套明確原則讓模型自我批評、自我修正</li>
+  <li>這種方法減少了對大量人工標註「有害內容」的依賴</li>
+  <li>目標是在「有幫助」與「無害」之間取得平衡，不走極端</li>
+  <li>感覺被過度拒絕時，換個更明確、說明正當用途的問法通常有效</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Constitutional AI（憲法式 AI）的核心做法是？</div><div class="opt">完全依賴大量人工標註有害內容</div><div class="opt">讓模型依照一套明確原則自我批評與修正</div><div class="opt">關閉模型的所有安全機制</div><div class="answer">✅ 讓模型依照一套明確原則自我批評與修正</div></div>
+  <div class="qa"><div class="qtext">Q2: Claude 訓練時追求的平衡是什麼？</div><div class="opt">有幫助與無害之間的平衡</div><div class="opt">速度與價格之間的平衡</div><div class="opt">中文與英文輸出的平衡</div><div class="answer">✅ 有幫助與無害之間的平衡</div></div>
+  <div class="qa"><div class="qtext">Q3: 遇到 Claude 委婉拒絕請求時，比較有效的做法是？</div><div class="opt">重複貼上同一句話</div><div class="opt">說明正當用途、換個更明確的問法</div><div class="opt">認定它讀不懂中文</div><div class="answer">✅ 說明正當用途、換個更明確的問法</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C02"><header class="ch-header"><div class="ch-eyebrow">章節 02</div><h2 class="ch-title">Prompt Engineering 基礎</h2><div class="ch-subtitle">把話說清楚是一種技術</div><div class="ch-meta">4課 · ⏱ ~21 分鐘</div></header>
+<article class="lesson" id="L2.1" data-lid="2.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.1"><span>已讀</span></label></div><h3 class="lesson-title">好 Prompt 的解剖學</h3><div class="lesson-subtitle">角色、脈絡、任務、格式</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>很多人寫 prompt 的方式，就是把心裡想的話原封不動打出來，然後對結果失望。問題往往不是 Claude 不夠聰明，是 prompt 本身缺了結構。一個穩定好用的 prompt，通常可以拆成四個部分：角色（role）、脈絡（context）、任務（task）、格式（format）。角色告訴 Claude「你現在是誰」，例如「你是一位資深法務顧問」，這會影響它用什麼語氣、站在什麼專業角度回答。脈絡是背景資訊——你的公司、你的讀者是誰、這份輸出要用在哪裡，缺了脈絡，Claude 只能用最通用、最安全的方式猜。</p>
+  <p>任務是具體要做的事，動詞要明確：「摘要」「比較」「改寫」「找出風險」都比籠統的「幫我看一下這個」有效。格式則是輸出長相的規格——要條列還是段落、要不要表格、字數上限、要不要中英夾雜。這四塊不是每次都要寫滿，但你可以把它當成一張檢查清單：結果不如預期時，回頭看是不是漏了角色、脈絡、任務、還是格式其中一塊，通常就能抓出問題在哪。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像寫 prompt 像交代新來的工讀生做事——你會告訴他「你負責客服窗口」（角色）、「我們是賣手工皂的」（脈絡）、「幫我回覆這封客訴信」（任務）、「用 200 字內、語氣要誠懇」（格式）。四項都講清楚，交出來的東西才不會走鐘。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>好 prompt 可拆成四塊：角色、脈絡、任務、格式</li>
+  <li>角色決定語氣與專業視角，脈絡補足背景資訊</li>
+  <li>任務要用明確動詞描述，避免籠統的請求</li>
+  <li>格式規定輸出長相：條列/段落、字數、要不要表格等</li>
+  <li>結果不理想時，可用這四塊當檢查清單回頭排查問題</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 好 prompt 的解剖學通常拆成哪四個部分？</div><div class="opt">角色、脈絡、任務、格式</div><div class="opt">開頭、中段、結尾、附註</div><div class="opt">溫度、token、模型、費用</div><div class="answer">✅ 角色、脈絡、任務、格式</div></div>
+  <div class="qa"><div class="qtext">Q2: 「幫我看一下這個」屬於哪一種常見問題？</div><div class="opt">格式規定太嚴格</div><div class="opt">任務描述太籠統、動詞不明確</div><div class="opt">脈絡資訊過多</div><div class="answer">✅ 任務描述太籠統、動詞不明確</div></div>
+  <div class="qa"><div class="qtext">Q3: 「你是一位資深法務顧問」這句話主要在設定 prompt 的哪一塊？</div><div class="opt">格式</div><div class="opt">角色</div><div class="opt">任務</div><div class="answer">✅ 角色</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L2.2" data-lid="2.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.2"><span>已讀</span></label></div><h3 class="lesson-title">給範例最有效</h3><div class="lesson-subtitle">few-shot prompting 的威力</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>如果只能學一個 prompt 技巧，很多實務工作者會選 few-shot prompting（少樣本提示）。概念很簡單：與其一直用文字描述你要的格式和風格，不如直接給 Claude 看一兩個「輸入 → 輸出」的範例，讓它照著範例的樣子做，而不是照你的文字說明去猜。相對的，完全不給範例、只靠文字指令的做法叫 zero-shot（零樣本），能用但精準度通常比較低，尤其是輸出格式比較特殊或風格要求很細的時候。</p>
+  <p>few-shot 特別有效的場景，是那些「用文字很難講清楚，但看範例秒懂」的任務：客服信件的語氣拿捏、資料抽取要輸出的精確欄位順序、程式碼註解的風格。你只需要給 2-3 個具代表性的範例，涵蓋一般情況和至少一個邊界案例，Claude 就能抓到規律並套用到新的輸入上。範例的品質比數量重要——三個精挑細選、真的反映你要的結果的範例，勝過十個隨便湊的。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">就像教新人寫工作報告，你與其口頭講半小時「要簡潔、要條列、語氣要中性」，不如直接丟一份寫得好的舊報告給他參考——「照這個感覺寫」比長篇說明有效多了。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>few-shot prompting：給 1-3 個「輸入→輸出」範例讓模型模仿</li>
+  <li>zero-shot：只靠文字指令、不給範例，精準度通常較低</li>
+  <li>few-shot 特別適合語氣、格式、風格難以純用文字描述的任務</li>
+  <li>範例品質比數量重要，2-3 個精準範例通常就夠</li>
+  <li>建議至少包含一個邊界案例，讓模型學到規則的界線</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: few-shot prompting 的核心做法是？</div><div class="opt">給模型看幾個輸入輸出範例讓它模仿</div><div class="opt">完全不給任何說明，讓模型自由發揮</div><div class="opt">把 temperature 調到最高</div><div class="answer">✅ 給模型看幾個輸入輸出範例讓它模仿</div></div>
+  <div class="qa"><div class="qtext">Q2: 不給範例、只靠文字指令的方式稱為？</div><div class="opt">zero-shot</div><div class="opt">chain of thought</div><div class="opt">Batch API</div><div class="answer">✅ zero-shot</div></div>
+  <div class="qa"><div class="qtext">Q3: 挑選 few-shot 範例時，比數量更重要的是什麼？</div><div class="opt">範例的品質與代表性</div><div class="opt">範例字數越多越好</div><div class="opt">範例一定要用英文寫</div><div class="answer">✅ 範例的品質與代表性</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L2.3" data-lid="2.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.3 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.3"><span>已讀</span></label></div><h3 class="lesson-title">讓 Claude 先思考</h3><div class="lesson-subtitle">chain of thought 與 XML 標籤</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>面對需要多步驟推理的問題，直接要 Claude 給答案，常常會得到一個「看起來合理但沒細想過」的結果。chain of thought（思考鏈，簡稱 CoT）的做法很直覺：明確請 Claude「先一步步想清楚，再給出最終答案」。這個簡單的指示，會讓模型把中間的推理過程寫出來，而不是直接跳到結論——寫出來的過程本身也會提升最終答案的品質，因為模型是照著自己寫下的邏輯繼續往下推，比腦內直接跳答案更不容易漏掉步驟。</p>
+  <p>要讓思考過程和最終答案不混在一起，一個好用的技巧是用 XML 標籤組織 prompt 和期待的輸出，例如請 Claude 把推理放進 &lt;thinking&gt;...&lt;/thinking&gt;，把要交付的答案放進 &lt;answer&gt;...&lt;/answer&gt;。Claude 對 XML 標籤的結構特別敏感、遵循度高，這也是為什麼很多正式 prompt 會用 &lt;context&gt;、&lt;document&gt;、&lt;instructions&gt; 這類標籤把長 prompt 的不同區塊清楚分開，而不是全部擠成一大段文字。區塊分清楚了，Claude 比較不會把「參考資料」和「要執行的指令」搞混。</p>
+  <pre class="code">請先在 &lt;thinking&gt; 標籤中列出你的推理步驟，
+再把最終結論寫在 &lt;answer&gt; 標籤中。
+
+&lt;context&gt;
+（這裡放參考資料或背景文件）
+&lt;/context&gt;
+
+&lt;instructions&gt;
+請根據以上 context，判斷這份合約是否有隱藏的自動續約條款。
+&lt;/instructions&gt;</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 CoT 想成考試要求「寫出計算過程」——不是老師想刁難你，是逼你自己檢查每一步邏輯，答案自然比憑直覺亂猜穩。XML 標籤則像用資料夾分類文件，「合約」「附件」「待辦」分開放，你自己都不容易拿錯，Claude 也一樣。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>chain of thought（思考鏈）：請模型先寫推理過程，再給最終答案</li>
+  <li>寫出中間步驟能提升複雜任務的答案品質，減少跳步驟出錯</li>
+  <li>Claude 對 XML 標籤遵循度高，適合用來切分 prompt 的不同區塊</li>
+  <li>常見標籤：&lt;thinking&gt;、&lt;answer&gt;、&lt;context&gt;、&lt;instructions&gt;</li>
+  <li>把推理過程和最終答案分開放，方便你只取用你要的那一段</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: chain of thought 的核心指示是什麼？</div><div class="opt">請模型直接給最短答案</div><div class="opt">請模型先一步步思考，再給最終答案</div><div class="opt">請模型不要解釋任何推理過程</div><div class="answer">✅ 請模型先一步步思考，再給最終答案</div></div>
+  <div class="qa"><div class="qtext">Q2: Claude 對哪一種標籤結構特別敏感、遵循度高？</div><div class="opt">XML 標籤</div><div class="opt">Markdown 表格</div><div class="opt">CSV 逗號分隔</div><div class="answer">✅ XML 標籤</div></div>
+  <div class="qa"><div class="qtext">Q3: 用 &lt;thinking&gt; 和 &lt;answer&gt; 分開標記的主要好處是？</div><div class="opt">可以把推理過程和最終答案清楚分開</div><div class="opt">能讓模型回答得更短</div><div class="opt">能自動翻譯成英文</div><div class="answer">✅ 可以把推理過程和最終答案清楚分開</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L2.4" data-lid="2.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 2.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="2.4"><span>已讀</span></label></div><h3 class="lesson-title">常見失敗模式與除錯</h3><div class="lesson-subtitle">prompt 不聽話的時候怎麼辦</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Prompt 寫不好，症狀通常長得很像：答非所問、格式亂跳、明明說了不要卻還是做了。第一個常見病因是指令模糊——「幫我優化這份文案」太籠統，Claude 只能猜你想優化的是長度、語氣、還是說服力，猜錯了你會覺得它「不聽話」，但問題其實出在指令本身沒講清楚要優化哪個面向。第二個常見病因是一次塞太多任務——一段 prompt 裡同時要求摘要、翻譯、抓風險、寫建議，模型的注意力被分散，每件事都做得普普，不如拆成幾次請求或用清楚的分點列出優先順序。</p>
+  <p>第三個是過度依賴 negative instruction（負面指令），像是「不要用被動語態」「不要太長」。負面指令只告訴模型「不要做什麼」，卻沒說「要做什麼」，效果通常比正面描述弱，把「不要用被動語態」換成「全程用主詞開頭的主動句」，模型更容易照做。除錯的方法也很直接：先把 prompt 拆解回角色、脈絡、任務、格式四塊檢查有沒有缺漏；用小範例先測，觀察模型輸出卡在哪一步；懷疑是任務太多，就先拆分成單一任務測試，確認每一塊都對了，再組回完整版本。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：把「這次沒做好」的失敗結果直接丟回去說「不對，重寫」，卻不解釋哪裡不對。模型沒有你腦內的標準答案，只能繼續猜，你會陷入越改越模糊的迴圈。具體指出哪裡不符合預期，才是有效的除錯。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>常見失敗一：指令模糊，模型只能用最通用的方式猜測意圖</li>
+  <li>常見失敗二：一次塞太多任務，拆分成單一任務通常效果更好</li>
+  <li>常見失敗三：過度依賴負面指令，正面描述「要做什麼」更有效</li>
+  <li>除錯第一步：回頭檢查角色、脈絡、任務、格式是否有缺漏</li>
+  <li>除錯第二步：用小範例測試、拆解任務逐一排查卡點</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 「幫我優化這份文案」這個指令最主要的問題是？</div><div class="opt">字數太少</div><div class="opt">沒說清楚要優化哪個面向</div><div class="opt">使用了負面指令</div><div class="answer">✅ 沒說清楚要優化哪個面向</div></div>
+  <div class="qa"><div class="qtext">Q2: 一段 prompt 同時要求摘要、翻譯、抓風險、寫建議，最可能的結果是？</div><div class="opt">每件事都做得又快又好</div><div class="opt">模型注意力分散，每件事都做得普普</div><div class="opt">模型會自動拒絕整個請求</div><div class="answer">✅ 模型注意力分散，每件事都做得普普</div></div>
+  <div class="qa"><div class="qtext">Q3: 「不要用被動語態」屬於哪一種指令，效果通常較弱？</div><div class="opt">正面指令</div><div class="opt">負面指令</div><div class="opt">格式指令</div><div class="answer">✅ 負面指令</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C03"><header class="ch-header"><div class="ch-eyebrow">章節 03</div><h2 class="ch-title">Claude API 入門</h2><div class="ch-subtitle">對應官方課程 Claude with the Anthropic API</div><div class="ch-meta">4課 · ⏱ ~21 分鐘</div></header>
+<article class="lesson" id="L3.1" data-lid="3.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.1"><span>已讀</span></label></div><h3 class="lesson-title">第一次呼叫</h3><div class="lesson-subtitle">API key 與 Messages API</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>要讓 Claude 接進你自己的程式或產品，起點是申請一把 API key——在 Anthropic 的開發者主控台（Console）建立帳號後就能產生，這把 key 是你的身分憑證，要當密碼一樣保管，不要寫進會被公開的程式碼或上傳到公開的程式碼庫。拿到 key 之後，你會透過官方提供的 SDK（Python、TypeScript 都有）呼叫 Messages API（訊息 API），這是目前 Claude API 的核心介面，取代了早期比較陽春的 completion 介面。</p>
+  <p>一次呼叫最基本要準備三樣東西：要用哪個 model（模型代號）、這次回應的 max_tokens 上限、以及 messages 陣列——裡面放使用者說的話。API 回傳的結果裡，實際文字內容放在 content 欄位，是一個區塊（block）的陣列，因為 Claude 的輸出除了文字，未來也可能包含其他類型的區塊（例如工具呼叫，第四章會講到）。第一次呼叫成功、印出模型的回覆，是接下來所有進階用法——多輪對話、工具串接、串流輸出——的共同起點。</p>
+  <pre class="code">import anthropic
+
+client = anthropic.Anthropic(api_key="你的 API key")
+
+message = client.messages.create(
+    model="你選用的 Claude 模型代號",  # 實際代號請查官方文件
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "用一句話介紹台北 101"}
+    ]
+)
+
+print(message.content)</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 API key 想成飯店房卡——弄丟或外流，別人就能刷你的房間、花你的錢，發現外流要立刻在 Console 裡作廢重發，跟掛失信用卡是同一個邏輯。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>呼叫 Claude API 前要先在 Console 申請 API key，需妥善保管不外流</li>
+  <li>Messages API 是目前呼叫 Claude 的核心介面</li>
+  <li>一次呼叫至少要指定 model、max_tokens、messages 三樣</li>
+  <li>messages 是陣列，裡面放對話中每一句話與說話者角色</li>
+  <li>回傳結果的 content 是區塊陣列，可能包含文字以外的類型</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 呼叫 Claude API 之前，第一步要做什麼？</div><div class="opt">直接寫程式呼叫，不需要任何憑證</div><div class="opt">在 Console 申請 API key</div><div class="opt">先安裝 Claude Code</div><div class="answer">✅ 在 Console 申請 API key</div></div>
+  <div class="qa"><div class="qtext">Q2: 一次 Messages API 呼叫至少需要指定哪三樣？</div><div class="opt">model、max_tokens、messages</div><div class="opt">temperature、system、api_version</div><div class="opt">username、password、region</div><div class="answer">✅ model、max_tokens、messages</div></div>
+  <div class="qa"><div class="qtext">Q3: API key 外流時最正確的處理方式是？</div><div class="opt">不用理它，反正很難被利用</div><div class="opt">立刻在 Console 作廢並重新產生</div><div class="opt">把它分享給更多人稀釋風險</div><div class="answer">✅ 立刻在 Console 作廢並重新產生</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L3.2" data-lid="3.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.2"><span>已讀</span></label></div><h3 class="lesson-title">核心參數</h3><div class="lesson-subtitle">system、max_tokens、temperature</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>呼叫 Messages API 時，除了必要的 model、messages，還有幾個參數會直接影響輸出的樣子和品質。system 是一個獨立於 messages 陣列之外的頂層參數，用來設定「這次對話 Claude 要扮演什麼角色、遵守什麼規則」——例如「你是一個只用繁體中文回答、語氣正式的客服助理」。把角色設定放進 system 而不是塞進第一句 user 訊息，效果通常更穩定，也更不容易被使用者後續的訊息覆蓋掉。</p>
+  <p>max_tokens 是必要參數，設定這次回應最多能生成多少 token（權杖，語言模型處理文字的基本單位），太小會讓長回答被硬生生截斷，太大則沒有實際意義只是留了空間。temperature 控制輸出的隨機性，範圍通常在 0 到 1 之間：數值低（接近 0）代表模型會偏好選擇最有把握的字詞，回答比較穩定、適合需要一致性的任務，例如資料抽取、程式碼生成；數值高則輸出更有變化、適合需要創意發散的任務，例如寫文案、腦力激盪。同一個 prompt，光是調整 temperature，拿到的個性可能完全不一樣。</p>
+  <pre class="code">message = client.messages.create(
+    model="你選用的 Claude 模型代號",
+    max_tokens=1024,
+    system="你是一位只用繁體中文回答的客服助理，語氣親切但專業。",
+    temperature=0.3,
+    messages=[
+        {"role": "user", "content": "訂單還沒到怎麼辦？"}
+    ]
+)</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：把角色設定寫在使用者的第一句訊息裡，而不是用 system 參數。這樣做在多輪對話後，角色設定很容易被使用者中途的訊息「蓋掉」或稀釋，穩定性不如把它放進 system。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>system 是頂層參數，用來設定角色與規則，比塞進 user 訊息更穩定</li>
+  <li>max_tokens 是必要參數，設定這次回應最多能生成的 token 數量</li>
+  <li>temperature 控制輸出隨機性，範圍常見是 0 到 1</li>
+  <li>temperature 低：穩定一致，適合資料抽取、程式碼等任務</li>
+  <li>temperature 高：更有創意變化，適合文案發想、腦力激盪</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 設定 Claude 的角色與行為規則，建議放在哪個參數？</div><div class="opt">temperature</div><div class="opt">system</div><div class="opt">max_tokens</div><div class="answer">✅ system</div></div>
+  <div class="qa"><div class="qtext">Q2: 需要穩定一致輸出的資料抽取任務，temperature 通常該設高還是低？</div><div class="opt">設高，接近 1</div><div class="opt">設低，接近 0</div><div class="opt">temperature 跟穩定性無關</div><div class="answer">✅ 設低，接近 0</div></div>
+  <div class="qa"><div class="qtext">Q3: max_tokens 這個參數的作用是？</div><div class="opt">控制回應的隨機性</div><div class="opt">設定這次回應最多能生成的 token 數量</div><div class="opt">決定要不要開啟串流</div><div class="answer">✅ 設定這次回應最多能生成的 token 數量</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L3.3" data-lid="3.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.3 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.3"><span>已讀</span></label></div><h3 class="lesson-title">多輪對話、串流與視覺輸入</h3><div class="lesson-subtitle">從單發問答到真正的應用</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude API 本身是無狀態（stateless）的——它不會幫你記住上一次呼叫聊了什麼，每一次呼叫都是全新的。要做出「記得前面聊過什麼」的多輪對話，責任在你這邊：把每一輪的使用者訊息和 Claude 的回覆都存下來，下一次呼叫時把完整的歷史（history）連同新的問題一起放進 messages 陣列，並且維持 user、assistant 角色交替出現。歷史留得越完整，Claude 的回答就越能接上前文，但也代表每次呼叫要傳送和處理的內容越多。</p>
+  <p>串流（streaming）解決的是體驗問題：預設情況下你要等 Claude 把整段回應生成完才會拿到結果，字數一長，使用者會盯著空白畫面等好幾秒。開啟串流後，文字會像打字機一樣一段段即時吐出來，讓使用者感覺回應「馬上開始」，特別適合聊天介面。視覺輸入（vision）則是讓 Claude 不只讀文字，也能看圖——把圖片以 base64 編碼或圖片網址放進 content 區塊裡，就能請它描述截圖、讀圖表數字、辨認照片裡的物件，這對處理發票、圖表、UI 截圖這類任務特別實用。</p>
+  <pre class="code">messages = [
+    {"role": "user", "content": "台北明天會下雨嗎？"},
+    {"role": "assistant", "content": "目前資訊有限，建議查氣象局預報。"},
+    {"role": "user", "content": "那我該帶傘嗎？"},
+]
+
+with client.messages.stream(
+    model="你選用的 Claude 模型代號",
+    max_tokens=512,
+    messages=messages,
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像 Claude 是一個很聰明但沒有記憶的顧問，每次見面都要你重新自我介紹——多輪對話就是你隨身帶著一份「之前聊過什麼」的筆記，每次見面先遞給他看一眼，他馬上就能接著聊。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>Claude API 是無狀態的，多輪對話的歷史要由你自己保存並每次傳入</li>
+  <li>messages 陣列需維持 user、assistant 角色交替</li>
+  <li>串流讓文字逐段即時輸出，改善使用者等待體驗</li>
+  <li>視覺輸入可在 content 區塊放入圖片，讓 Claude 讀圖表、截圖、照片</li>
+  <li>歷史留得越完整，回答越能接上前文，但傳輸與處理量也越大</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude API 的「無狀態」特性代表什麼？</div><div class="opt">每次呼叫都自動記得所有歷史對話</div><div class="opt">每次呼叫都是全新的，歷史要由你自己保存傳入</div><div class="opt">API 完全不能做多輪對話</div><div class="answer">✅ 每次呼叫都是全新的，歷史要由你自己保存傳入</div></div>
+  <div class="qa"><div class="qtext">Q2: 開啟串流輸出主要解決的是什麼問題？</div><div class="opt">降低 API 呼叫費用</div><div class="opt">改善使用者等待整段回應的體驗</div><div class="opt">讓模型的答案更準確</div><div class="answer">✅ 改善使用者等待整段回應的體驗</div></div>
+  <div class="qa"><div class="qtext">Q3: 要讓 Claude 讀圖表、辨認照片內容，應該使用哪種輸入方式？</div><div class="opt">視覺輸入（vision），把圖片放進 content 區塊</div><div class="opt">把圖片檔名打進純文字訊息</div><div class="opt">调高 temperature 參數</div><div class="answer">✅ 視覺輸入（vision），把圖片放進 content 區塊</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L3.4" data-lid="3.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 3.4 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="3.4"><span>已讀</span></label></div><h3 class="lesson-title">省錢之道</h3><div class="lesson-subtitle">prompt caching 與 Batch API</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>API 用量一大，成本就會變成認真要管理的事，Anthropic 提供兩個機制專門處理這個問題。第一個是 prompt caching（提示詞快取）：如果你的 prompt 裡有一大段內容是重複、不太會變的——例如很長的 system 指示、固定的參考文件、範例集——你可以把這段內容標記為可快取，之後的呼叫只要內容沒變，Claude 就不用重新「處理」這段一模一樣的內容，能明顯降低延遲和成本。特別適合那種「一份長文件、被問很多次不同問題」的場景，例如針對同一份合約反覆提問。</p>
+  <p>第二個是 Batch API（批次 API），針對的是「不急著馬上拿到結果」的大量請求，例如晚上要把一整天累積的十萬筆客服訊息做情緒分類。你把所有請求打包一次送出，Anthropic 在背景非同步處理，通常在一定時間內完成，換來的是比即時呼叫更低的單位成本。兩者的判斷邏輯不同：prompt caching 解決「同樣的內容被重複使用」，Batch API 解決「大量但不急」。實務上常常兩個一起用，把重複的長文件快取起來，再把大量非即時的請求丟進批次處理。</p>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：以為 Batch API 是「比較慢的即時 API」。它是完全不同的用法——你不會在使用者等待畫面時用它，適合的是報表產出、離線分析、大量分類這類背景任務。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>prompt caching：把重複、不常變動的長內容標記快取，降低延遲與成本</li>
+  <li>prompt caching 適合場景：同一份長文件被反覆提問的情境</li>
+  <li>Batch API：把大量不急迫的請求打包非同步處理，單位成本更低</li>
+  <li>Batch API 適合場景：離線分析、大量分類、報表產出等背景任務</li>
+  <li>實務上常兩者併用：快取重複內容 + 批次處理大量請求</li>
+  <li>實際費率與折扣幅度請以官方 pricing 頁面為準</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 同一份長合約被反覆提問不同問題，最適合用哪個機制降低成本？</div><div class="opt">prompt caching</div><div class="opt">temperature 調整</div><div class="opt">縮短 max_tokens</div><div class="answer">✅ prompt caching</div></div>
+  <div class="qa"><div class="qtext">Q2: 要把十萬筆客服訊息做離線情緒分類、不急著拿結果，適合用哪個機制？</div><div class="opt">Batch API</div><div class="opt">串流輸出</div><div class="opt">視覺輸入</div><div class="answer">✅ Batch API</div></div>
+  <div class="qa"><div class="qtext">Q3: 下列敘述何者正確？</div><div class="opt">Batch API 適合聊天介面即時回覆使用者</div><div class="opt">Batch API 適合離線、非即時的大量請求</div><div class="opt">prompt caching 只能用在圖片輸入</div><div class="answer">✅ Batch API 適合離線、非即時的大量請求</div></div>
+</div></div>
+</div></article>
+</section>
+<section class="chapter" id="C04"><header class="ch-header"><div class="ch-eyebrow">章節 04</div><h2 class="ch-title">Tool Use 工具使用</h2><div class="ch-subtitle">讓 Claude 動手做事</div><div class="ch-meta">4課 · ⏱ ~22 分鐘</div></header>
+<article class="lesson" id="L4.1" data-lid="4.1"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.1 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.1"><span>已讀</span></label></div><h3 class="lesson-title">什麼是 tool use</h3><div class="lesson-subtitle">從純文字到能查能算</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>Claude 本身是一個語言模型，它擅長理解和生成文字，但它不會憑空知道「現在台北的氣溫」，也沒辦法真的幫你查資料庫、算今天的匯率、或是預訂一張機票——這些都需要接到外部系統。tool use（工具使用，有時也稱 function calling）就是解決這個落差的機制：你先把可用的工具描述給 Claude 聽（這個工具叫什麼名字、做什麼事、需要什麼參數），Claude 在對話過程中如果判斷「這個問題需要用工具才能回答」，就會回傳一個結構化的請求，說明它想呼叫哪個工具、帶什麼參數，而不是自己亂猜答案。</p>
+  <p>要注意的是，Claude 本身並不會真的去執行工具——呼叫外部 API、查資料庫這些動作，是你的程式碼負責執行的，Claude 只負責「判斷該用哪個工具、該帶什麼參數」這個決策層。執行完之後，你把結果回傳給 Claude，它才會根據真實的結果組織成人話回覆使用者。這個設計讓 Claude 從「只會講」升級成「講完還能接手動作」，是 agent（代理人）能自主完成多步驟任務的核心機制，後面幾課會細講這個來回的完整迴圈。</p>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">把 Claude 想成一位很聰明但不會自己開車的顧問——他知道該查哪張地圖、該打哪通電話，但踩油門、撥號這些實際動作要靠你（你的程式碼）幫他做，做完把結果回報給他，他再幫你整理成一段話。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>tool use（工具使用）讓 Claude 能在回答中判斷「這題需要查外部資訊」</li>
+  <li>Claude 只負責決定要呼叫哪個工具、帶什麼參數，不會自己執行</li>
+  <li>實際執行工具（呼叫 API、查資料庫）是由你的程式碼負責</li>
+  <li>執行結果要回傳給 Claude，它才能組織成最終的自然語言回覆</li>
+  <li>tool use 是 agent 能自主完成多步驟任務的核心機制</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: Claude 想查詢外部資料時，實際執行 API 呼叫的是誰？</div><div class="opt">Claude 自己直接執行</div><div class="opt">你的程式碼負責執行</div><div class="opt">使用者手動執行</div><div class="answer">✅ 你的程式碼負責執行</div></div>
+  <div class="qa"><div class="qtext">Q2: tool use 又常被稱為什麼？</div><div class="opt">function calling</div><div class="opt">prompt caching</div><div class="opt">chain of thought</div><div class="answer">✅ function calling</div></div>
+  <div class="qa"><div class="qtext">Q3: tool use 機制讓 Claude 從「只會講」升級成什麼？</div><div class="opt">只會拒絕請求</div><div class="opt">講完還能接手動作的 agent</div><div class="opt">完全不需要人類介入的獨立系統</div><div class="answer">✅ 講完還能接手動作的 agent</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L4.2" data-lid="4.2"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.2 課</span><span class="lesson-time">⏱ ~5 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.2"><span>已讀</span></label></div><h3 class="lesson-title">定義好用的工具 schema</h3><div class="lesson-subtitle">描述寫得好，模型用得對</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>定義一個工具，本質上是在填三件事：name（工具名稱）、description（工具描述）、input_schema（輸入參數的 JSON Schema）。很多人以為 name 取得清楚就夠了，但實務上 description 才是決定 Claude 用不用得對這個工具的關鍵——它讀的是你寫的描述文字，不是你腦中的意圖。一個模糊的描述像「查詢資料」，Claude 很難判斷什麼情境該用它；一個具體的描述像「查詢指定城市今天的天氣狀況與攝氏氣溫，僅支援台灣縣市」，Claude 才能準確判斷這個工具適不適合眼前這個問題。</p>
+  <p>input_schema 用標準的 JSON Schema 格式定義參數，包含每個參數的型別、是否必填、以及同樣重要的參數描述。參數命名和描述一樣不能馬虎——city 這個參數如果描述寫「城市名稱，例如台北」，Claude 傳進來的值就會比較穩定；什麼都不寫，模型可能會傳英文、簡體、或加上「市」字不一致的格式。工具描述沒寫好，最常見的症狀是 Claude 該用工具時沒用、不該用時亂用，或是參數格式對不上你程式碼預期的樣子——這些問題往往不是模型能力不夠，是 schema 寫得不夠精準。</p>
+  <pre class="code">tools = [
+    {
+        "name": "get_weather",
+        "description": "查詢指定城市今天的天氣狀況與攝氏氣溫，僅支援台灣縣市。",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "description": "城市名稱，例如：台北、台中、高雄"
+                }
+            },
+            "required": ["city"]
+        }
+    }
+]</pre>
+  <div class="hint warn"><span class="hint-icon">⚠️</span><div class="hint-body">常見誤區：把多個功能塞進同一個工具，用一個 mode 參數切換行為。這會讓 description 很難寫清楚，Claude 也更容易選錯 mode。拆成幾個名字、用途單一的工具，通常比一個萬用工具好用。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>定義工具要填 name、description、input_schema 三個部分</li>
+  <li>description 是 Claude 判斷「該不該用這個工具」的主要依據</li>
+  <li>description 越具體、越明確標示適用範圍，模型用得越準</li>
+  <li>input_schema 用 JSON Schema 定義參數型別、必填與描述</li>
+  <li>一個工具只負責單一功能，通常比塞多個 mode 的萬用工具好用</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 決定 Claude 會不會用對工具的最關鍵欄位是？</div><div class="opt">name</div><div class="opt">description</div><div class="opt">參數的排列順序</div><div class="answer">✅ description</div></div>
+  <div class="qa"><div class="qtext">Q2: input_schema 主要用什麼格式定義參數？</div><div class="opt">JSON Schema</div><div class="opt">CSV</div><div class="opt">純文字說明，沒有固定格式</div><div class="answer">✅ JSON Schema</div></div>
+  <div class="qa"><div class="qtext">Q3: 把多個功能塞進同一個工具、用 mode 參數切換，常見的問題是？</div><div class="opt">完全沒有影響</div><div class="opt">description 難寫清楚，模型容易選錯 mode</div><div class="opt">會讓 API 呼叫費用變貴</div><div class="answer">✅ description 難寫清楚，模型容易選錯 mode</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L4.3" data-lid="4.3"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.3 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.3"><span>已讀</span></label></div><h3 class="lesson-title">Agentic loop</h3><div class="lesson-subtitle">從工具請求到結果回傳的完整迴圈</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>理解 tool use 最重要的一步，是搞懂它其實不是「問一次答一次」，而是一個來回的迴圈，通稱 agentic loop（代理迴圈）。流程是這樣的：你發送請求給 Claude，並附上可用的工具列表；如果 Claude 判斷需要用工具，它回傳的 stop_reason（停止原因）會是 tool_use，內容裡包含它想呼叫的工具名稱和參數，而不是最終答案。你的程式碼這時要做的事，是真正執行那個工具（呼叫 API、跑查詢……），拿到結果後，把 Claude 上一輪的完整回覆和你執行的結果一起送回去——結果要包成一個 tool_result（工具結果）區塊，並且帶上對應的 tool_use_id，讓 Claude 知道這是哪一次呼叫的答案。</p>
+  <p>送出之後，Claude 會根據這個真實結果，決定要不要再呼叫另一個工具、還是已經有足夠資訊可以組織成最終文字回覆給使用者。這個迴圈可能只跑一輪（查一次天氣就夠了），也可能連續跑好幾輪（先查匯率、再查商品價格、最後算出換算後金額）——迴圈會一直持續，直到 Claude 判斷不再需要工具、回傳 stop_reason 為 end_turn 的最終回答為止。這就是為什麼 agent 能自主完成多步驟任務：迴圈的每一輪，都是模型根據新資訊重新做一次判斷。</p>
+  <pre class="code">response = client.messages.create(
+    model="你選用的 Claude 模型代號",
+    max_tokens=1024,
+    tools=tools,
+    messages=messages,
+)
+
+if response.stop_reason == "tool_use":
+    tool_call = next(b for b in response.content if b.type == "tool_use")
+    result = run_tool(tool_call.name, tool_call.input)
+
+    messages.append({"role": "assistant", "content": response.content})
+    messages.append({
+        "role": "user",
+        "content": [{
+            "type": "tool_result",
+            "tool_use_id": tool_call.id,
+            "content": str(result),
+        }],
+    })
+    # 再送出一次 messages.create(...)，迴圈繼續</pre>
+  <div class="hint"><span class="hint-icon">💡</span><div class="hint-body">想像 Claude 和你的程式碼在打乒乓球——Claude 發球說「我需要查天氣」，你的程式碼接球去查、把結果打回去，Claude 再判斷要不要繼續發球（查下一件事）還是收拍給使用者總結。球來回幾次，取決於任務需要幾個步驟。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>agentic loop：請求 → Claude 回 tool_use → 你執行 → 回傳 tool_result → 繼續</li>
+  <li>stop_reason 為 tool_use 時，代表 Claude 想呼叫工具、還沒給最終答案</li>
+  <li>tool_result 要帶上對應的 tool_use_id，讓 Claude 知道這是哪次呼叫的結果</li>
+  <li>迴圈可能一輪就結束，也可能連續多輪，視任務需要幾個步驟</li>
+  <li>stop_reason 變成 end_turn，代表 Claude 已組織出最終回覆</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 當 response.stop_reason 是 tool_use 時，代表什麼？</div><div class="opt">Claude 已經給出最終答案</div><div class="opt">Claude 想呼叫工具，還沒給最終答案</div><div class="opt">這次呼叫發生了錯誤</div><div class="answer">✅ Claude 想呼叫工具，還沒給最終答案</div></div>
+  <div class="qa"><div class="qtext">Q2: 回傳 tool_result 時，為什麼要帶上 tool_use_id？</div><div class="opt">純粹是格式要求，沒有實際作用</div><div class="opt">讓 Claude 知道這是對應哪一次工具呼叫的結果</div><div class="opt">用來計算這次呼叫的費用</div><div class="answer">✅ 讓 Claude 知道這是對應哪一次工具呼叫的結果</div></div>
+  <div class="qa"><div class="qtext">Q3: agentic loop 什麼時候會結束？</div><div class="opt">固定跑三輪後強制停止</div><div class="opt">Claude 回傳 stop_reason 為 end_turn 的最終回答時</div><div class="opt">程式碼主動中斷連線時</div><div class="answer">✅ Claude 回傳 stop_reason 為 end_turn 的最終回答時</div></div>
+</div></div>
+</div></article>
+<article class="lesson" id="L4.4" data-lid="4.4"><header class="lesson-header"><div class="lesson-meta-row"><span class="lesson-num">第 4.4 課</span><span class="lesson-time">⏱ ~6 分鐘</span><label class="progress-toggle"><input type="checkbox" class="progress-check" data-lid="4.4"><span>已讀</span></label></div><h3 class="lesson-title">結構化輸出與錯誤處理</h3><div class="lesson-subtitle">穩定拿到你要的 JSON</div></header><div class="lesson-body">
+<div class="lesson-section"><h4 class="section-title">讀一讀</h4><div class="section-body">
+  <p>tool use 除了拿來串接真正的外部功能，還有一個很實用的延伸用法：強制 Claude 輸出結構化資料。做法是定義一個「假工具」——它不真的執行任何動作，input_schema 就是你想要的資料格式，例如「從這段文字抽取出姓名、日期、金額」。搭配 tool_choice 參數指定要求 Claude 必須呼叫這個工具（而不是自由決定要不要用），Claude 就會把答案套進你定義好的 schema 裡回傳，而不是生成一段可能格式跑掉的自由文字。這比要求 Claude「請用 JSON 格式回答」穩定得多，因為 schema 本身就是規格，不是一句期待模型自己遵守的口頭指示。</p>
+  <p>有了 schema 保底，錯誤處理還是不能省。工具的輸入可能不完整、外部 API 可能逾時或回傳錯誤、Claude 傳來的參數也可能和你預期的格式對不上。穩健的做法是：執行工具前先驗證輸入（缺必要欄位就直接拒絕，不要硬跑）；執行失敗時，把錯誤訊息也包進 tool_result 回傳給 Claude（可以標記 is_error），讓它有機會根據錯誤內容調整、重試或換個工具，而不是讓整個流程直接崩潰；對外部依賴設定合理的逾時和重試次數，避免一次呼叫卡住整個 agentic loop。</p>
+  <div class="hint stop"><span class="hint-icon">🚫</span><div class="hint-body">絕對別做：工具執行失敗時直接吞掉錯誤、回傳空字串或假資料給 Claude。Claude 會把它當成真實結果繼續往下推論，最後產出一個看起來自信滿滿、實際上完全建立在錯誤資訊上的答案，比明講失敗更危險。</div></div>
+</div></div>
+<div class="lesson-section"><h4 class="section-title">重點整理</h4><div class="section-body"><ul class="bullets">
+  <li>定義一個「假工具」、schema 就是想要的資料格式，可強制拿到結構化輸出</li>
+  <li>搭配 tool_choice 要求 Claude 必須呼叫該工具，比純文字要求 JSON 更穩定</li>
+  <li>執行工具前應先驗證輸入，缺必要欄位就不要硬跑</li>
+  <li>工具執行失敗要把錯誤訊息誠實回傳給 Claude，讓它能調整或重試</li>
+  <li>對外部依賴設定逾時與重試上限，避免卡住整個 agentic loop</li>
+  <li>錯誤處理不完整時，不要用假資料頂替，會讓後續推論建立在錯誤前提上</li>
+</ul></div></div>
+<div class="lesson-section"><h4 class="section-title">練習題</h4><div class="section-body">
+  <div class="qa"><div class="qtext">Q1: 想穩定拿到符合特定格式的 JSON 輸出，比較可靠的做法是？</div><div class="opt">在 prompt 裡口頭要求「請用 JSON 格式回答」</div><div class="opt">定義一個工具，用 input_schema 規定資料格式並搭配 tool_choice 強制呼叫</div><div class="opt">把 temperature 調到 1</div><div class="answer">✅ 定義一個工具，用 input_schema 規定資料格式並搭配 tool_choice 強制呼叫</div></div>
+  <div class="qa"><div class="qtext">Q2: 工具執行失敗時，比較穩健的處理方式是？</div><div class="opt">回傳空字串讓 Claude 自己猜</div><div class="opt">把錯誤訊息誠實包進 tool_result 回傳給 Claude</div><div class="opt">直接中斷整個程式，不回傳任何東西</div><div class="answer">✅ 把錯誤訊息誠實包進 tool_result 回傳給 Claude</div></div>
+  <div class="qa"><div class="qtext">Q3: 執行工具前，穩健的做法應該先做什麼？</div><div class="opt">直接執行，出錯再處理</div><div class="opt">先驗證輸入，缺必要欄位就不要硬跑</div><div class="opt">先把 max_tokens 調到最大</div><div class="answer">✅ 先驗證輸入，缺必要欄位就不要硬跑</div></div>
+</div></div>
+</div></article>
+</section>
