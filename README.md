@@ -26,6 +26,16 @@
 
 `reference-gads-course.html` 是參考頁的本地快照，僅供比對，非交付物。
 
+## Obsidian vault（LLM 知識庫）
+
+`vault/` 是由課文自動生成的 Obsidian 知識庫：40 課筆記（YAML frontmatter + callout + 可折疊練習題答案）+ `Home.md` 目錄頁，每課有上一課/下一課 wikilink。在 Obsidian 中「Open folder as vault」選 `vault/` 即可。
+
+`vault/` 是產物（由 `vault-build.mjs` 從 `src/content/` 生成），**不要直接編輯**，重跑會整批覆寫：
+
+```bash
+node vault-build.mjs   # 重新生成 vault/
+```
+
 ## 修改內容後怎麼重建
 
 `index.html` 是產物，**不要直接編輯**。改 `src/` 下的檔案後：
