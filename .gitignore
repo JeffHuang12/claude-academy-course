@@ -1,3 +1,9 @@
 reference-gads-course.html
 .DS_Store
 .obsidian/
+
+# ---- 交檔暫存區：從 Downloads 或外部搬進來給 Claude 讀的東西 ----
+# macOS TCC 擋住 ~/Downloads，Claude 讀不到。約定落點是各專案根目錄的 _inbox/。
+# 一律不進 git：裡面常是客戶檔、廠商工具包、他人的原始素材。
+# 規則見 CLAUDE.md「外部檔案交給 Claude：專案 _inbox/」。
+_inbox/
